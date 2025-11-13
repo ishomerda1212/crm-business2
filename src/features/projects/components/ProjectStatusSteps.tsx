@@ -22,10 +22,10 @@ export function ProjectStatusSteps({ currentStatus }: ProjectStatusStepsProps) {
   );
 
   return (
-    <div className="w-full py-8 px-8 bg-white dark:bg-white border-b dark:border-gray-200">
-      <div className="max-w-[1800px] mx-auto">
-        <div className="flex items-center justify-between relative">
-          <div className="absolute top-5 left-0 right-0 h-0.5 bg-gray-200 dark:bg-gray-200 -z-10">
+    <div className="w-full py-6 sm:py-8 px-4 sm:px-6 lg:px-8 bg-white dark:bg-white border-b dark:border-gray-200 overflow-x-auto">
+      <div className="w-full max-w-[1800px] mx-auto">
+        <div className="flex items-center justify-between relative min-w-[800px] sm:min-w-0">
+          <div className="absolute top-5 left-0 right-0 h-0.5 bg-gray-200 dark:bg-gray-200 -z-10 hidden sm:block">
             <div
               className="h-full bg-orange-500 transition-all duration-500"
               style={{
@@ -39,24 +39,24 @@ export function ProjectStatusSteps({ currentStatus }: ProjectStatusStepsProps) {
             const isCurrent = index === currentIndex;
 
             return (
-              <div key={status.id} className="flex flex-col items-center">
+              <div key={status.id} className="flex flex-col items-center flex-shrink-0">
                 <div
                   className={cn(
-                    'w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-300',
+                    'w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center border-2 transition-all duration-300',
                     isCompleted
                       ? 'bg-orange-500 border-orange-500 text-white'
                       : 'bg-white border-gray-300 text-gray-400'
                   )}
                 >
                   {isCompleted ? (
-                    <Check className="w-5 h-5" />
+                    <Check className="w-4 h-4 sm:w-5 sm:h-5" />
                   ) : (
-                    <span className="text-sm font-medium">{index + 1}</span>
+                    <span className="text-xs sm:text-sm font-medium">{index + 1}</span>
                   )}
                 </div>
                 <span
                   className={cn(
-                    'mt-2 text-xs font-medium text-center whitespace-nowrap',
+                    'mt-2 text-[10px] sm:text-xs font-medium text-center whitespace-nowrap max-w-[60px] sm:max-w-none',
                     isCurrent ? 'text-orange-600 dark:text-orange-600' : 'text-gray-600 dark:text-gray-600'
                   )}
                 >

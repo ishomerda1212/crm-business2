@@ -15,7 +15,7 @@ export function BasicInfoTab({ project }: BasicInfoTabProps) {
           <CardTitle className="text-lg font-semibold">基本情報</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-2 gap-x-12 gap-y-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 sm:gap-x-12 gap-y-6">
             <div>
               <Label className="text-sm text-gray-600 dark:text-gray-600">案件ID</Label>
               <p className="mt-1 font-medium">{project.project_number}</p>
@@ -114,7 +114,7 @@ export function BasicInfoTab({ project }: BasicInfoTabProps) {
             </table>
           </div>
 
-          <div className="mt-6 grid grid-cols-2 gap-6">
+          <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div>
               <Label className="text-sm text-gray-600 dark:text-gray-600">工事時間</Label>
               <p className="mt-1 text-sm text-gray-500 dark:text-gray-500">自動物件値</p>
@@ -133,7 +133,7 @@ export function BasicInfoTab({ project }: BasicInfoTabProps) {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-x-12">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 sm:gap-x-12 gap-y-4">
               <div>
                 <Label className="text-sm text-gray-600 dark:text-gray-600">保証入</Label>
                 <p className="mt-1 font-medium">妻</p>
@@ -149,7 +149,7 @@ export function BasicInfoTab({ project }: BasicInfoTabProps) {
               <p className="mt-1 text-sm">東京都中央区東京3-1-1-1</p>
             </div>
 
-            <div className="grid grid-cols-2 gap-x-12">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 sm:gap-x-12 gap-y-4">
               <div>
                 <Label className="text-sm text-gray-600 dark:text-gray-600">税金保険</Label>
                 <p className="mt-1 font-medium">妻</p>

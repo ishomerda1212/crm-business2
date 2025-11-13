@@ -1,0 +1,145 @@
+---
+alwaysApply: true
+---
+
+# Featuresディレクトリ構造のベストプラクティス
+
+## ディレクトリ構造
+
+各機能（feature）は以下の構造に従って作成してください：
+
+```
+src/features/
+  {feature-name}/
+    components/     # 機能固有の再利用可能なコンポーネント
+    pages/          # ページレベルのコンポーネント
+    hooks/          # 機能固有のカスタムフック（必要に応じて）
+    types/          # 機能固有の型定義（必要に応じて）
+```
+
+## 実装すべき機能
+
+以下の機能をfeaturesディレクトリに実装してください：
+
+### 1. ダッシュボード (dashboard)
+- **パス**: `src/features/dashboard/`
+- **ページ**: `DashboardPage.tsx`
+- **機能**:
+  - 主要なKPI表示（案件数、売上、未入金額など）
+  - グラフ・チャート表示
+  - 最近のアクティビティ表示
+  - クイックアクション
+
+### 2. 顧客一覧 (customers)
+- **パス**: `src/features/customers/`
+- **ページ**: `CustomerListPage.tsx`
+- **機能**:
+  - 顧客一覧表示（検索・フィルター機能）
+  - 顧客詳細ページへの遷移
+  - 新規顧客登録
+  - 顧客情報の編集・削除
+
+### 3. 案件一覧 (projects) - 既存
+- **パス**: `src/features/projects/`
+- **ページ**: `ProjectListPage.tsx`, `ProjectDetailPage.tsx`
+- **機能**: 既に実装済み
+
+### 4. 未入金管理 (unpaid)
+- **パス**: `src/features/unpaid/`
+- **ページ**: `UnpaidListPage.tsx`
+- **機能**:
+  - 未入金案件の一覧表示
+  - 入金期限によるソート・フィルター
+  - 入金確認・更新機能
+  - 入金リマインダー機能
+
+### 5. ランキング (contracts)
+- **パス**: `src/features/ranking/`
+- **ページ**: `ContractRankingPage.tsx`
+- **機能**:
+  - 契約ランキング
+    - 期間別（年・月・週）ランキング表示
+    - 契約金額によるランキング
+    - 担当者別・顧客別ランキング
+  - イズクラブ新規加入ランキング
+    - 期間別（年・月・週）ランキング表示
+    - 新規加入数によるランキング
+  - アンケートランキング
+    - 期間別（年・月・週）ランキング表示
+    - アンケート回答数・評価によるランキング
+  - グラフ・チャート表示
+
+## コーディング規約
+
+### コンポーネント命名
+- ページコンポーネント: `{FeatureName}Page.tsx` (例: `DashboardPage.tsx`)
+- 機能コンポーネント: `{ComponentName}.tsx` (例: `CustomerCard.tsx`)
+- コンポーネント名はPascalCaseを使用
+
+### 型定義
+- 共通型定義は `src/lib/supabase.ts` に集約
+- 機能固有の型定義は `src/features/{feature-name}/types/` に配置（必要に応じて）
+
+### スタイリング
+- Tailwind CSSを使用
+- アクセントカラー: `orange-500`, `orange-600` (ホバー時)
+- レスポンシブデザインを必須で実装（`sm:`, `lg:` ブレークポイント）
+- 最大幅: `max-w-[1800px]`
+- パディング: `px-4 sm:px-6 lg:px-8`, `py-6 sm:py-8`
+
+### UIコンポーネント
+- shadcn/uiコンポーネントを使用（`@/components/ui/`）
+- 必要に応じて新規UIコンポーネントを追加
+
+### 状態管理
+- ローカル状態: `useState` を使用
+- グローバル状態: 必要に応じてContext APIまたは状態管理ライブラリを使用
+
+### データ取得
+- Supabaseクライアントを使用（`src/lib/supabase.ts`）
+- モックデータは `src/data/mockData.ts` に定義（開発時）
+
+### ページ遷移
+- ページ間の遷移は親コンポーネント（`App.tsx`）で管理
+- `currentPage` stateで現在のページを管理
+- `onNavigate` コールバックでページ遷移を実装
+
+## 実装例
+
+### ページコンポーネントの基本構造
+
+```typescript
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+
+type {FeatureName}PageProps = {
+  // 必要なpropsを定義
+};
+
+export function {FeatureName}Page({ ...props }: {FeatureName}PageProps) {
+  const [state, setState] = useState();
+
+  return (
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-50 w-full overflow-x-hidden">
+      <div className="bg-white dark:bg-white border-b dark:border-gray-200 w-full">
+        <div className="w-full max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+          {/* ヘッダー */}
+        </div>
+      </div>
+
+      <div className="w-full max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 overflow-x-hidden">
+        {/* メインコンテンツ */}
+      </div>
+    </div>
+  );
+}
+```
+
+## 注意事項
+
+- すべての機能で一貫したUI/UXを維持
+- アクセシビリティを考慮した実装
+- エラーハンドリングを適切に実装
+- ローディング状態を適切に表示
+- 空の状態（Empty State）を適切に表示

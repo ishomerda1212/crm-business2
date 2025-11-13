@@ -121,3 +121,27 @@ export type PaymentRequest = {
   created_at: string;
   updated_at: string;
 };
+
+export type CustomerListItem = {
+  id: string;
+  customer_id: string;
+  customer_name: string;
+  furigana: string;
+  phone: string;
+  email: string;
+  acquisition_channel: string;
+  status: string;
+  registration_date: string;
+};
+
+export type ProjectListItem = {
+  id: string;
+  project_number: string;
+  project_name: string;
+  customer_name: string | null;
+  status: string;
+  contract_amount: number | null;
+  sales_person: string | null;
+  start_date: string | null;
+  completion_date: string | null;
+};
