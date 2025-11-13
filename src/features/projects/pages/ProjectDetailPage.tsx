@@ -7,6 +7,17 @@ import { BasicInfoTab } from '../components/BasicInfoTab';
 import { CustomerInfoTab } from '../components/CustomerInfoTab';
 import { ConstructionTab } from '../components/ConstructionTab';
 import { QuotationTab } from '../components/QuotationTab';
+import { AssignStaffDialog } from '../features/assign-staff/AssignStaffDialog';
+import { SurveyConsentDialog } from '../features/survey-consent/SurveyConsentDialog';
+import { ContractApprovalDialog } from '../features/contract-approval/ContractApprovalDialog';
+import { ContractProcedureDialog } from '../features/contract-procedure/ContractProcedureDialog';
+import { RatificationConsentDialog } from '../features/ratification-consent/RatificationConsentDialog';
+import { ChangeConsentDialog } from '../features/change-consent/ChangeConsentDialog';
+import { AdditionalOrderDialog } from '../features/additional-order/AdditionalOrderDialog';
+import { CancellationConsentDialog } from '../features/cancellation-consent/CancellationConsentDialog';
+import { CompletionProcedureDialog } from '../features/completion-procedure/CompletionProcedureDialog';
+import { ConveniencePaymentDialog } from '../features/convenience-payment/ConveniencePaymentDialog';
+import { ReportOutputDialog } from '../features/report-output/ReportOutputDialog';
 import { Project, Customer, CorporateInfo, PropertyInfo, Quotation, PaymentMethod, PaymentRequest } from '@/lib/supabase';
 import { mockProjects, mockCustomer, mockCorporateInfo, mockPropertyInfo, mockQuotation, mockPaymentMethod, mockPaymentRequests } from '@/data/mockData';
 import { 
@@ -18,6 +29,7 @@ import {
   Edit3, 
   ShoppingCart, 
   XCircle, 
+  CircleCheck,
   CreditCard, 
   FileText 
 } from 'lucide-react';
@@ -35,6 +47,21 @@ export function ProjectDetailPage({ projectId, onBack }: ProjectDetailPageProps)
   const [quotation] = useState<Quotation | null>(mockQuotation);
   const [paymentMethod] = useState<PaymentMethod | null>(mockPaymentMethod);
   const [paymentRequests] = useState<PaymentRequest[]>(mockPaymentRequests);
+  
+  // 各機能ダイアログの開閉状態
+  const [openDialogs, setOpenDialogs] = useState<Record<string, boolean>>({
+    'assign-staff': false,
+    'survey-consent': false,
+    'contract-approval': false,
+    'contract-procedure': false,
+    'ratification-consent': false,
+    'change-consent': false,
+    'additional-order': false,
+    'cancellation-consent': false,
+    'completion-procedure': false,
+    'convenience-payment': false,
+    'report-output': false,
+  });
 
   useEffect(() => {
     const foundProject = mockProjects.find(p => p.id === projectId);
@@ -42,8 +69,22 @@ export function ProjectDetailPage({ projectId, onBack }: ProjectDetailPageProps)
   }, [projectId]);
 
   const handleAction = (actionName: string) => {
-    console.log(`Action: ${actionName}`);
-    // TODO: 各機能の実装
+    setOpenDialogs((prev) => ({
+      ...prev,
+      [actionName]: true,
+    }));
+  };
+
+  const handleDialogChange = (actionName: string, open: boolean) => {
+    setOpenDialogs((prev) => ({
+      ...prev,
+      [actionName]: open,
+    }));
+  };
+
+  const handleSuccess = () => {
+    // 成功時の処理（必要に応じてプロジェクト情報を再取得など）
+    console.log('処理が完了しました');
   };
 
   if (!project) {
@@ -63,6 +104,7 @@ export function ProjectDetailPage({ projectId, onBack }: ProjectDetailPageProps)
     { name: '変更合意手続', icon: Edit3, action: 'change-consent' },
     { name: '追加注文手続', icon: ShoppingCart, action: 'additional-order' },
     { name: '解約合意手続', icon: XCircle, action: 'cancellation-consent' },
+    { name: '完了手続', icon: CircleCheck, action: 'completion-procedure' },
     { name: 'コンビニ支払依頼', icon: CreditCard, action: 'convenience-payment' },
     { name: '帳票出力', icon: FileText, action: 'report-output' },
   ];
@@ -148,6 +190,78 @@ export function ProjectDetailPage({ projectId, onBack }: ProjectDetailPageProps)
           </TabsContent>
         </Tabs>
       </div>
+
+      {/* 各機能ダイアログ */}
+      {project && (
+        <>
+          <AssignStaffDialog
+            open={openDialogs['assign-staff']}
+            onOpenChange={(open) => handleDialogChange('assign-staff', open)}
+            project={project}
+            onSuccess={handleSuccess}
+          />
+          <SurveyConsentDialog
+            open={openDialogs['survey-consent']}
+            onOpenChange={(open) => handleDialogChange('survey-consent', open)}
+            project={project}
+            onSuccess={handleSuccess}
+          />
+          <ContractApprovalDialog
+            open={openDialogs['contract-approval']}
+            onOpenChange={(open) => handleDialogChange('contract-approval', open)}
+            project={project}
+            onSuccess={handleSuccess}
+          />
+          <ContractProcedureDialog
+            open={openDialogs['contract-procedure']}
+            onOpenChange={(open) => handleDialogChange('contract-procedure', open)}
+            project={project}
+            onSuccess={handleSuccess}
+          />
+          <RatificationConsentDialog
+            open={openDialogs['ratification-consent']}
+            onOpenChange={(open) => handleDialogChange('ratification-consent', open)}
+            project={project}
+            onSuccess={handleSuccess}
+          />
+          <ChangeConsentDialog
+            open={openDialogs['change-consent']}
+            onOpenChange={(open) => handleDialogChange('change-consent', open)}
+            project={project}
+            onSuccess={handleSuccess}
+          />
+          <AdditionalOrderDialog
+            open={openDialogs['additional-order']}
+            onOpenChange={(open) => handleDialogChange('additional-order', open)}
+            project={project}
+            onSuccess={handleSuccess}
+          />
+          <CancellationConsentDialog
+            open={openDialogs['cancellation-consent']}
+            onOpenChange={(open) => handleDialogChange('cancellation-consent', open)}
+            project={project}
+            onSuccess={handleSuccess}
+          />
+          <CompletionProcedureDialog
+            open={openDialogs['completion-procedure']}
+            onOpenChange={(open) => handleDialogChange('completion-procedure', open)}
+            project={project}
+            onSuccess={handleSuccess}
+          />
+          <ConveniencePaymentDialog
+            open={openDialogs['convenience-payment']}
+            onOpenChange={(open) => handleDialogChange('convenience-payment', open)}
+            project={project}
+            onSuccess={handleSuccess}
+          />
+          <ReportOutputDialog
+            open={openDialogs['report-output']}
+            onOpenChange={(open) => handleDialogChange('report-output', open)}
+            project={project}
+            onSuccess={handleSuccess}
+          />
+        </>
+      )}
     </div>
   );
 }
