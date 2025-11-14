@@ -1,14 +1,21 @@
 import { useState, useEffect } from 'react';
+import { DashboardPage } from './features/dashboard/pages/DashboardPage';
 import { ProjectListPage } from './features/projects/pages/ProjectListPage';
 import { ProjectDetailPage } from './features/projects/pages/ProjectDetailPage';
 import { CustomerListPage } from './features/customers/pages/CustomerListPage';
+import { ApprovalListPage } from './features/approvals/pages/ApprovalListPage';
 import { ContractProcedurePage } from './features/projects/features/contract-procedure/ContractProcedurePage';
 import { CompletionProcedurePage } from './features/projects/features/completion-procedure/CompletionProcedurePage';
+import { RatificationConsentPage } from './features/projects/features/ratification-consent/RatificationConsentPage';
+import { ChangeConsentPage } from './features/projects/features/change-consent/ChangeConsentPage';
+import { AdditionalOrderPage } from './features/projects/features/additional-order/AdditionalOrderPage';
+import { CancellationConsentPage } from './features/projects/features/cancellation-consent/CancellationConsentPage';
+import { ConveniencePaymentPage } from './features/projects/features/convenience-payment/ConveniencePaymentPage';
 import { Sidebar } from './components/Sidebar';
 
 function App() {
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
-  const [currentPage, setCurrentPage] = useState('projects');
+  const [currentPage, setCurrentPage] = useState('dashboard');
 
   // URLパスに基づいてページを設定
   useEffect(() => {
@@ -17,6 +24,16 @@ function App() {
       setCurrentPage('contract-procedure');
     } else if (path === '/completion-procedure') {
       setCurrentPage('completion-procedure');
+    } else if (path === '/ratification-consent') {
+      setCurrentPage('ratification-consent');
+    } else if (path === '/change-consent') {
+      setCurrentPage('change-consent');
+    } else if (path === '/additional-order') {
+      setCurrentPage('additional-order');
+    } else if (path === '/cancellation-consent') {
+      setCurrentPage('cancellation-consent');
+    } else if (path === '/convenience-payment') {
+      setCurrentPage('convenience-payment');
     }
   }, []);
 
@@ -33,6 +50,21 @@ function App() {
     if (currentPage === 'completion-procedure') {
       return <CompletionProcedurePage />;
     }
+    if (currentPage === 'ratification-consent') {
+      return <RatificationConsentPage />;
+    }
+    if (currentPage === 'change-consent') {
+      return <ChangeConsentPage />;
+    }
+    if (currentPage === 'additional-order') {
+      return <AdditionalOrderPage />;
+    }
+    if (currentPage === 'cancellation-consent') {
+      return <CancellationConsentPage />;
+    }
+    if (currentPage === 'convenience-payment') {
+      return <ConveniencePaymentPage />;
+    }
 
     if (selectedProjectId) {
       return (
@@ -44,17 +76,21 @@ function App() {
     }
 
     switch (currentPage) {
+      case 'dashboard':
+        return <DashboardPage />;
       case 'customers':
         return <CustomerListPage />;
       case 'projects':
         return <ProjectListPage onSelectProject={setSelectedProjectId} />;
+      case 'approvals':
+        return <ApprovalListPage />;
       default:
-        return <ProjectListPage onSelectProject={setSelectedProjectId} />;
+        return <DashboardPage />;
     }
   };
 
   // 手続きページの場合はサイドバーを表示しない
-  if (currentPage === 'contract-procedure' || currentPage === 'completion-procedure') {
+  if (currentPage === 'contract-procedure' || currentPage === 'completion-procedure' || currentPage === 'ratification-consent' || currentPage === 'change-consent' || currentPage === 'additional-order' || currentPage === 'cancellation-consent' || currentPage === 'convenience-payment') {
     return renderPage();
   }
 

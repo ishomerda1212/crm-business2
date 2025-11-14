@@ -1,4 +1,4 @@
-import { LayoutDashboard, Users, FolderOpen, Search, UserCog, TrendingUp } from 'lucide-react';
+import { LayoutDashboard, Users, FolderOpen, Search, UserCog, TrendingUp, CheckCircle2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 type SidebarProps = {
@@ -12,6 +12,7 @@ const menuItems = [
   { id: 'projects', label: '案件一覧', icon: FolderOpen },
   { id: 'search', label: '担当未決条件', icon: Search },
   { id: 'management', label: '未入金管理', icon: UserCog },
+  { id: 'approvals', label: '承認待ち', icon: CheckCircle2 },
   { id: 'ranking', label: '契約ランキング', icon: TrendingUp },
 ];
 

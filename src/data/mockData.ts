@@ -1,4 +1,4 @@
-import { Project, Customer, CorporateInfo, PropertyInfo, Quotation, PaymentMethod, PaymentRequest, CustomerListItem, ProjectListItem } from '@/lib/supabase';
+import { Project, Customer, CorporateInfo, PropertyInfo, Quotation, PaymentMethod, PaymentRequest, CustomerListItem, ProjectListItem, ApprovalRequest } from '@/lib/supabase';
 
 export const mockProjects: Project[] = [
   {
@@ -348,5 +348,68 @@ export const mockProjectList: ProjectListItem[] = [
     sales_person: '佐々木次郎',
     start_date: '2024/02/01',
     completion_date: '2024/03/15',
+  },
+];
+
+export const mockApprovalRequests: ApprovalRequest[] = [
+  {
+    id: '1',
+    approval_type: 'contract-approval',
+    project_id: '1',
+    project_number: 'PJ001',
+    project_name: 'マンション全面リノベーション',
+    customer_name: '田中 太郎',
+    applicant_name: '山田 太郎',
+    requested_at: '2024-05-20T10:30:00Z',
+    amount: 5720000,
+    status: 'pending',
+    notes: '契約金額の承認をお願いします',
+    created_at: '2024-05-20T10:30:00Z',
+    updated_at: '2024-05-20T10:30:00Z',
+  },
+  {
+    id: '2',
+    approval_type: 'convenience-payment',
+    project_id: '2',
+    project_number: 'PJ002',
+    project_name: '戸建てフルリフォーム',
+    customer_name: '佐藤 花子',
+    applicant_name: '佐々木次郎',
+    requested_at: '2024-05-21T14:15:00Z',
+    amount: 500000,
+    status: 'pending',
+    notes: 'コンビニ支払いの承認をお願いします',
+    created_at: '2024-05-21T14:15:00Z',
+    updated_at: '2024-05-21T14:15:00Z',
+  },
+  {
+    id: '3',
+    approval_type: 'contract-approval',
+    project_id: '4',
+    project_number: 'PJ004',
+    project_name: 'リビング・ダイニングリノベーション',
+    customer_name: '高橋 美咲',
+    applicant_name: '佐藤 次郎',
+    requested_at: '2024-05-22T09:00:00Z',
+    amount: 3500000,
+    status: 'pending',
+    notes: null,
+    created_at: '2024-05-22T09:00:00Z',
+    updated_at: '2024-05-22T09:00:00Z',
+  },
+  {
+    id: '4',
+    approval_type: 'convenience-payment',
+    project_id: '1',
+    project_number: 'PJ001',
+    project_name: 'マンション全面リノベーション',
+    customer_name: '田中 太郎',
+    applicant_name: '山田 太郎',
+    requested_at: '2024-05-23T11:20:00Z',
+    amount: 300000,
+    status: 'pending',
+    notes: '緊急対応が必要です',
+    created_at: '2024-05-23T11:20:00Z',
+    updated_at: '2024-05-23T11:20:00Z',
   },
 ];

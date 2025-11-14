@@ -145,3 +145,21 @@ export type ProjectListItem = {
   start_date: string | null;
   completion_date: string | null;
 };
+
+export type ApprovalType = 'contract-approval' | 'convenience-payment';
+
+export type ApprovalRequest = {
+  id: string;
+  approval_type: ApprovalType;
+  project_id: string;
+  project_number: string;
+  project_name: string;
+  customer_name: string;
+  applicant_name: string;
+  requested_at: string;
+  amount: number | null;
+  status: 'pending' | 'approved' | 'rejected';
+  notes: string | null;
+  created_at: string;
+  updated_at: string;
+};

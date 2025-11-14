@@ -87,9 +87,9 @@ export function BasicInfoTab({ project }: BasicInfoTabProps) {
                 <tr className="border-b">
                   <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-700">区分</th>
                   <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-700">契約日</th>
-                  <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-700">契約締高工日</th>
+                  <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-700">契約時着工予定日</th>
                   <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-700">着工日</th>
-                  <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-700">契約締高工日</th>
+                  <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-700">契約時完工予定日</th>
                   <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-700">完工日</th>
                 </tr>
               </thead>

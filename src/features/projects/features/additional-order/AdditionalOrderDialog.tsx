@@ -24,32 +24,20 @@ export function AdditionalOrderDialog({
   open,
   onOpenChange,
   project,
-  onSuccess,
 }: AdditionalOrderDialogProps) {
-  const [orderName, setOrderName] = useState('');
-  const [amount, setAmount] = useState('');
-  const [notes, setNotes] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [orderAmount, setOrderAmount] = useState('');
+  const [summary, setSummary] = useState('');
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      // TODO: 追加注文手続の実装
-      console.log('追加注文手続:', {
-        projectId: project.id,
-        orderName,
-        amount,
-        notes,
-      });
-      await new Promise((resolve) => setTimeout(resolve, 500)); // モック
-      onSuccess?.();
-      onOpenChange(false);
-    } catch (error) {
-      console.error('追加注文手続エラー:', error);
-    } finally {
-      setLoading(false);
-    }
+  const handleStartProcedure = () => {
+    // 追加注文ページを新しいウィンドウで開く
+    // 入力された注文情報をlocalStorageに保存
+    const orderData = {
+      orderAmount,
+      summary,
+    };
+    localStorage.setItem('additionalOrderData', JSON.stringify(orderData));
+    window.open('/additional-order', '_blank');
+    onOpenChange(false);
   };
 
   return (
@@ -58,57 +46,43 @@ export function AdditionalOrderDialog({
         <DialogHeader>
           <DialogTitle>追加注文手続</DialogTitle>
           <DialogDescription>
-            案件「{project.name}」の追加注文手続を行います
+            案件「{project.project_name}」の追加注文手続を開始します
           </DialogDescription>
         </DialogHeader>
-        <form onSubmit={handleSubmit}>
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label htmlFor="orderName">注文名</Label>
-              <Input
-                id="orderName"
-                value={orderName}
-                onChange={(e) => setOrderName(e.target.value)}
-                placeholder="追加注文の名称を入力"
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="amount">金額</Label>
-              <Input
-                id="amount"
-                type="number"
-                value={amount}
-                onChange={(e) => setAmount(e.target.value)}
-                placeholder="金額を入力"
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="notes">備考</Label>
-              <Textarea
-                id="notes"
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-                placeholder="備考を入力"
-                rows={3}
-              />
-            </div>
+        <div className="space-y-4 py-4">
+          <div className="space-y-2">
+            <Label htmlFor="orderAmount">注文金額（税込）</Label>
+            <Input
+              id="orderAmount"
+              type="text"
+              value={orderAmount}
+              onChange={(e) => setOrderAmount(e.target.value)}
+              placeholder="¥ 500,000"
+            />
           </div>
-          <DialogFooter>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => onOpenChange(false)}
-              disabled={loading}
-            >
-              キャンセル
-            </Button>
-            <Button type="submit" disabled={loading}>
-              {loading ? '処理中...' : '追加注文手続を実行'}
-            </Button>
-          </DialogFooter>
-        </form>
+          <div className="space-y-2">
+            <Label htmlFor="summary">概要</Label>
+            <Textarea
+              id="summary"
+              value={summary}
+              onChange={(e) => setSummary(e.target.value)}
+              placeholder="追加注文の概要を入力"
+              rows={4}
+            />
+          </div>
+        </div>
+        <DialogFooter>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => onOpenChange(false)}
+          >
+            キャンセル
+          </Button>
+          <Button onClick={handleStartProcedure}>
+            追加注文手続を開始
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

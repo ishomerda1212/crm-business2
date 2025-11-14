@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -8,9 +7,8 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
 import { Project } from '@/lib/supabase';
+import { FileText } from 'lucide-react';
 
 type RatificationConsentDialogProps = {
   open: boolean;
@@ -23,63 +21,47 @@ export function RatificationConsentDialog({
   open,
   onOpenChange,
   project,
-  onSuccess,
 }: RatificationConsentDialogProps) {
-  const [notes, setNotes] = useState('');
-  const [loading, setLoading] = useState(false);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      // TODO: 追認同意手続の実装
-      console.log('追認同意手続:', { projectId: project.id, notes });
-      await new Promise((resolve) => setTimeout(resolve, 500)); // モック
-      onSuccess?.();
-      onOpenChange(false);
-    } catch (error) {
-      console.error('追認同意手続エラー:', error);
-    } finally {
-      setLoading(false);
-    }
+  const handleStartProcedure = () => {
+    // 追認同意ページを新しいウィンドウで開く
+    window.open('/ratification-consent', '_blank');
+    onOpenChange(false);
   };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[600px]">
+      <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle>追認同意手続</DialogTitle>
           <DialogDescription>
-            案件「{project.name}」の追認同意手続を行います
+            案件「{project.project_name}」の追認同意手続を開始します
           </DialogDescription>
         </DialogHeader>
-        <form onSubmit={handleSubmit}>
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label htmlFor="notes">備考</Label>
-              <Textarea
-                id="notes"
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-                placeholder="追認内容の備考を入力"
-                rows={4}
-              />
+        <div className="py-6">
+          <div className="flex items-center gap-4 p-4 bg-orange-50 rounded-lg border border-orange-200">
+            <FileText className="h-8 w-8 text-orange-600 flex-shrink-0" />
+            <div className="space-y-1">
+              <p className="text-sm font-medium text-gray-900">
+                追認同意ページを開きます
+              </p>
+              <p className="text-sm text-gray-600">
+                新しいタブで追認同意手続きを進めていただきます。
+              </p>
             </div>
           </div>
-          <DialogFooter>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => onOpenChange(false)}
-              disabled={loading}
-            >
-              キャンセル
-            </Button>
-            <Button type="submit" disabled={loading}>
-              {loading ? '処理中...' : '追認同意手続を実行'}
-            </Button>
-          </DialogFooter>
-        </form>
+        </div>
+        <DialogFooter>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => onOpenChange(false)}
+          >
+            キャンセル
+          </Button>
+          <Button onClick={handleStartProcedure}>
+            追認同意手続を開始
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

@@ -8,6 +8,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Project } from '@/lib/supabase';
@@ -23,64 +24,106 @@ export function ChangeConsentDialog({
   open,
   onOpenChange,
   project,
-  onSuccess,
 }: ChangeConsentDialogProps) {
-  const [changeDetails, setChangeDetails] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [newContractAmount, setNewContractAmount] = useState('');
+  const [amountChangeReason, setAmountChangeReason] = useState('');
+  const [newStartDate, setNewStartDate] = useState('');
+  const [newEndDate, setNewEndDate] = useState('');
+  const [scheduleChangeReason, setScheduleChangeReason] = useState('');
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      // TODO: 変更合意手続の実装
-      console.log('変更合意手続:', { projectId: project.id, changeDetails });
-      await new Promise((resolve) => setTimeout(resolve, 500)); // モック
-      onSuccess?.();
-      onOpenChange(false);
-    } catch (error) {
-      console.error('変更合意手続エラー:', error);
-    } finally {
-      setLoading(false);
-    }
+  const handleStartProcedure = () => {
+    // 変更合意ページを新しいウィンドウで開く
+    // 入力された変更情報をURLパラメータまたはlocalStorageに保存
+    const changeData = {
+      newContractAmount,
+      amountChangeReason,
+      newStartDate,
+      newEndDate,
+      scheduleChangeReason,
+    };
+    localStorage.setItem('changeConsentData', JSON.stringify(changeData));
+    window.open('/change-consent', '_blank');
+    onOpenChange(false);
   };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[600px]">
+      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>変更合意手続</DialogTitle>
           <DialogDescription>
-            案件「{project.name}」の変更合意手続を行います
+            案件「{project.project_name}」の変更合意手続を開始します
           </DialogDescription>
         </DialogHeader>
-        <form onSubmit={handleSubmit}>
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label htmlFor="changeDetails">変更内容</Label>
-              <Textarea
-                id="changeDetails"
-                value={changeDetails}
-                onChange={(e) => setChangeDetails(e.target.value)}
-                placeholder="変更内容の詳細を入力"
-                rows={4}
-                required
-              />
+        <div className="space-y-4 py-4">
+          <div className="space-y-2">
+            <Label htmlFor="newContractAmount">変更後請負金額</Label>
+            <Input
+              id="newContractAmount"
+              type="text"
+              value={newContractAmount}
+              onChange={(e) => setNewContractAmount(e.target.value)}
+              placeholder="¥ 5,500,000"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="amountChangeReason">変更理由</Label>
+            <Textarea
+              id="amountChangeReason"
+              value={amountChangeReason}
+              onChange={(e) => setAmountChangeReason(e.target.value)}
+              placeholder="請負金額の変更理由を入力"
+              rows={3}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label>変更後工期</Label>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="newStartDate" className="text-sm text-gray-600">着工日</Label>
+                <Input
+                  id="newStartDate"
+                  type="date"
+                  value={newStartDate}
+                  onChange={(e) => setNewStartDate(e.target.value)}
+                  className="mt-1"
+                />
+              </div>
+              <div>
+                <Label htmlFor="newEndDate" className="text-sm text-gray-600">完工日</Label>
+                <Input
+                  id="newEndDate"
+                  type="date"
+                  value={newEndDate}
+                  onChange={(e) => setNewEndDate(e.target.value)}
+                  className="mt-1"
+                />
+              </div>
             </div>
           </div>
-          <DialogFooter>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => onOpenChange(false)}
-              disabled={loading}
-            >
-              キャンセル
-            </Button>
-            <Button type="submit" disabled={loading}>
-              {loading ? '処理中...' : '変更合意手続を実行'}
-            </Button>
-          </DialogFooter>
-        </form>
+          <div className="space-y-2">
+            <Label htmlFor="scheduleChangeReason">変更理由</Label>
+            <Textarea
+              id="scheduleChangeReason"
+              value={scheduleChangeReason}
+              onChange={(e) => setScheduleChangeReason(e.target.value)}
+              placeholder="工期の変更理由を入力"
+              rows={3}
+            />
+          </div>
+        </div>
+        <DialogFooter>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => onOpenChange(false)}
+          >
+            キャンセル
+          </Button>
+          <Button onClick={handleStartProcedure}>
+            変更合意手続を開始
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

@@ -69,6 +69,11 @@ export function ProjectDetailPage({ projectId, onBack }: ProjectDetailPageProps)
   }, [projectId]);
 
   const handleAction = (actionName: string) => {
+    // コンビニ支払依頼の場合はページに遷移
+    if (actionName === 'convenience-payment') {
+      window.location.href = `/convenience-payment?projectId=${projectId}`;
+      return;
+    }
     setOpenDialogs((prev) => ({
       ...prev,
       [actionName]: true,
