@@ -137,92 +137,122 @@ export function CustomerInfoTab({
             </div>
 
             <div>
-              <Label className="text-sm text-gray-600 mb-3 block">建物所有者</Label>
+              <Label className="text-sm text-gray-600 dark:text-gray-600 mb-3 block">建物所有者</Label>
               <div className="space-y-3">
-                <div className="flex items-center gap-8">
-                  <div className="flex items-center gap-2">
-                    <input type="radio" id="owner1" name="owner" className="text-orange-500" />
-                    <label htmlFor="owner1" className="text-sm">本人</label>
+                <div className="flex items-center gap-6">
+                  <div className="flex items-center gap-3">
+                    <div className="h-4 w-4 rounded-full border-2 border-gray-400 bg-white flex items-center justify-center">
+                      {propertyInfo?.building_owner_type === '本人' && (
+                        <div className="h-2 w-2 rounded-full bg-orange-500" />
+                      )}
+                    </div>
+                    <span className="text-sm">本人</span>
                   </div>
-                  <div className="flex items-center gap-4">
-                    <span className="text-sm text-gray-600 dark:text-gray-600">その他</span>
-                    <input
-                      type="text"
-                      className="border-b border-gray-300 px-2 py-1 text-sm w-48 focus:border-orange-500 focus:outline-none"
-                      placeholder="続柄"
-                    />
+                  <div className="flex items-center gap-3">
+                    <div className="h-4 w-4 rounded-full border-2 border-gray-400 bg-white flex items-center justify-center">
+                      {propertyInfo?.building_owner_type === '親族' && (
+                        <div className="h-2 w-2 rounded-full bg-orange-500" />
+                      )}
+                    </div>
+                    <span className="text-sm">親族</span>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm text-gray-600 dark:text-gray-600">所有者</span>
-                    <select className="border border-gray-300 rounded px-3 py-1 text-sm focus:border-orange-500 focus:outline-none">
-                      <option>両親</option>
-                      <option>配偶者</option>
-                      <option>親族</option>
-                    </select>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm text-gray-600 dark:text-gray-600">建業</span>
-                    <span className="text-sm">本部</span>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-8">
-                  <div className="flex items-center gap-2">
-                    <input type="radio" id="owner2" name="owner" className="text-orange-500" />
-                    <label htmlFor="owner2" className="text-sm">本人</label>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <span className="text-sm text-gray-600 dark:text-gray-600">その他</span>
-                    <input
-                      type="text"
-                      className="border-b border-gray-300 px-2 py-1 text-sm w-48 focus:border-orange-500 focus:outline-none"
-                      placeholder="続柄"
-                    />
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm text-gray-600 dark:text-gray-600">所有者</span>
-                    <select className="border border-gray-300 rounded px-3 py-1 text-sm focus:border-orange-500 focus:outline-none">
-                      <option>両親</option>
-                      <option>配偶者</option>
-                      <option>親族</option>
-                    </select>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm text-gray-600 dark:text-gray-600">建業</span>
-                    <span className="text-sm">本部</span>
+                  <div className="flex items-center gap-3">
+                    <div className="h-4 w-4 rounded-full border-2 border-gray-400 bg-white flex items-center justify-center">
+                      {propertyInfo?.building_owner_type === '賃貸' && (
+                        <div className="h-2 w-2 rounded-full bg-orange-500" />
+                      )}
+                    </div>
+                    <span className="text-sm">賃貸</span>
                   </div>
                 </div>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-x-12">
-              <div>
-                <Label className="text-sm text-gray-600 dark:text-gray-600">経過:その他の詳細</Label>
-                <p className="mt-1 text-sm">-</p>
+                {(propertyInfo?.building_owner_type === '親族' || propertyInfo?.building_owner_type === '賃貸') && (
+                  <div className="grid grid-cols-2 gap-x-12 gap-y-4 mt-4">
+                    <div>
+                      <Label className="text-sm text-gray-600 dark:text-gray-600">所有者名</Label>
+                      <p className="mt-1 font-medium">
+                        {propertyInfo?.building_owner_name || '-'}
+                      </p>
+                    </div>
+                    <div>
+                      <Label className="text-sm text-gray-600 dark:text-gray-600">続柄</Label>
+                      <p className="mt-1 font-medium">
+                        {propertyInfo?.building_owner_relationship || '-'}
+                      </p>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
             <div>
-              <Label className="text-sm text-gray-600 dark:text-gray-600">建築年（医院）</Label>
+              <Label className="text-sm text-gray-600 dark:text-gray-600 mb-3 block">土地所有者</Label>
+              <div className="space-y-3">
+                <div className="flex items-center gap-6">
+                  <div className="flex items-center gap-3">
+                    <div className="h-4 w-4 rounded-full border-2 border-gray-400 bg-white flex items-center justify-center">
+                      {propertyInfo?.land_owner_type === '本人' && (
+                        <div className="h-2 w-2 rounded-full bg-orange-500" />
+                      )}
+                    </div>
+                    <span className="text-sm">本人</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="h-4 w-4 rounded-full border-2 border-gray-400 bg-white flex items-center justify-center">
+                      {propertyInfo?.land_owner_type === '親族' && (
+                        <div className="h-2 w-2 rounded-full bg-orange-500" />
+                      )}
+                    </div>
+                    <span className="text-sm">親族</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="h-4 w-4 rounded-full border-2 border-gray-400 bg-white flex items-center justify-center">
+                      {propertyInfo?.land_owner_type === '賃貸' && (
+                        <div className="h-2 w-2 rounded-full bg-orange-500" />
+                      )}
+                    </div>
+                    <span className="text-sm">賃貸</span>
+                  </div>
+                </div>
+                {(propertyInfo?.land_owner_type === '親族' || propertyInfo?.land_owner_type === '賃貸') && (
+                  <div className="grid grid-cols-2 gap-x-12 gap-y-4 mt-4">
+                    <div>
+                      <Label className="text-sm text-gray-600 dark:text-gray-600">所有者名</Label>
+                      <p className="mt-1 font-medium">
+                        {propertyInfo?.land_owner_name || '-'}
+                      </p>
+                    </div>
+                    <div>
+                      <Label className="text-sm text-gray-600 dark:text-gray-600">続柄</Label>
+                      <p className="mt-1 font-medium">
+                        {propertyInfo?.land_owner_relationship || '-'}
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div>
+              <Label className="text-sm text-gray-600 dark:text-gray-600">建築年（西暦）</Label>
               <p className="mt-1 font-medium">
                 {propertyInfo?.building_age || '2000'}
               </p>
             </div>
 
             <div>
-              <Label className="text-sm text-gray-600 dark:text-gray-600">構造生性質</Label>
+              <Label className="text-sm text-gray-600 dark:text-gray-600">郵送先ご住所</Label>
               <div className="mt-2 flex gap-4">
                 <label className="flex items-center gap-2">
                   <input type="radio" name="structure" className="text-orange-500" />
-                  <span className="text-sm">こ在外</span>
+                  <span className="text-sm">現住所</span>
                 </label>
                 <label className="flex items-center gap-2">
                   <input type="radio" name="structure" className="text-orange-500" />
-                  <span className="text-sm">呼場応力</span>
+                  <span className="text-sm">工事住所</span>
                 </label>
                 <label className="flex items-center gap-2">
                   <input type="radio" name="structure" className="text-orange-500" />
-                  <span className="text-sm">リフォーム町式定全宅フレーム&主賃整老企</span>
+                  <span className="text-sm">リフォーム前は現住所でリフォーム後は現場住所</span>
                 </label>
               </div>
             </div>

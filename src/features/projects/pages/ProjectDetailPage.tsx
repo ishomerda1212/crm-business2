@@ -18,8 +18,8 @@ import { CancellationConsentDialog } from '../features/cancellation-consent/Canc
 import { CompletionProcedureDialog } from '../features/completion-procedure/CompletionProcedureDialog';
 import { ConveniencePaymentDialog } from '../features/convenience-payment/ConveniencePaymentDialog';
 import { ReportOutputDialog } from '../features/report-output/ReportOutputDialog';
-import { Project, Customer, CorporateInfo, PropertyInfo, Quotation, PaymentMethod, PaymentRequest } from '@/lib/supabase';
-import { mockProjects, mockCustomer, mockCorporateInfo, mockPropertyInfo, mockQuotation, mockPaymentMethod, mockPaymentRequests } from '@/data/mockData';
+import { Project, Customer, CorporateInfo, PropertyInfo, Quotation, PaymentMethod, PaymentRequest, ContractInfo, CompletionInfo } from '@/lib/supabase';
+import { mockProjects, mockCustomer, mockCorporateInfo, mockPropertyInfo, mockQuotation, mockPaymentMethod, mockPaymentRequests, mockContractInfo, mockCompletionInfo } from '@/data/mockData';
 import { 
   UserPlus, 
   FileCheck, 
@@ -47,6 +47,8 @@ export function ProjectDetailPage({ projectId, onBack }: ProjectDetailPageProps)
   const [quotation] = useState<Quotation | null>(mockQuotation);
   const [paymentMethod] = useState<PaymentMethod | null>(mockPaymentMethod);
   const [paymentRequests] = useState<PaymentRequest[]>(mockPaymentRequests);
+  const [contractInfo] = useState<ContractInfo | null>(mockContractInfo);
+  const [completionInfo] = useState<CompletionInfo | null>(mockCompletionInfo);
   
   // 各機能ダイアログの開閉状態
   const [openDialogs, setOpenDialogs] = useState<Record<string, boolean>>({
@@ -171,7 +173,7 @@ export function ProjectDetailPage({ projectId, onBack }: ProjectDetailPageProps)
           </TabsList>
 
           <TabsContent value="basic" className="mt-6">
-            <BasicInfoTab project={project} />
+            <BasicInfoTab project={project} contractInfo={contractInfo} completionInfo={completionInfo} />
           </TabsContent>
 
           <TabsContent value="customer" className="mt-6">

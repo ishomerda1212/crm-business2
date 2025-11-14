@@ -62,6 +62,12 @@ export type PropertyInfo = {
   building_type: string | null;
   building_age: number | null;
   structure_method: string | null;
+  building_owner_type: '本人' | '親族' | '賃貸' | null;
+  building_owner_name: string | null;
+  building_owner_relationship: string | null;
+  land_owner_type: '本人' | '親族' | '賃貸' | null;
+  land_owner_name: string | null;
+  land_owner_relationship: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -160,6 +166,50 @@ export type ApprovalRequest = {
   amount: number | null;
   status: 'pending' | 'approved' | 'rejected';
   notes: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type ContractInfo = {
+  id: string;
+  project_id: string;
+  guarantor: '要' | '不要';
+  guarantor_address: string | null;
+  defect_insurance: '要' | '不要';
+  guarantor_name: string | null;
+  defect_insurance_amount: number | null;
+  special_provisions: {
+    loan: boolean;
+    delivery_delay: boolean;
+    advance_payment_75plus: boolean;
+    display_stock_items: boolean;
+  };
+  free_input: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type CompletionInfo = {
+  id: string;
+  project_id: string;
+  promotional_materials: {
+    mail_supervisor_present: boolean;
+    mail_supervisor_absent: boolean;
+    postal_supervisor_present: boolean;
+    postal_supervisor_absent: boolean;
+  };
+  remaining_work: string | null;
+  photo_publication: {
+    all_allowed: boolean;
+    partially_allowed: boolean;
+    all_not_allowed: boolean;
+    partial_options: {
+      comments: boolean;
+      outdoor_photos: boolean;
+      indoor_photos_only: boolean;
+      self_portraits_videos: boolean;
+    };
+  };
   created_at: string;
   updated_at: string;
 };

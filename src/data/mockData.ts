@@ -1,4 +1,4 @@
-import { Project, Customer, CorporateInfo, PropertyInfo, Quotation, PaymentMethod, PaymentRequest, CustomerListItem, ProjectListItem, ApprovalRequest } from '@/lib/supabase';
+import { Project, Customer, CorporateInfo, PropertyInfo, Quotation, PaymentMethod, PaymentRequest, CustomerListItem, ProjectListItem, ApprovalRequest, ContractInfo, CompletionInfo } from '@/lib/supabase';
 
 export const mockProjects: Project[] = [
   {
@@ -87,6 +87,12 @@ export const mockPropertyInfo: PropertyInfo = {
   building_type: 'mansion',
   building_age: 2000,
   structure_method: null,
+  building_owner_type: '本人',
+  building_owner_name: null,
+  building_owner_relationship: null,
+  land_owner_type: '親族',
+  land_owner_name: '田中 一郎',
+  land_owner_relationship: '父',
   created_at: '2024-04-20T00:00:00Z',
   updated_at: '2024-04-20T00:00:00Z',
 };
@@ -413,3 +419,47 @@ export const mockApprovalRequests: ApprovalRequest[] = [
     updated_at: '2024-05-23T11:20:00Z',
   },
 ];
+
+export const mockContractInfo: ContractInfo = {
+  id: '1',
+  project_id: '1',
+  guarantor: '要',
+  guarantor_address: '東京都渋谷区道玄坂1-2-3',
+  defect_insurance: '要',
+  guarantor_name: '田中一郎',
+  defect_insurance_amount: 50000,
+  special_provisions: {
+    loan: true,
+    delivery_delay: true,
+    advance_payment_75plus: false,
+    display_stock_items: false,
+  },
+  free_input: '近隣挨拶は着工1週間前に実施。夜間作業は行わない。',
+  created_at: '2024-04-20T00:00:00Z',
+  updated_at: '2024-04-20T00:00:00Z',
+};
+
+export const mockCompletionInfo: CompletionInfo = {
+  id: '1',
+  project_id: '1',
+  promotional_materials: {
+    mail_supervisor_present: true,
+    mail_supervisor_absent: false,
+    postal_supervisor_present: true,
+    postal_supervisor_absent: false,
+  },
+  remaining_work: '-',
+  photo_publication: {
+    all_allowed: true,
+    partially_allowed: false,
+    all_not_allowed: false,
+    partial_options: {
+      comments: false,
+      outdoor_photos: false,
+      indoor_photos_only: false,
+      self_portraits_videos: false,
+    },
+  },
+  created_at: '2024-04-20T00:00:00Z',
+  updated_at: '2024-04-20T00:00:00Z',
+};
