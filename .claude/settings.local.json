@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(if [ ! -d \"doc\" ])",
+      "Bash(then mkdir doc)",
+      "Bash(fi)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

@@ -34,6 +34,16 @@ const staffList = [
   '佐々木次郎',
 ];
 
+// 担当店舗リスト
+const storeList = [
+  '東京本店',
+  '横浜店',
+  '大阪店',
+  '名古屋店',
+  '福岡店',
+  '仙台店',
+];
+
 // 案件種別リスト
 const projectTypes = [
   '請負契約',
@@ -49,6 +59,7 @@ export function AssignStaffDialog({
   onSuccess,
 }: AssignStaffDialogProps) {
   const [staffName, setStaffName] = useState('');
+  const [storeName, setStoreName] = useState('');
   const [projectType, setProjectType] = useState('');
   const [andpadId, setAndpadId] = useState('');
   const [loading, setLoading] = useState(false);
@@ -61,6 +72,7 @@ export function AssignStaffDialog({
       console.log('担当者登録:', {
         projectId: project.id,
         staffName,
+        storeName,
         projectType,
         andpadId,
       });
@@ -69,6 +81,7 @@ export function AssignStaffDialog({
       onOpenChange(false);
       // フォームをリセット
       setStaffName('');
+      setStoreName('');
       setProjectType('');
       setAndpadId('');
     } catch (error) {
@@ -82,6 +95,7 @@ export function AssignStaffDialog({
     if (!open) {
       // ダイアログを閉じる際にフォームをリセット
       setStaffName('');
+      setStoreName('');
       setProjectType('');
       setAndpadId('');
     }
@@ -109,6 +123,21 @@ export function AssignStaffDialog({
                   {staffList.map((staff) => (
                     <SelectItem key={staff} value={staff}>
                       {staff}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="storeName">担当店舗</Label>
+              <Select value={storeName} onValueChange={setStoreName} required>
+                <SelectTrigger id="storeName">
+                  <SelectValue placeholder="担当店舗を選択" />
+                </SelectTrigger>
+                <SelectContent>
+                  {storeList.map((store) => (
+                    <SelectItem key={store} value={store}>
+                      {store}
                     </SelectItem>
                   ))}
                 </SelectContent>

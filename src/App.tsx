@@ -12,6 +12,7 @@ import { AdditionalOrderPage } from './features/projects/features/additional-ord
 import { CancellationConsentPage } from './features/projects/features/cancellation-consent/CancellationConsentPage';
 import { ConveniencePaymentPage } from './features/projects/features/convenience-payment/ConveniencePaymentPage';
 import { Sidebar } from './components/Sidebar';
+import { SettingsPage } from './features/settings/pages/SettingsPage';
 
 function App() {
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
@@ -84,6 +85,8 @@ function App() {
         return <ProjectListPage onSelectProject={setSelectedProjectId} />;
       case 'approvals':
         return <ApprovalListPage />;
+      case 'settings':
+        return <SettingsPage />;
       default:
         return <DashboardPage />;
     }
