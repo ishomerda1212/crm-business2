@@ -27,7 +27,7 @@ const menuItems = [
 
 export function Sidebar({ currentPage, onNavigate }: SidebarProps) {
   return (
-    <aside className="w-64 bg-white dark:bg-white border-r dark:border-gray-200 min-h-screen flex-shrink-0">
+    <aside className="w-64 bg-white dark:bg-white border-r dark:border-gray-200 h-full flex-shrink-0">
       <div className="flex h-full flex-col">
         <div className="p-6">
           <div className="flex items-center gap-2 mb-8">

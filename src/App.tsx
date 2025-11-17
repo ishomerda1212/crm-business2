@@ -13,6 +13,7 @@ import { ChangeConsentPage } from './features/projects/features/change-consent/C
 import { AdditionalOrderPage } from './features/projects/features/additional-order/AdditionalOrderPage';
 import { CancellationConsentPage } from './features/projects/features/cancellation-consent/CancellationConsentPage';
 import { ConveniencePaymentPage } from './features/projects/features/convenience-payment/ConveniencePaymentPage';
+import { ContractApprovalPage } from './features/projects/features/contract-approval/ContractApprovalPage';
 import { Sidebar } from './components/Sidebar';
 import { SettingsPage } from './features/settings/pages/SettingsPage';
 
@@ -37,6 +38,8 @@ function App() {
       setCurrentPage('cancellation-consent');
     } else if (path === '/convenience-payment') {
       setCurrentPage('convenience-payment');
+    } else if (path === '/contract-approval') {
+      setCurrentPage('contract-approval');
     }
   }, []);
 
@@ -67,6 +70,9 @@ function App() {
     }
     if (currentPage === 'convenience-payment') {
       return <ConveniencePaymentPage />;
+    }
+    if (currentPage === 'contract-approval') {
+      return <ContractApprovalPage />;
     }
 
     if (selectedProjectId) {
@@ -99,14 +105,23 @@ function App() {
   };
 
   // 手続きページの場合はサイドバーを表示しない
-  if (currentPage === 'contract-procedure' || currentPage === 'completion-procedure' || currentPage === 'ratification-consent' || currentPage === 'change-consent' || currentPage === 'additional-order' || currentPage === 'cancellation-consent' || currentPage === 'convenience-payment') {
+  if (
+    currentPage === 'contract-procedure' ||
+    currentPage === 'completion-procedure' ||
+    currentPage === 'ratification-consent' ||
+    currentPage === 'change-consent' ||
+    currentPage === 'additional-order' ||
+    currentPage === 'cancellation-consent' ||
+    currentPage === 'convenience-payment' ||
+    currentPage === 'contract-approval'
+  ) {
     return renderPage();
   }
 
   return (
-    <div className="flex min-h-screen bg-white dark:bg-white overflow-x-hidden">
+    <div className="flex h-screen bg-white dark:bg-white overflow-x-hidden">
       <Sidebar currentPage={currentPage} onNavigate={handleNavigate} />
-      <main className="flex-1 bg-gray-50 dark:bg-gray-50 min-w-0 w-full overflow-x-hidden">
+      <main className="flex-1 bg-gray-50 dark:bg-gray-50 min-w-0 w-full overflow-x-hidden overflow-y-auto">
         {renderPage()}
       </main>
     </div>

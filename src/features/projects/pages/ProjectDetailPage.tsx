@@ -9,7 +9,6 @@ import { ConstructionTab } from '../components/ConstructionTab';
 import { QuotationTab } from '../components/QuotationTab';
 import { AssignStaffDialog } from '../features/assign-staff/AssignStaffDialog';
 import { SurveyConsentDialog } from '../features/survey-consent/SurveyConsentDialog';
-import { ContractApprovalDialog } from '../features/contract-approval/ContractApprovalDialog';
 import { ContractProcedureDialog } from '../features/contract-procedure/ContractProcedureDialog';
 import { RatificationConsentDialog } from '../features/ratification-consent/RatificationConsentDialog';
 import { ChangeConsentDialog } from '../features/change-consent/ChangeConsentDialog';
@@ -55,7 +54,6 @@ export function ProjectDetailPage({ projectId, onBack }: ProjectDetailPageProps)
   const [openDialogs, setOpenDialogs] = useState<Record<string, boolean>>({
     'assign-staff': false,
     'survey-consent': false,
-    'contract-approval': false,
     'contract-procedure': false,
     'ratification-consent': false,
     'change-consent': false,
@@ -75,6 +73,10 @@ export function ProjectDetailPage({ projectId, onBack }: ProjectDetailPageProps)
     // コンビニ支払依頼の場合はページに遷移
     if (actionName === 'convenience-payment') {
       window.location.href = `/convenience-payment?projectId=${projectId}`;
+      return;
+    }
+    if (actionName === 'contract-approval') {
+      window.location.href = `/contract-approval?projectId=${projectId}`;
       return;
     }
     setOpenDialogs((prev) => ({
@@ -212,12 +214,6 @@ export function ProjectDetailPage({ projectId, onBack }: ProjectDetailPageProps)
           <SurveyConsentDialog
             open={openDialogs['survey-consent']}
             onOpenChange={(open) => handleDialogChange('survey-consent', open)}
-            project={project}
-            onSuccess={handleSuccess}
-          />
-          <ContractApprovalDialog
-            open={openDialogs['contract-approval']}
-            onOpenChange={(open) => handleDialogChange('contract-approval', open)}
             project={project}
             onSuccess={handleSuccess}
           />
