@@ -53,6 +53,15 @@ export function ChangeConsentDialog({
           <DialogTitle>変更合意手続</DialogTitle>
           <DialogDescription>
             案件「{project.project_name}」の変更合意手続を開始します
+            <br />
+            <br />
+            <span className="text-sm text-gray-600">
+              変更合意手続は、下記の場合必要です。
+              <br />
+              ①請負金額が契約時から10万円以上の差異がある場合
+              <br />
+              ②工期が14日以上の変更がある場合
+            </span>
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4 py-4">

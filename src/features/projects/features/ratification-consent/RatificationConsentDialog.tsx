@@ -35,6 +35,11 @@ export function RatificationConsentDialog({
           <DialogTitle>追認同意手続</DialogTitle>
           <DialogDescription>
             案件「{project.project_name}」の追認同意手続を開始します
+            <br />
+            <br />
+            <span className="text-sm text-gray-600">
+              追認同意手続は、即決契約で仮契約を結んだ場合に必要な手続きです。
+            </span>
           </DialogDescription>
         </DialogHeader>
         <div className="py-6">

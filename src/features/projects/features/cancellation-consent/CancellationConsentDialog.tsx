@@ -35,6 +35,11 @@ export function CancellationConsentDialog({
           <DialogTitle>解約合意手続</DialogTitle>
           <DialogDescription>
             案件「{project.project_name}」の解約合意手続を開始します
+            <br />
+            <br />
+            <span className="text-sm text-gray-600">
+              解約合意手続は、即決契約など契約を結んだ後に解約が必要な場合に必要です。
+            </span>
           </DialogDescription>
         </DialogHeader>
         <div className="py-6">

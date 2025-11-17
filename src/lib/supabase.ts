@@ -20,6 +20,7 @@ export type Project = {
   construction_manager: string | null;
   client_id: string | null;
   case_number: string | null;
+  quotation_url: string | null;
   created_date: string | null;
   updated_date: string | null;
   created_at: string;
@@ -29,6 +30,7 @@ export type Project = {
 export type Customer = {
   id: string;
   project_id: string;
+  customer_type: '個人' | '法人' | null;
   customer_name: string | null;
   furigana: string | null;
   phone1: string | null;
@@ -37,6 +39,11 @@ export type Customer = {
   email2: string | null;
   property_number: string | null;
   address: string | null;
+  // 現住所物件情報
+  current_property_type: '戸建' | '集合' | 'その他' | null;
+  current_postal_code: string | null;
+  current_prefecture: string | null;
+  current_address: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -68,6 +75,11 @@ export type PropertyInfo = {
   land_owner_type: '本人' | '親族' | '賃貸' | null;
   land_owner_name: string | null;
   land_owner_relationship: string | null;
+  // 工事住所情報
+  construction_property_type: '戸建' | '集合' | 'その他' | null;
+  construction_postal_code: string | null;
+  construction_prefecture: string | null;
+  construction_address: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -173,11 +185,14 @@ export type ApprovalRequest = {
 export type ContractInfo = {
   id: string;
   project_id: string;
+  age_75plus?: 'not_75plus' | '75plus_with_guarantor' | '75plus_without_guarantor' | '75plus_no_guarantor_full_advance';
   guarantor: '要' | '不要';
   guarantor_address: string | null;
   defect_insurance: '要' | '不要';
   guarantor_name: string | null;
   defect_insurance_amount: number | null;
+  construction_confirmation: '有' | '無' | null;
+  registered_property_number: string | null;
   special_provisions: {
     loan: boolean;
     delivery_delay: boolean;
@@ -199,6 +214,7 @@ export type CompletionInfo = {
     postal_supervisor_absent: boolean;
   };
   remaining_work: string | null;
+  consumer_product_safety_act?: 'applicable' | 'not_applicable';
   photo_publication: {
     all_allowed: boolean;
     partially_allowed: boolean;
@@ -210,6 +226,17 @@ export type CompletionInfo = {
       self_portraits_videos: boolean;
     };
   };
+  created_at: string;
+  updated_at: string;
+};
+
+export type LoanInfo = {
+  id: string;
+  project_id: string;
+  company: string | null;
+  branch: string | null;
+  contact_person: string | null;
+  contact_phone: string | null;
   created_at: string;
   updated_at: string;
 };

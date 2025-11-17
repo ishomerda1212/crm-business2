@@ -18,8 +18,8 @@ import { CancellationConsentDialog } from '../features/cancellation-consent/Canc
 import { CompletionProcedureDialog } from '../features/completion-procedure/CompletionProcedureDialog';
 import { ConveniencePaymentDialog } from '../features/convenience-payment/ConveniencePaymentDialog';
 import { ReportOutputDialog } from '../features/report-output/ReportOutputDialog';
-import { Project, Customer, CorporateInfo, PropertyInfo, Quotation, PaymentMethod, PaymentRequest, ContractInfo, CompletionInfo } from '@/lib/supabase';
-import { mockProjects, mockCustomer, mockCorporateInfo, mockPropertyInfo, mockQuotation, mockPaymentMethod, mockPaymentRequests, mockContractInfo, mockCompletionInfo } from '@/data/mockData';
+import { Project, Customer, CorporateInfo, PropertyInfo, Quotation, PaymentMethod, PaymentRequest, ContractInfo, CompletionInfo, LoanInfo } from '@/lib/supabase';
+import { mockProjects, mockCustomer, mockCorporateInfo, mockPropertyInfo, mockQuotation, mockPaymentMethod, mockPaymentRequests, mockContractInfo, mockCompletionInfo, mockLoanInfo } from '@/data/mockData';
 import { 
   UserPlus, 
   FileCheck, 
@@ -49,6 +49,7 @@ export function ProjectDetailPage({ projectId, onBack }: ProjectDetailPageProps)
   const [paymentRequests] = useState<PaymentRequest[]>(mockPaymentRequests);
   const [contractInfo] = useState<ContractInfo | null>(mockContractInfo);
   const [completionInfo] = useState<CompletionInfo | null>(mockCompletionInfo);
+  const [loanInfo] = useState<LoanInfo | null>(mockLoanInfo);
   
   // 各機能ダイアログの開閉状態
   const [openDialogs, setOpenDialogs] = useState<Record<string, boolean>>({
@@ -193,6 +194,7 @@ export function ProjectDetailPage({ projectId, onBack }: ProjectDetailPageProps)
               quotation={quotation}
               paymentMethod={paymentMethod}
               paymentRequests={paymentRequests}
+              loanInfo={loanInfo}
             />
           </TabsContent>
         </Tabs>

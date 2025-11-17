@@ -47,6 +47,11 @@ export function AdditionalOrderDialog({
           <DialogTitle>追加注文手続</DialogTitle>
           <DialogDescription>
             案件「{project.project_name}」の追加注文手続を開始します
+            <br />
+            <br />
+            <span className="text-sm text-gray-600">
+              追加注文の請負金額は完工金に加算されます。
+            </span>
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4 py-4">

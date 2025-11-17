@@ -2,8 +2,10 @@ import { useState, useEffect } from 'react';
 import { DashboardPage } from './features/dashboard/pages/DashboardPage';
 import { ProjectListPage } from './features/projects/pages/ProjectListPage';
 import { ProjectDetailPage } from './features/projects/pages/ProjectDetailPage';
+import { UnassignedProjectsPage } from './features/projects/pages/UnassignedProjectsPage';
 import { CustomerListPage } from './features/customers/pages/CustomerListPage';
 import { ApprovalListPage } from './features/approvals/pages/ApprovalListPage';
+import { UnpaidListPage } from './features/unpaid/pages/UnpaidListPage';
 import { ContractProcedurePage } from './features/projects/features/contract-procedure/ContractProcedurePage';
 import { CompletionProcedurePage } from './features/projects/features/completion-procedure/CompletionProcedurePage';
 import { RatificationConsentPage } from './features/projects/features/ratification-consent/RatificationConsentPage';
@@ -83,8 +85,12 @@ function App() {
         return <CustomerListPage />;
       case 'projects':
         return <ProjectListPage onSelectProject={setSelectedProjectId} />;
+      case 'search':
+        return <UnassignedProjectsPage onSelectProject={setSelectedProjectId} />;
       case 'approvals':
         return <ApprovalListPage />;
+      case 'management':
+        return <UnpaidListPage />;
       case 'settings':
         return <SettingsPage />;
       default:

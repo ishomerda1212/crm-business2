@@ -141,6 +141,11 @@ export function ConveniencePaymentDialog({
           <DialogTitle>コンビニ支払依頼</DialogTitle>
           <DialogDescription>
             案件「{project.project_name}」のコンビニ支払を依頼します
+            <br />
+            <br />
+            <span className="text-sm text-gray-600">
+              コンビニ支払依頼は、30万円以下の場合に利用可能です。
+            </span>
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
