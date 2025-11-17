@@ -39,6 +39,14 @@ export type Customer = {
   email2: string | null;
   property_number: string | null;
   address: string | null;
+  occupation: string | null;
+  household_income: string | null;
+  work_holiday: string | null;
+  adult_count: number | null;
+  child_count: number | null;
+  cohabitant_structure: string | null;
+  pets: string | null;
+  visitor_frequency: string | null;
   // 現住所物件情報
   current_property_type: '戸建' | '集合' | 'その他' | null;
   current_postal_code: string | null;
@@ -237,6 +245,19 @@ export type LoanInfo = {
   branch: string | null;
   contact_person: string | null;
   contact_phone: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type InquiryInfo = {
+  id: string;
+  project_id: string;
+  consideration_area: string | null;
+  important_points: string | null;
+  desired_completion_timing: string | null;
+  budget: string | null;
+  loan: string | null;
+  quotation_status: string | null;
   created_at: string;
   updated_at: string;
 };

@@ -1,4 +1,4 @@
-import { Project, Customer, CorporateInfo, PropertyInfo, Quotation, PaymentMethod, PaymentRequest, CustomerListItem, ProjectListItem, ApprovalRequest, ContractInfo, CompletionInfo, LoanInfo } from '@/lib/supabase';
+import { Project, Customer, CorporateInfo, PropertyInfo, Quotation, PaymentMethod, PaymentRequest, CustomerListItem, ProjectListItem, ApprovalRequest, ContractInfo, CompletionInfo, LoanInfo, InquiryInfo } from '@/lib/supabase';
 
 export const mockProjects: Project[] = [
   {
@@ -610,6 +610,19 @@ export const mockLoanInfo: LoanInfo = {
   branch: '東京支店',
   contact_person: '山田 太郎',
   contact_phone: '03-1234-5678',
+  created_at: '2024-04-20T00:00:00Z',
+  updated_at: '2024-04-20T00:00:00Z',
+};
+
+export const mockInquiryInfo: InquiryInfo = {
+  id: '1',
+  project_id: '1',
+  consideration_area: 'リビング拡張、キッチン刷新、浴室リニューアル',
+  important_points: '断熱・遮音性能、デザイン性、メンテナンス性',
+  desired_completion_timing: '2025年3月末まで（新年度前）',
+  budget: '600〜700万円',
+  loan: '住宅ローン利用予定（仮審査済）',
+  quotation_status: '概算見積提示済／詳細見積作成中',
   created_at: '2024-04-20T00:00:00Z',
   updated_at: '2024-04-20T00:00:00Z',
 };

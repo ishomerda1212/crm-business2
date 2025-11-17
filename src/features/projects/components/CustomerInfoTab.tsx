@@ -61,7 +61,7 @@ export function CustomerInfoTab({
             </div>
 
             <div className="border-t pt-6">
-              <h3 className="text-base font-semibold mb-4">物件情報</h3>
+              <h3 className="text-base font-semibold mb-4">現住所情報</h3>
               <div className="grid grid-cols-2 gap-x-12 gap-y-6">
                 <div>
                   <Label className="text-sm text-gray-600 dark:text-gray-600">現住所物件種別</Label>
@@ -259,6 +259,52 @@ export function CustomerInfoTab({
                   </label>
                 </div>
               </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card className="bg-white dark:bg-white border-gray-200 dark:border-gray-200">
+        <CardHeader>
+          <CardTitle className="text-lg font-semibold">顧客詳細</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-2 gap-x-12 gap-y-6">
+            <div>
+              <Label className="text-sm text-gray-600 dark:text-gray-600">職業</Label>
+              <p className="mt-1 font-medium">{customer?.occupation || '-'}</p>
+            </div>
+            <div>
+              <Label className="text-sm text-gray-600 dark:text-gray-600">世帯年収</Label>
+              <p className="mt-1 font-medium">{customer?.household_income || '-'}</p>
+            </div>
+            <div>
+              <Label className="text-sm text-gray-600 dark:text-gray-600">仕事の休み</Label>
+              <p className="mt-1 font-medium">{customer?.work_holiday || '-'}</p>
+            </div>
+            <div>
+              <Label className="text-sm text-gray-600 dark:text-gray-600">大人人数</Label>
+              <p className="mt-1 font-medium">
+                {typeof customer?.adult_count === 'number' ? `${customer.adult_count}人` : '-'}
+              </p>
+            </div>
+            <div>
+              <Label className="text-sm text-gray-600 dark:text-gray-600">子供人数</Label>
+              <p className="mt-1 font-medium">
+                {typeof customer?.child_count === 'number' ? `${customer.child_count}人` : '-'}
+              </p>
+            </div>
+            <div>
+              <Label className="text-sm text-gray-600 dark:text-gray-600">同居者構成</Label>
+              <p className="mt-1 font-medium">{customer?.cohabitant_structure || '-'}</p>
+            </div>
+            <div>
+              <Label className="text-sm text-gray-600 dark:text-gray-600">ペット</Label>
+              <p className="mt-1 font-medium">{customer?.pets || '-'}</p>
+            </div>
+            <div>
+              <Label className="text-sm text-gray-600 dark:text-gray-600">来客頻度</Label>
+              <p className="mt-1 font-medium">{customer?.visitor_frequency || '-'}</p>
             </div>
           </div>
         </CardContent>

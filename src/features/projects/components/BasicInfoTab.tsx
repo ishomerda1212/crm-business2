@@ -9,8 +9,8 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 
 type BasicInfoTabProps = {
   project: Project;
-  contractInfo?: ContractInfo;
-  completionInfo?: CompletionInfo;
+  contractInfo?: ContractInfo | null;
+  completionInfo?: CompletionInfo | null;
 };
 
 export function BasicInfoTab({ project, contractInfo, completionInfo }: BasicInfoTabProps) {

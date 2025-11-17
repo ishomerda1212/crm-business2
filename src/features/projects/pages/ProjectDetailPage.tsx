@@ -5,6 +5,7 @@ import { ProjectStatusSteps } from '../components/ProjectStatusSteps';
 import { ProjectHeader } from '../components/ProjectHeader';
 import { BasicInfoTab } from '../components/BasicInfoTab';
 import { CustomerInfoTab } from '../components/CustomerInfoTab';
+import { InquiryInfoTab } from '../components/InquiryInfoTab';
 import { ConstructionTab } from '../components/ConstructionTab';
 import { QuotationTab } from '../components/QuotationTab';
 import { AssignStaffDialog } from '../features/assign-staff/AssignStaffDialog';
@@ -17,8 +18,8 @@ import { CancellationConsentDialog } from '../features/cancellation-consent/Canc
 import { CompletionProcedureDialog } from '../features/completion-procedure/CompletionProcedureDialog';
 import { ConveniencePaymentDialog } from '../features/convenience-payment/ConveniencePaymentDialog';
 import { ReportOutputDialog } from '../features/report-output/ReportOutputDialog';
-import { Project, Customer, CorporateInfo, PropertyInfo, Quotation, PaymentMethod, PaymentRequest, ContractInfo, CompletionInfo, LoanInfo } from '@/lib/supabase';
-import { mockProjects, mockCustomer, mockCorporateInfo, mockPropertyInfo, mockQuotation, mockPaymentMethod, mockPaymentRequests, mockContractInfo, mockCompletionInfo, mockLoanInfo } from '@/data/mockData';
+import { Project, Customer, CorporateInfo, PropertyInfo, Quotation, PaymentMethod, PaymentRequest, ContractInfo, CompletionInfo, LoanInfo, InquiryInfo } from '@/lib/supabase';
+import { mockProjects, mockCustomer, mockCorporateInfo, mockPropertyInfo, mockQuotation, mockPaymentMethod, mockPaymentRequests, mockContractInfo, mockCompletionInfo, mockLoanInfo, mockInquiryInfo } from '@/data/mockData';
 import { 
   UserPlus, 
   FileCheck, 
@@ -49,6 +50,7 @@ export function ProjectDetailPage({ projectId, onBack }: ProjectDetailPageProps)
   const [contractInfo] = useState<ContractInfo | null>(mockContractInfo);
   const [completionInfo] = useState<CompletionInfo | null>(mockCompletionInfo);
   const [loanInfo] = useState<LoanInfo | null>(mockLoanInfo);
+  const [inquiryInfo] = useState<InquiryInfo | null>(mockInquiryInfo);
   
   // 各機能ダイアログの開閉状態
   const [openDialogs, setOpenDialogs] = useState<Record<string, boolean>>({
@@ -173,6 +175,12 @@ export function ProjectDetailPage({ projectId, onBack }: ProjectDetailPageProps)
             >
               請負・入金情報
             </TabsTrigger>
+            <TabsTrigger
+              value="inquiry"
+              className="data-[state=active]:bg-orange-500 data-[state=active]:text-white px-6 py-3 text-base font-medium"
+            >
+              問合情報
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="basic" className="mt-6">
@@ -198,6 +206,10 @@ export function ProjectDetailPage({ projectId, onBack }: ProjectDetailPageProps)
               paymentRequests={paymentRequests}
               loanInfo={loanInfo}
             />
+          </TabsContent>
+
+          <TabsContent value="inquiry" className="mt-6">
+            <InquiryInfoTab inquiryInfo={inquiryInfo} />
           </TabsContent>
         </Tabs>
       </div>

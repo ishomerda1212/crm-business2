@@ -8,14 +8,11 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
+import {
+  RadioGroup,
+  RadioGroupItem,
+} from '@/components/ui/radio-group';
 import { Project } from '@/lib/supabase';
 
 type ReportOutputDialogProps = {
@@ -32,8 +29,15 @@ export function ReportOutputDialog({
   onSuccess,
 }: ReportOutputDialogProps) {
   const [reportType, setReportType] = useState('');
-  const [format, setFormat] = useState('pdf');
   const [loading, setLoading] = useState(false);
+  const outputFormat = 'pdf';
+  const reportOptions = [
+    { value: 'contract', label: '契約書' },
+    { value: 'quotation', label: '見積書' },
+    { value: 'invoice', label: '請求書' },
+    { value: 'receipt', label: '領収書' },
+    { value: 'summary', label: '案件サマリー' },
+  ];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,7 +47,7 @@ export function ReportOutputDialog({
       console.log('帳票出力:', {
         projectId: project.id,
         reportType,
-        format,
+        format: outputFormat,
       });
       await new Promise((resolve) => setTimeout(resolve, 1000)); // モック
       onSuccess?.();
@@ -61,39 +65,36 @@ export function ReportOutputDialog({
         <DialogHeader>
           <DialogTitle>帳票出力</DialogTitle>
           <DialogDescription>
-            案件「{project.name}」の帳票を出力します
+            案件「{project.project_name}」の帳票を出力します
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
               <Label htmlFor="reportType">帳票種類</Label>
-              <Select value={reportType} onValueChange={setReportType}>
-                <SelectTrigger>
-                  <SelectValue placeholder="帳票種類を選択" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="contract">契約書</SelectItem>
-                  <SelectItem value="quotation">見積書</SelectItem>
-                  <SelectItem value="invoice">請求書</SelectItem>
-                  <SelectItem value="receipt">領収書</SelectItem>
-                  <SelectItem value="summary">案件サマリー</SelectItem>
-                </SelectContent>
-              </Select>
+              <RadioGroup
+                value={reportType}
+                onValueChange={setReportType}
+                className="space-y-2"
+              >
+                {reportOptions.map((option) => (
+                  <Label
+                    key={option.value}
+                    className="flex w-full items-center gap-3 rounded-lg border border-gray-200 px-4 py-3 text-base font-medium text-gray-700 transition hover:border-orange-500 focus-within:border-orange-500 cursor-pointer"
+                  >
+                    <RadioGroupItem
+                      id={`report-${option.value}`}
+                      value={option.value}
+                      className="h-5 w-5 border-2 border-gray-400"
+                    />
+                    <span>{option.label}</span>
+                  </Label>
+                ))}
+              </RadioGroup>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="format">出力形式</Label>
-              <Select value={format} onValueChange={setFormat}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="pdf">PDF</SelectItem>
-                  <SelectItem value="excel">Excel</SelectItem>
-                  <SelectItem value="csv">CSV</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+            <p className="text-sm text-gray-500">
+              出力形式はPDFのみ対応しています。
+            </p>
           </div>
           <DialogFooter>
             <Button
