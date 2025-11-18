@@ -6,6 +6,7 @@ import { ConstructionConfirmStep } from './components/ConstructionConfirmStep';
 import { WarrantyConfirmStep } from './components/WarrantyConfirmStep';
 import { SettlementStep } from './components/SettlementStep';
 import { HandoverStep } from './components/HandoverStep';
+import { PromotionalMaterialStep } from './components/PromotionalMaterialStep';
 import { CompletionNoticeStep } from './components/CompletionNoticeStep';
 
 export const CompletionProcedurePage = () => {
@@ -30,6 +31,8 @@ export const CompletionProcedurePage = () => {
         return <SettlementStep />;
       case 'handover':
         return <HandoverStep />;
+      case 'promotional-material':
+        return <PromotionalMaterialStep />;
       case 'company-notice':
         return <CompletionNoticeStep />;
       default:

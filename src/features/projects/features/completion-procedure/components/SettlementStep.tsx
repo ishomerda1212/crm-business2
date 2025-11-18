@@ -96,28 +96,6 @@ export const SettlementStep = () => {
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>精算内訳</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-2">
-            <div className="flex justify-between py-2 text-sm">
-              <span className="text-gray-600">既支払額</span>
-              <span className="font-medium">¥2,695,000</span>
-            </div>
-            <div className="flex justify-between py-2 text-sm">
-              <span className="text-gray-600">最終契約金額</span>
-              <span className="font-medium">¥4,000,000</span>
-            </div>
-            <div className="flex justify-between py-3 border-t text-lg">
-              <span className="text-gray-900 font-medium">お支払い残額</span>
-              <span className="font-bold text-orange-600">¥1,305,000</span>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
       <Alert className="bg-blue-50 border-blue-200">
         <CreditCard className="h-4 w-4 text-blue-600" />
         <AlertDescription className="text-blue-800">
@@ -156,48 +134,10 @@ export const SettlementStep = () => {
             </div>
           </div>
 
-          <div className="p-4 bg-gray-50 rounded-lg">
-            <p className="font-medium text-gray-900 mb-2">現金支払い</p>
-            <p className="text-sm text-gray-600">
-              引き渡し時に担当者へ直接お支払いいただけます。
-            </p>
-          </div>
-
           <Button className="w-full" size="lg">
             <FileText className="h-4 w-4 mr-2" />
             請求書をダウンロード
           </Button>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>追加工事内訳</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-3">
-            <div className="flex justify-between items-start p-3 bg-gray-50 rounded-lg">
-              <div>
-                <p className="font-medium text-gray-900">照明器具の追加</p>
-                <p className="text-sm text-gray-500">ダウンライト × 3箇所</p>
-              </div>
-              <span className="font-medium">¥80,000</span>
-            </div>
-            <div className="flex justify-between items-start p-3 bg-gray-50 rounded-lg">
-              <div>
-                <p className="font-medium text-gray-900">コンセントの増設</p>
-                <p className="text-sm text-gray-500">壁面コンセント × 2箇所</p>
-              </div>
-              <span className="font-medium">¥40,000</span>
-            </div>
-            <div className="flex justify-between items-start p-3 bg-gray-50 rounded-lg">
-              <div>
-                <p className="font-medium text-gray-900">カウンター延長</p>
-                <p className="text-sm text-gray-500">追加材料費含む</p>
-              </div>
-              <span className="font-medium">¥30,000</span>
-            </div>
-          </div>
         </CardContent>
       </Card>
     </div>

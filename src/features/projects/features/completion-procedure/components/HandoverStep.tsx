@@ -2,20 +2,43 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
 import { useState } from 'react';
-import { Calendar, Key, FileText, Home } from 'lucide-react';
+import { Calendar } from 'lucide-react';
+import { mockProjects } from '@/data/mockData';
+import { mockPropertyInfo } from '@/data/mockData';
+import { mockQuotation } from '@/data/mockData';
 
 export const HandoverStep = () => {
   const [handoverDate, setHandoverDate] = useState('');
   const [receiverName, setReceiverName] = useState('');
-  const [checklist, setChecklist] = useState({
-    inspection: false,
-    documents: false,
-    keys: false,
-    warranty: false,
-    manual: false,
-  });
+
+  // モックデータから値を取得（実際の実装では、プロジェクトIDから取得）
+  const project = mockProjects[0];
+  const propertyInfo = mockPropertyInfo;
+  const quotation = mockQuotation;
+
+  // 日付フォーマット関数
+  const formatDate = (dateString: string | null | undefined) => {
+    if (!dateString) return '-';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('ja-JP', { year: 'numeric', month: 'long', day: 'numeric' });
+  };
+
+  // 金額フォーマット関数
+  const formatAmount = (amount: number | null | undefined) => {
+    if (amount === null || amount === undefined) return '-';
+    return `¥${amount.toLocaleString()}`;
+  };
+
+  // 工事場所のフォーマット
+  const constructionLocation = propertyInfo.construction_postal_code && propertyInfo.construction_prefecture && propertyInfo.construction_address
+    ? `〒${propertyInfo.construction_postal_code} ${propertyInfo.construction_prefecture}${propertyInfo.construction_address}`
+    : '-';
+
+  // 工期のフォーマット
+  const constructionPeriod = project.created_date && project.updated_date
+    ? `${formatDate(project.created_date)} - ${formatDate(project.updated_date)}`
+    : '-';
 
   return (
     <div className="space-y-6">
@@ -26,218 +49,67 @@ export const HandoverStep = () => {
         </p>
       </div>
 
+      {/* 工事内容 */}
       <Card>
         <CardHeader>
-          <CardTitle>引き渡し情報</CardTitle>
+          <CardTitle>〈工事内容〉</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="handoverDate">引き渡し日</Label>
-            <div className="relative">
-              <Input
-                id="handoverDate"
-                type="date"
-                value={handoverDate}
-                onChange={(e) => setHandoverDate(e.target.value)}
-                className="pl-10"
-              />
-              <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-            </div>
+          <div>
+            <Label className="text-gray-500 text-sm">ご契約日</Label>
+            <p className="mt-1 text-gray-900 font-medium">
+              {formatDate(project.created_date)}
+            </p>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="receiverName">受領者氏名</Label>
-            <Input
-              id="receiverName"
-              type="text"
-              value={receiverName}
-              onChange={(e) => setReceiverName(e.target.value)}
-              placeholder="山田 太郎"
-            />
+          <div>
+            <Label className="text-gray-500 text-sm">工事名称（案件名）</Label>
+            <p className="mt-1 text-gray-900 font-medium">
+              {project.project_name || '-'}
+            </p>
+          </div>
+
+          <div>
+            <Label className="text-gray-500 text-sm">工事場所</Label>
+            <p className="mt-1 text-gray-900 font-medium">
+              {constructionLocation}
+            </p>
+          </div>
+
+          <div>
+            <Label className="text-gray-500 text-sm">工事内容</Label>
+            <p className="mt-1 text-gray-900 font-medium">
+              外壁工事、内装工事、キッチン・浴室リフォーム
+            </p>
+          </div>
+
+          <div>
+            <Label className="text-gray-500 text-sm">工期：着工日‐完工日</Label>
+            <p className="mt-1 text-gray-900 font-medium">
+              {constructionPeriod}
+            </p>
           </div>
         </CardContent>
       </Card>
 
+      {/* 精算内容 */}
       <Card>
         <CardHeader>
-          <CardTitle>引き渡しチェックリスト</CardTitle>
+          <CardTitle>〈精算内容〉</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="flex items-start space-x-3">
-            <Checkbox
-              id="inspection"
-              checked={checklist.inspection}
-              onCheckedChange={(checked) =>
-                setChecklist({ ...checklist, inspection: checked as boolean })
-              }
-            />
-            <div className="space-y-1 flex-1">
-              <Label htmlFor="inspection" className="text-sm font-medium cursor-pointer">
-                <div className="flex items-center gap-2">
-                  <Home className="h-4 w-4 text-gray-500" />
-                  <span>最終検査の実施</span>
-                </div>
-              </Label>
-              <p className="text-sm text-gray-500">
-                お客様立ち会いのもと、施工箇所の最終確認を実施しました
-              </p>
-            </div>
+          <div>
+            <Label className="text-gray-500 text-sm">最終請負金額</Label>
+            <p className="mt-1 text-gray-900 font-medium">
+              {formatAmount(quotation.total_contract_amount)}
+            </p>
           </div>
 
-          <div className="flex items-start space-x-3">
-            <Checkbox
-              id="documents"
-              checked={checklist.documents}
-              onCheckedChange={(checked) =>
-                setChecklist({ ...checklist, documents: checked as boolean })
-              }
-            />
-            <div className="space-y-1 flex-1">
-              <Label htmlFor="documents" className="text-sm font-medium cursor-pointer">
-                <div className="flex items-center gap-2">
-                  <FileText className="h-4 w-4 text-gray-500" />
-                  <span>書類一式のお渡し</span>
-                </div>
-              </Label>
-              <p className="text-sm text-gray-500">
-                工事完了報告書、検査済証、保証書等の書類をお渡ししました
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-start space-x-3">
-            <Checkbox
-              id="keys"
-              checked={checklist.keys}
-              onCheckedChange={(checked) =>
-                setChecklist({ ...checklist, keys: checked as boolean })
-              }
-            />
-            <div className="space-y-1 flex-1">
-              <Label htmlFor="keys" className="text-sm font-medium cursor-pointer">
-                <div className="flex items-center gap-2">
-                  <Key className="h-4 w-4 text-gray-500" />
-                  <span>鍵のお渡し</span>
-                </div>
-              </Label>
-              <p className="text-sm text-gray-500">
-                玄関鍵、設備鍵など、全ての鍵をお渡ししました
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-start space-x-3">
-            <Checkbox
-              id="warranty"
-              checked={checklist.warranty}
-              onCheckedChange={(checked) =>
-                setChecklist({ ...checklist, warranty: checked as boolean })
-              }
-            />
-            <div className="space-y-1 flex-1">
-              <Label htmlFor="warranty" className="text-sm font-medium cursor-pointer">
-                <div className="flex items-center gap-2">
-                  <FileText className="h-4 w-4 text-gray-500" />
-                  <span>保証書のお渡し</span>
-                </div>
-              </Label>
-              <p className="text-sm text-gray-500">
-                工事保証書および設備機器の保証書をお渡ししました
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-start space-x-3">
-            <Checkbox
-              id="manual"
-              checked={checklist.manual}
-              onCheckedChange={(checked) =>
-                setChecklist({ ...checklist, manual: checked as boolean })
-              }
-            />
-            <div className="space-y-1 flex-1">
-              <Label htmlFor="manual" className="text-sm font-medium cursor-pointer">
-                <div className="flex items-center gap-2">
-                  <FileText className="h-4 w-4 text-gray-500" />
-                  <span>取扱説明書のお渡し</span>
-                </div>
-              </Label>
-              <p className="text-sm text-gray-500">
-                設備機器の取扱説明書とメンテナンス方法をご説明しました
-              </p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>お渡し書類一覧</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-            <div className="flex items-center gap-3">
-              <FileText className="h-5 w-5 text-gray-400" />
-              <div>
-                <p className="font-medium text-gray-900">工事完了報告書</p>
-                <p className="text-sm text-gray-500">施工内容の詳細報告</p>
-              </div>
-            </div>
-            <Button variant="outline" size="sm">
-              確認
-            </Button>
-          </div>
-
-          <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-            <div className="flex items-center gap-3">
-              <FileText className="h-5 w-5 text-gray-400" />
-              <div>
-                <p className="font-medium text-gray-900">工事保証書</p>
-                <p className="text-sm text-gray-500">施工保証・防水保証・構造保証</p>
-              </div>
-            </div>
-            <Button variant="outline" size="sm">
-              確認
-            </Button>
-          </div>
-
-          <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-            <div className="flex items-center gap-3">
-              <FileText className="h-5 w-5 text-gray-400" />
-              <div>
-                <p className="font-medium text-gray-900">設備機器保証書</p>
-                <p className="text-sm text-gray-500">メーカー保証書一式</p>
-              </div>
-            </div>
-            <Button variant="outline" size="sm">
-              確認
-            </Button>
-          </div>
-
-          <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-            <div className="flex items-center gap-3">
-              <FileText className="h-5 w-5 text-gray-400" />
-              <div>
-                <p className="font-medium text-gray-900">取扱説明書</p>
-                <p className="text-sm text-gray-500">設備機器の使用方法とメンテナンス</p>
-              </div>
-            </div>
-            <Button variant="outline" size="sm">
-              確認
-            </Button>
-          </div>
-
-          <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-            <div className="flex items-center gap-3">
-              <FileText className="h-5 w-5 text-gray-400" />
-              <div>
-                <p className="font-medium text-gray-900">竣工写真集</p>
-                <p className="text-sm text-gray-500">施工前後の比較写真</p>
-              </div>
-            </div>
-            <Button variant="outline" size="sm">
-              確認
-            </Button>
+          <div>
+            <Label className="text-gray-500 text-sm">内消費税</Label>
+            <p className="mt-1 text-gray-900 font-medium">
+              {formatAmount(quotation.consumption_tax)}
+            </p>
           </div>
         </CardContent>
       </Card>

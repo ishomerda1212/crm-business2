@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -5,20 +6,32 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
 export function ConstructionTab() {
-  const equipmentItems = [
-    { name: 'システムキッチンー式', count: 0, warranty: 0 },
-    { name: 'ビルトインコンロ (ガス・IH) 単品', count: 0, warranty: 0 },
-    { name: '食器洗い乾燥機単品', count: 0, warranty: 0 },
-    { name: 'レンジフード単品', count: 0, warranty: 0 },
-    { name: 'ユニットバスー式', count: 0, warranty: 0 },
-    { name: '浴室暖房乾燥機単品', count: 0, warranty: 0 },
-    { name: 'ガス給湯器単品', count: 0, warranty: 0 },
-    { name: 'エコキュート単品', count: 0, warranty: 0 },
-    { name: '洗面化粧台一式', count: 0, warranty: 0 },
-    { name: 'トイレー式', count: 0, warranty: 0 },
-    { name: '温水洗浄便座', count: 0, warranty: 0 },
-    { name: '水栓金具単品', count: 0, warranty: 0 },
-  ];
+  const [equipmentItems, setEquipmentItems] = useState([
+    { name: 'システムキッチンー式', checked: false, warranty: 0 },
+    { name: 'ビルトインコンロ (ガス・IH) 単品', checked: false, warranty: 0 },
+    { name: '食器洗い乾燥機単品', checked: false, warranty: 0 },
+    { name: 'レンジフード単品', checked: false, warranty: 0 },
+    { name: 'ユニットバスー式', checked: false, warranty: 0 },
+    { name: '浴室暖房乾燥機単品', checked: false, warranty: 0 },
+    { name: 'ガス給湯器単品', checked: false, warranty: 0 },
+    { name: 'エコキュート単品', checked: false, warranty: 0 },
+    { name: '洗面化粧台一式', checked: false, warranty: 0 },
+    { name: 'トイレー式', checked: false, warranty: 0 },
+    { name: '温水洗浄便座', checked: false, warranty: 0 },
+    { name: '水栓金具単品', checked: false, warranty: 0 },
+  ]);
+
+  const handleEquipmentCheck = (index: number, checked: boolean) => {
+    const updated = [...equipmentItems];
+    updated[index].checked = checked;
+    setEquipmentItems(updated);
+  };
+
+  const handleWarrantyChange = (index: number, value: string) => {
+    const updated = [...equipmentItems];
+    updated[index].warranty = parseInt(value) || 0;
+    setEquipmentItems(updated);
+  };
 
   const constructionTypes = [
     {
@@ -60,20 +73,21 @@ export function ConstructionTab() {
     <div className="space-y-6">
       <Card className="bg-white dark:bg-white border-gray-200 dark:border-gray-200">
         <CardHeader>
-          <CardTitle className="text-lg font-semibold">設備機器（台数・保証年）</CardTitle>
+          <CardTitle className="text-lg font-semibold">設備機器（チェック・保証年）</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-3 gap-6">
-            {equipmentItems.map((item) => (
+            {equipmentItems.map((item, index) => (
               <div key={item.name} className="border rounded-lg p-4">
                 <div className="font-medium text-sm mb-3">{item.name}</div>
                 <div className="flex items-center gap-4">
                   <div className="flex items-center gap-2">
-                    <span className="text-xs text-gray-600 dark:text-gray-600">台数</span>
-                    <Input
-                      type="number"
-                      value={item.count}
-                      className="w-16 h-8 text-center"
+                    <Checkbox
+                      checked={item.checked}
+                      onCheckedChange={(checked) =>
+                        handleEquipmentCheck(index, checked === true)
+                      }
+                      className="border-gray-300 data-[state=checked]:bg-orange-500 data-[state=checked]:border-orange-500"
                     />
                   </div>
                   <div className="flex items-center gap-2">
@@ -81,6 +95,7 @@ export function ConstructionTab() {
                     <Input
                       type="number"
                       value={item.warranty}
+                      onChange={(e) => handleWarrantyChange(index, e.target.value)}
                       className="w-16 h-8 text-center"
                     />
                   </div>

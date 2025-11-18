@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { CheckCircle2, Phone, Mail, Clock } from 'lucide-react';
+import { CheckCircle2, Phone, Mail } from 'lucide-react';
 
 export const CompanyNoticeStep = () => {
   return (
@@ -8,7 +8,7 @@ export const CompanyNoticeStep = () => {
       <div>
         <h1 className="text-2xl font-bold text-gray-900">会社からのご案内</h1>
         <p className="mt-2 text-gray-600">
-          工事開始までの流れと、その他のご案内事項をご確認ください。
+          お客さま専用窓口 イズコールセンターについてご案内いたします。
         </p>
       </div>
 
@@ -21,90 +21,72 @@ export const CompanyNoticeStep = () => {
 
       <Card>
         <CardHeader>
-          <CardTitle>今後の流れ</CardTitle>
+          <CardTitle>お客さま専用窓口 イズコールセンターについて</CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div className="flex gap-4">
-              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center font-bold">
-                1
-              </div>
-              <div>
-                <p className="font-medium text-gray-900">着工前打ち合わせ</p>
-                <p className="text-sm text-gray-600 mt-1">
-                  工事開始の約1週間前に、担当者より詳細な工程についてご説明いたします。
-                </p>
-              </div>
-            </div>
+        <CardContent className="space-y-6">
+          <div>
+            <p className="text-gray-700 leading-relaxed">
+              株式会社イズでは、お客様を個別の担当者だけでなく、会社全体でサポートさせていただくため、イズコールセンターを設置しております。
+            </p>
+            <p className="text-gray-700 leading-relaxed mt-3">
+              担当者に連絡が取れない場合や、ご不明な点・ご心配な点がございましたら、お気軽にイズコールセンターまでお問い合わせください。
+            </p>
+          </div>
 
-            <div className="flex gap-4">
-              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center font-bold">
-                2
-              </div>
+          <div>
+            <h3 className="font-semibold text-gray-900 mb-3">以下のような場合にご連絡ください</h3>
+            <div className="space-y-4">
               <div>
-                <p className="font-medium text-gray-900">近隣挨拶</p>
-                <p className="text-sm text-gray-600 mt-1">
-                  工事開始前に、弊社スタッフが近隣の方々へご挨拶に伺います。
-                </p>
+                <p className="font-medium text-gray-900 mb-2">ご契約後/工事着工前</p>
+                <ul className="space-y-1 text-sm text-gray-700 ml-4">
+                  <li className="list-disc">契約内容に関して不明な点がある</li>
+                  <li className="list-disc">工事着工までに聞きたいことがある</li>
+                </ul>
               </div>
-            </div>
 
-            <div className="flex gap-4">
-              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center font-bold">
-                3
-              </div>
               <div>
-                <p className="font-medium text-gray-900">工事着工</p>
-                <p className="text-sm text-gray-600 mt-1">
-                  予定日より工事を開始いたします。工程に応じて随時ご報告いたします。
-                </p>
+                <p className="font-medium text-gray-900 mb-2">工事着工中</p>
+                <ul className="space-y-1 text-sm text-gray-700 ml-4">
+                  <li className="list-disc">工事の進捗状況のことで聞きたいことがある</li>
+                </ul>
               </div>
-            </div>
 
-            <div className="flex gap-4">
-              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center font-bold">
-                4
-              </div>
               <div>
-                <p className="font-medium text-gray-900">完成・引き渡し</p>
-                <p className="text-sm text-gray-600 mt-1">
-                  工事完了後、お客様立ち会いのもと完成検査を実施し、お引き渡しいたします。
-                </p>
+                <p className="font-medium text-gray-900 mb-2">工事完了後</p>
+                <ul className="space-y-1 text-sm text-gray-700 ml-4">
+                  <li className="list-disc">工事中、気になることがあった</li>
+                  <li className="list-disc">保証のことで聞きたいことがある</li>
+                </ul>
               </div>
             </div>
           </div>
-        </CardContent>
-      </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>お問い合わせ</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex items-start gap-3">
-            <Phone className="h-5 w-5 text-gray-400 mt-0.5" />
-            <div>
-              <p className="font-medium text-gray-900">電話でのお問い合わせ</p>
-              <p className="text-gray-600 mt-1">0120-XXX-XXX</p>
-              <p className="text-sm text-gray-500">受付時間: 平日 9:00〜18:00</p>
-            </div>
+          <div className="pt-4 border-t">
+            <p className="text-sm text-gray-700 mb-3">
+              以下の内容でイズコールセンターよりご指定の方法でご連絡させていただく場合がございます。
+            </p>
+            <ul className="space-y-1 text-sm text-gray-700 ml-4">
+              <li className="list-disc">ご入金確認後（ローンの場合は除く）</li>
+              <li className="list-disc">ご契約後</li>
+              <li className="list-disc">工事完了後</li>
+            </ul>
           </div>
 
-          <div className="flex items-start gap-3">
-            <Mail className="h-5 w-5 text-gray-400 mt-0.5" />
-            <div>
-              <p className="font-medium text-gray-900">メールでのお問い合わせ</p>
-              <p className="text-gray-600 mt-1">info@example.com</p>
-              <p className="text-sm text-gray-500">24時間受付（返信は営業時間内）</p>
+          <div className="bg-gray-100 rounded-lg p-4 space-y-3">
+            <h3 className="font-semibold text-gray-900">イズコールセンター</h3>
+            <div className="flex items-start gap-3">
+              <Phone className="h-5 w-5 text-gray-600 mt-0.5 flex-shrink-0" />
+              <div>
+                <p className="text-sm text-gray-600">直通電話</p>
+                <p className="font-medium text-gray-900 mt-1">0120-12-9156</p>
+              </div>
             </div>
-          </div>
-
-          <div className="flex items-start gap-3">
-            <Clock className="h-5 w-5 text-gray-400 mt-0.5" />
-            <div>
-              <p className="font-medium text-gray-900">営業時間</p>
-              <p className="text-gray-600 mt-1">平日 9:00〜18:00</p>
-              <p className="text-sm text-gray-500">土日祝日は休業日となります</p>
+            <div className="flex items-start gap-3">
+              <Mail className="h-5 w-5 text-gray-600 mt-0.5 flex-shrink-0" />
+              <div>
+                <p className="text-sm text-gray-600">直通アドレス</p>
+                <p className="font-medium text-gray-900 mt-1">is-support@is-cross.co.jp</p>
+              </div>
             </div>
           </div>
         </CardContent>
