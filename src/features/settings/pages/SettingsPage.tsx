@@ -6,8 +6,9 @@ import { StaffListPage } from './StaffListPage';
 import { ApprovalRoutePage } from './ApprovalRoutePage';
 import { ConstructionContentPage } from './ConstructionContentPage';
 import { ImportantItemDescriptionPage } from './ImportantItemDescriptionPage';
+import { WarrantyContentPage } from './WarrantyContentPage';
 
-type SettingsSubPage = 'company' | 'branches' | 'staff' | 'approval-routes' | 'construction-content' | 'important-items';
+type SettingsSubPage = 'company' | 'branches' | 'staff' | 'approval-routes' | 'construction-content' | 'important-items' | 'warranty-content';
 
 export function SettingsPage() {
   const [activeTab, setActiveTab] = useState<SettingsSubPage>('company');
@@ -32,13 +33,14 @@ export function SettingsPage() {
 
       <div className="w-full max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as SettingsSubPage)}>
-          <TabsList className="grid w-full max-w-4xl grid-cols-6 mb-6">
+          <TabsList className="grid w-full max-w-5xl grid-cols-7 mb-6">
             <TabsTrigger value="company">自社設定</TabsTrigger>
             <TabsTrigger value="branches">店舗・拠点リスト</TabsTrigger>
             <TabsTrigger value="staff">担当者リスト</TabsTrigger>
             <TabsTrigger value="approval-routes">承認ルート</TabsTrigger>
             <TabsTrigger value="construction-content">工事内容</TabsTrigger>
             <TabsTrigger value="important-items">重要項目説明</TabsTrigger>
+            <TabsTrigger value="warranty-content">保証内容</TabsTrigger>
           </TabsList>
 
           <TabsContent value="company" className="mt-0">
@@ -63,6 +65,10 @@ export function SettingsPage() {
 
           <TabsContent value="important-items" className="mt-0">
             <ImportantItemDescriptionPage />
+          </TabsContent>
+
+          <TabsContent value="warranty-content" className="mt-0">
+            <WarrantyContentPage />
           </TabsContent>
         </Tabs>
       </div>
