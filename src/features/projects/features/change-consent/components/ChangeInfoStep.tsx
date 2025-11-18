@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 type ChangeInfoStepProps = {
   changeData: {

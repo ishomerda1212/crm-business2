@@ -95,9 +95,9 @@ export type PropertyInfo = {
 export type ConstructionDetails = {
   id: string;
   project_id: string;
-  equipment_data: Record<string, any>;
-  construction_types: any[];
-  other_warranty: any[];
+  equipment_data: Record<string, unknown>;
+  construction_types: unknown[];
+  other_warranty: unknown[];
   warranty_details: string | null;
   created_at: string;
   updated_at: string;

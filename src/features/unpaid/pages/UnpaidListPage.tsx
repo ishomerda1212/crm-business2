@@ -190,7 +190,7 @@ export function UnpaidListPage() {
                 />
               </div>
               <div className="flex gap-2">
-                <Select value={filterStatus} onValueChange={(value: any) => setFilterStatus(value)}>
+                <Select value={filterStatus} onValueChange={(value: string) => setFilterStatus(value)}>
                   <SelectTrigger className="w-[140px]">
                     <SelectValue />
                   </SelectTrigger>
@@ -200,7 +200,7 @@ export function UnpaidListPage() {
                     <SelectItem value="overdue">期限超過</SelectItem>
                   </SelectContent>
                 </Select>
-                <Select value={sortBy} onValueChange={(value: any) => setSortBy(value)}>
+                <Select value={sortBy} onValueChange={(value: string) => setSortBy(value)}>
                   <SelectTrigger className="w-[140px]">
                     <SelectValue />
                   </SelectTrigger>

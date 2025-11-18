@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useMemo } from 'react';
 import { Badge } from '@/components/ui/badge';
 import {
   Table,
@@ -9,7 +9,6 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Eye } from 'lucide-react';
-import { ProjectListItem } from '@/lib/supabase';
 import { mockProjectList } from '@/data/mockData';
 
 type UnassignedProjectsPageProps = {

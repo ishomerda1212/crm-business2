@@ -1,16 +1,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import { useState } from 'react';
-import { Calendar } from 'lucide-react';
 import { mockProjects } from '@/data/mockData';
 import { mockPropertyInfo } from '@/data/mockData';
 import { mockQuotation } from '@/data/mockData';
 
 export const HandoverStep = () => {
-  const [handoverDate, setHandoverDate] = useState('');
-  const [receiverName, setReceiverName] = useState('');
 
   // モックデータから値を取得（実際の実装では、プロジェクトIDから取得）
   const project = mockProjects[0];

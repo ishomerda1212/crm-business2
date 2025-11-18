@@ -58,7 +58,7 @@ export function DashboardPage() {
       }, 0);
 
     // 今月の新規顧客数（モックデータから計算）
-    const newCustomersThisMonth = projects.filter((p) => {
+    const newCustomersThisMonth = projects.filter(() => {
       // 簡易計算：今月作成された案件を新規顧客として仮定
       return true; // 実際にはcreated_dateで判定
     }).length;
@@ -78,7 +78,7 @@ export function DashboardPage() {
   const recentActivities = useMemo(() => {
     return projects
       .slice()
-      .sort((a, b) => {
+      .sort(() => {
         // 簡易ソート（実際にはupdated_atでソート）
         return 0;
       })
