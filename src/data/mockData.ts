@@ -66,13 +66,21 @@ export const mockCustomer: Customer = {
   email2: null,
   property_number: 'mansion',
   address: '東京都中央区東京3-1-1-1',
+  occupation: null,
+  household_income: null,
+  work_holiday: null,
+  adult_count: null,
+  child_count: null,
+  cohabitant_structure: null,
+  pets: null,
+  visitor_frequency: null,
   current_property_type: '集合',
   current_postal_code: '100-0001',
   current_prefecture: '東京都',
   current_address: '中央区東京3-1-1-1',
   created_at: '2024-04-20T00:00:00Z',
   updated_at: '2024-04-20T00:00:00Z',
-};
+} as Customer;
 
 export const mockCorporateInfo: CorporateInfo = {
   id: '1',

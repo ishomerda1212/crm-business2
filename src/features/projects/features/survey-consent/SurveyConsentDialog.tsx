@@ -50,7 +50,7 @@ export function SurveyConsentDialog({
         <DialogHeader>
           <DialogTitle>現地調査同意手続</DialogTitle>
           <DialogDescription>
-            案件「{project.name}」の現地調査同意手続を行います
+            案件「{project.project_name}」の現地調査同意手続を行います
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit}>

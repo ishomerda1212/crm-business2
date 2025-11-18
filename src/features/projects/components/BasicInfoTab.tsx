@@ -116,6 +116,13 @@ export function BasicInfoTab({ project, contractInfo, completionInfo }: BasicInf
               <p className="mt-1 font-medium">-</p>
             </div>
           </div>
+          <div className="mt-6 pt-6 border-t border-gray-200">
+            <div className="bg-red-50 border border-red-300 rounded-md p-3">
+              <p className="text-sm text-red-800 dark:text-red-800">
+                <span className="font-semibold">注意事項:</span>契約時の予定日から14日以上の差異が発生する場合は、変更合意手続きが必要となります。
+              </p>
+            </div>
+          </div>
         </CardContent>
       </Card>
 

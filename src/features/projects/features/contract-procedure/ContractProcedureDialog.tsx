@@ -34,7 +34,7 @@ export function ContractProcedureDialog({
         <DialogHeader>
           <DialogTitle>契約手続</DialogTitle>
           <DialogDescription>
-            案件「{project.name}」の契約手続を開始します
+            案件「{project.project_name}」の契約手続を開始します
           </DialogDescription>
         </DialogHeader>
         <div className="py-6">

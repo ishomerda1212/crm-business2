@@ -408,7 +408,7 @@ export function ImportantItemDescriptionPage() {
                 onValueChange={(value) => {
                   // 項目名から対応するカテゴリを決定
                   const categoryKey = Object.entries(categoryLabels).find(
-                    ([_, label]) => label === value
+                    ([, label]) => label === value
                   )?.[0] as ItemCategory | undefined;
                   
                   if (categoryKey && editingItem) {
