@@ -96,6 +96,14 @@ export function BasicInfoTab({ project, contractInfo, completionInfo }: BasicInf
               <p className="mt-1 font-medium">18:00</p>
             </div>
             <div>
+              <Label className="text-sm text-gray-600 dark:text-gray-600">見積作成日</Label>
+              <p className="mt-1 font-medium">2024/05/01</p>
+            </div>
+            <div>
+              <Label className="text-sm text-gray-600 dark:text-gray-600">契約承認日</Label>
+              <p className="mt-1 font-medium">2024/05/01</p>
+            </div>
+            <div>
               <Label className="text-sm text-gray-600 dark:text-gray-600">契約時着工予定日</Label>
               <p className="mt-1 font-medium">2024/05/01</p>
             </div>
