@@ -83,7 +83,7 @@ export function BasicInfoTab({ project, contractInfo, completionInfo }: BasicInf
 
       <Card className="bg-white dark:bg-white border-gray-200 dark:border-gray-200">
         <CardHeader>
-          <CardTitle className="text-lg font-semibold">工期</CardTitle>
+          <CardTitle className="text-lg font-semibold">工期・マイルストーン</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 sm:gap-x-12 gap-y-6">
