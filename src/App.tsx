@@ -14,6 +14,7 @@ import { AdditionalOrderPage } from './features/projects/features/additional-ord
 import { CancellationConsentPage } from './features/projects/features/cancellation-consent/CancellationConsentPage';
 import { ConveniencePaymentPage } from './features/projects/features/convenience-payment/ConveniencePaymentPage';
 import { ContractApprovalPage } from './features/projects/features/contract-approval/ContractApprovalPage';
+import { CompletionSurveyPage } from './features/projects/features/completion-survey/CompletionSurveyPage';
 import { Sidebar } from './components/Sidebar';
 import { SettingsPage } from './features/settings/pages/SettingsPage';
 
@@ -40,6 +41,8 @@ function App() {
       setCurrentPage('convenience-payment');
     } else if (path === '/contract-approval') {
       setCurrentPage('contract-approval');
+    } else if (path === '/completion-survey') {
+      setCurrentPage('completion-survey');
     }
   }, []);
 
@@ -73,6 +76,9 @@ function App() {
     }
     if (currentPage === 'contract-approval') {
       return <ContractApprovalPage />;
+    }
+    if (currentPage === 'completion-survey') {
+      return <CompletionSurveyPage />;
     }
 
     if (selectedProjectId) {
@@ -113,7 +119,8 @@ function App() {
     currentPage === 'additional-order' ||
     currentPage === 'cancellation-consent' ||
     currentPage === 'convenience-payment' ||
-    currentPage === 'contract-approval'
+    currentPage === 'contract-approval' ||
+    currentPage === 'completion-survey'
   ) {
     return renderPage();
   }
