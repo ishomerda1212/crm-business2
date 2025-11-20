@@ -331,55 +331,6 @@ export function BasicInfoTab({ project, contractInfo, completionInfo }: BasicInf
         </CardHeader>
         <CardContent>
           <div className="space-y-6">
-            <div>
-              <Label className="text-sm text-gray-600 dark:text-gray-600 mb-3 block">販促物</Label>
-              <div className="flex flex-wrap gap-2">
-                <Button
-                  variant={completionInfo?.promotional_materials?.mail_supervisor_present ? 'default' : 'outline'}
-                  size="sm"
-                  className={
-                    completionInfo?.promotional_materials?.mail_supervisor_present
-                      ? 'bg-blue-600 hover:bg-blue-700 text-white'
-                      : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
-                  }
-                >
-                  メ・監督有
-                </Button>
-                <Button
-                  variant={completionInfo?.promotional_materials?.mail_supervisor_absent ? 'default' : 'outline'}
-                  size="sm"
-                  className={
-                    completionInfo?.promotional_materials?.mail_supervisor_absent
-                      ? 'bg-blue-600 hover:bg-blue-700 text-white'
-                      : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
-                  }
-                >
-                  メ・監督無
-                </Button>
-                <Button
-                  variant={completionInfo?.promotional_materials?.postal_supervisor_present ? 'default' : 'outline'}
-                  size="sm"
-                  className={
-                    completionInfo?.promotional_materials?.postal_supervisor_present
-                      ? 'bg-blue-600 hover:bg-blue-700 text-white'
-                      : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
-                  }
-                >
-                  郵・監督有
-                </Button>
-                <Button
-                  variant={completionInfo?.promotional_materials?.postal_supervisor_absent ? 'default' : 'outline'}
-                  size="sm"
-                  className={
-                    completionInfo?.promotional_materials?.postal_supervisor_absent
-                      ? 'bg-blue-600 hover:bg-blue-700 text-white'
-                      : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
-                  }
-                >
-                  郵・監督無
-                </Button>
-              </div>
-            </div>
 
             <div>
               <Label className="text-sm text-gray-600 dark:text-gray-600">残工事</Label>

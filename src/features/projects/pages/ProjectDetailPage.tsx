@@ -17,6 +17,7 @@ import { AdditionalOrderDialog } from '../features/additional-order/AdditionalOr
 import { CancellationConsentDialog } from '../features/cancellation-consent/CancellationConsentDialog';
 import { CompletionProcedureDialog } from '../features/completion-procedure/CompletionProcedureDialog';
 import { ConveniencePaymentDialog } from '../features/convenience-payment/ConveniencePaymentDialog';
+import { CompletionSurveyDialog } from '../features/completion-survey/CompletionSurveyDialog';
 import { ReportOutputDialog } from '../features/report-output/ReportOutputDialog';
 import { Project, Customer, CorporateInfo, PropertyInfo, Quotation, PaymentMethod, PaymentRequest, ContractInfo, CompletionInfo, LoanInfo, InquiryInfo } from '@/lib/supabase';
 import { mockProjects, mockCustomer, mockCorporateInfo, mockPropertyInfo, mockQuotation, mockPaymentMethod, mockPaymentRequests, mockContractInfo, mockCompletionInfo, mockLoanInfo, mockInquiryInfo } from '@/data/mockData';
@@ -30,7 +31,8 @@ import {
   ShoppingCart, 
   XCircle, 
   CircleCheck,
-  CreditCard, 
+  CreditCard,
+  ClipboardList,
   FileText 
 } from 'lucide-react';
 
@@ -63,6 +65,7 @@ export function ProjectDetailPage({ projectId, onBack }: ProjectDetailPageProps)
     'cancellation-consent': false,
     'completion-procedure': false,
     'convenience-payment': false,
+    'completion-survey': false,
     'report-output': false,
   });
 
@@ -118,6 +121,7 @@ export function ProjectDetailPage({ projectId, onBack }: ProjectDetailPageProps)
     { name: '解約合意手続', icon: XCircle, action: 'cancellation-consent' },
     { name: '完了手続', icon: CircleCheck, action: 'completion-procedure' },
     { name: 'コンビニ支払依頼', icon: CreditCard, action: 'convenience-payment' },
+    { name: '完工アンケート', icon: ClipboardList, action: 'completion-survey' },
     { name: '帳票出力', icon: FileText, action: 'report-output' },
   ];
 
@@ -268,6 +272,12 @@ export function ProjectDetailPage({ projectId, onBack }: ProjectDetailPageProps)
           <ConveniencePaymentDialog
             open={openDialogs['convenience-payment']}
             onOpenChange={(open) => handleDialogChange('convenience-payment', open)}
+            project={project}
+            onSuccess={handleSuccess}
+          />
+          <CompletionSurveyDialog
+            open={openDialogs['completion-survey']}
+            onOpenChange={(open) => handleDialogChange('completion-survey', open)}
             project={project}
             onSuccess={handleSuccess}
           />
