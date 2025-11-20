@@ -13,14 +13,23 @@ import {
 import { mockProjectList } from '@/data/mockData';
 import { ProjectListItem } from '@/lib/supabase';
 
-// 承認待ちのステータス（実際のデータに合わせて調整）
-const PENDING_APPROVAL_STATUSES = ['提案', '契約'];
+// ステータス分類
+const PENDING_APPROVAL_STATUSES = ['担当未決', '契約準備', '契約承認待'];
+const IN_PROGRESS_STATUSES = ['契約可', '契約確認', '着工準備'];
+const COMPLETED_STATUSES = ['完了済'];
 
-// 進行中のステータス
-const IN_PROGRESS_STATUSES = ['工事中', '契約'];
+const STATUS_BADGE_STYLES: Record<string, string> = {
+  担当未決: 'bg-purple-100 text-purple-700',
+  契約準備: 'bg-yellow-100 text-yellow-700',
+  契約承認待: 'bg-amber-100 text-amber-700',
+  契約可: 'bg-green-100 text-green-700',
+  契約確認: 'bg-emerald-100 text-emerald-700',
+  着工準備: 'bg-orange-100 text-orange-700',
+  完了済: 'bg-gray-100 text-gray-700',
+};
 
-// 完了ステータス
-const COMPLETED_STATUSES = ['完工'];
+const getStatusBadgeClass = (status: string) =>
+  STATUS_BADGE_STYLES[status] ?? 'bg-gray-100 text-gray-700';
 
 export function DashboardPage() {
   const [projects] = useState<ProjectListItem[]>(mockProjectList);
@@ -130,7 +139,7 @@ export function DashboardPage() {
                 {kpis.inProgressCount}
               </div>
               <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">
-                工事中・契約済み
+                契約可〜着工準備
               </p>
             </CardContent>
           </Card>
@@ -229,17 +238,7 @@ export function DashboardPage() {
                       </p>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Badge
-                        className={`${
-                          project.status === '工事中'
-                            ? 'bg-orange-100 text-orange-700'
-                            : project.status === '契約'
-                            ? 'bg-green-100 text-green-700'
-                            : project.status === '完工'
-                            ? 'bg-green-50 text-green-600'
-                            : 'bg-gray-100 text-gray-700'
-                        } border-0`}
-                      >
+                      <Badge className={`${getStatusBadgeClass(project.status)} border-0`}>
                         {project.status}
                       </Badge>
                     </div>

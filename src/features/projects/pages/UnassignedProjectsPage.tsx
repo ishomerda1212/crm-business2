@@ -17,16 +17,20 @@ type UnassignedProjectsPageProps = {
 
 const getStatusBadgeColor = (status: string) => {
   switch (status) {
-    case '工事中':
-      return 'bg-orange-100 text-orange-700 hover:bg-orange-200';
-    case '契約':
-      return 'bg-green-100 text-green-700 hover:bg-green-200';
-    case '完工':
-      return 'bg-green-50 text-green-600 hover:bg-green-100';
-    case '提案':
-      return 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200';
     case '担当未決':
       return 'bg-purple-100 text-purple-700 hover:bg-purple-200';
+    case '契約準備':
+      return 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200';
+    case '契約承認待':
+      return 'bg-amber-100 text-amber-700 hover:bg-amber-200';
+    case '契約可':
+      return 'bg-green-100 text-green-700 hover:bg-green-200';
+    case '契約確認':
+      return 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200';
+    case '着工準備':
+      return 'bg-orange-100 text-orange-700 hover:bg-orange-200';
+    case '完了済':
+      return 'bg-gray-100 text-gray-700 hover:bg-gray-200';
     default:
       return 'bg-gray-100 text-gray-700 hover:bg-gray-200';
   }
