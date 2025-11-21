@@ -13,11 +13,20 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { ArrowLeft, Plus, Edit } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { ArrowLeft, Plus, Edit, Eye, EyeOff } from 'lucide-react';
 import { PointHistory, MembershipFeeHistory, CustomerMembership } from '@/lib/supabase';
 import { mockPointHistories, mockMembershipFeeHistories, mockCustomerMembership } from '@/data/mockData';
 import { PointHistoryDialog } from '../components/PointHistoryDialog';
 import { MembershipFeeHistoryDialog } from '../components/MembershipFeeHistoryDialog';
+import { DateInput } from '../components/common/DateInput';
 
 type CustomerHistoryPageProps = {
   customerId: string;
@@ -34,6 +43,9 @@ export function CustomerHistoryPage({ customerId, onBack }: CustomerHistoryPageP
   const [editingPointHistory, setEditingPointHistory] = useState<PointHistory | null>(null);
   const [feeDialogOpen, setFeeDialogOpen] = useState(false);
   const [editingFeeHistory, setEditingFeeHistory] = useState<MembershipFeeHistory | null>(null);
+  
+  // パスワード表示/非表示の状態管理
+  const [showPassword, setShowPassword] = useState(false);
 
   // TODO: customerIdに基づいて実際のデータを取得
   useEffect(() => {
@@ -166,6 +178,20 @@ export function CustomerHistoryPage({ customerId, onBack }: CustomerHistoryPageP
     }
   };
 
+  // 会員情報の更新
+  const handleUpdateMembershipInfo = (
+    field: 'membership_type' | 'join_date' | 'withdrawal_date' | 'login_id' | 'password',
+    value: string | null
+  ) => {
+    if (membership) {
+      setMembership({
+        ...membership,
+        [field]: value,
+        updated_at: new Date().toISOString(),
+      });
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-50 w-full overflow-x-hidden">
       {/* ヘッダー */}
@@ -194,6 +220,94 @@ export function CustomerHistoryPage({ customerId, onBack }: CustomerHistoryPageP
 
       {/* メインコンテンツ */}
       <div className="w-full max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 overflow-x-hidden">
+        {/* 会員情報 */}
+        <Card className="bg-white dark:bg-white border-gray-200 dark:border-gray-200 mb-6">
+          <CardHeader>
+            <CardTitle className="text-lg font-semibold">会員情報</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* 会員区分 */}
+              <div className="space-y-2">
+                <Label>会員区分</Label>
+                <Select
+                  value={membership?.membership_type || '未設定'}
+                  onValueChange={(value) =>
+                    handleUpdateMembershipInfo(
+                      'membership_type',
+                      value === '未設定' ? null : (value as CustomerMembership['membership_type'])
+                    )
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="会員区分を選択" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="未設定">未設定</SelectItem>
+                    <SelectItem value="ゴールド会員">ゴールド会員</SelectItem>
+                    <SelectItem value="シルバー会員">シルバー会員</SelectItem>
+                    <SelectItem value="ブロンズ会員">ブロンズ会員</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* 入会日 */}
+              <DateInput
+                id="join-date"
+                label="入会日"
+                value={membership?.join_date || ''}
+                onChange={(value) => handleUpdateMembershipInfo('join_date', value || null)}
+              />
+
+              {/* 退会日 */}
+              <DateInput
+                id="withdrawal-date"
+                label="退会日"
+                value={membership?.withdrawal_date || ''}
+                onChange={(value) => handleUpdateMembershipInfo('withdrawal_date', value || null)}
+              />
+
+              {/* ログインID */}
+              <div className="space-y-2">
+                <Label>ログインID</Label>
+                <Input
+                  type="text"
+                  value={membership?.login_id || ''}
+                  onChange={(e) => handleUpdateMembershipInfo('login_id', e.target.value || null)}
+                  placeholder="ログインIDを入力"
+                />
+              </div>
+
+              {/* パスワード */}
+              <div className="space-y-2 sm:col-span-2">
+                <Label>パスワード</Label>
+                <div className="relative">
+                  <Input
+                    type={showPassword ? 'text' : 'password'}
+                    value={membership?.password || ''}
+                    onChange={(e) => handleUpdateMembershipInfo('password', e.target.value || null)}
+                    placeholder="パスワードを入力"
+                    className="pr-10"
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-4 w-4 text-gray-500" />
+                    ) : (
+                      <Eye className="h-4 w-4 text-gray-500" />
+                    )}
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* イズクラブ備考 */}
         <Card className="bg-white dark:bg-white border-gray-200 dark:border-gray-200 mb-6">
           <CardHeader>

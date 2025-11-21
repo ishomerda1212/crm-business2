@@ -8,6 +8,9 @@ import { CustomerDetailPage } from './features/customers/pages/CustomerDetailPag
 import { CustomerHistoryPage } from './features/customers/pages/CustomerHistoryPage';
 import { ApprovalListPage } from './features/approvals/pages/ApprovalListPage';
 import { UnpaidListPage } from './features/unpaid/pages/UnpaidListPage';
+import { CompletionSurveyListPage } from './features/completion-survey/pages/CompletionSurveyListPage';
+import { ContractRankingPage } from './features/ranking/pages/ContractRankingPage';
+import { IzClubMemberListPage } from './features/izclub-members/pages/IzClubMemberListPage';
 import { ContractProcedurePage } from './features/projects/features/contract-procedure/ContractProcedurePage';
 import { CompletionProcedurePage } from './features/projects/features/completion-procedure/CompletionProcedurePage';
 import { RatificationConsentPage } from './features/projects/features/ratification-consent/RatificationConsentPage';
@@ -26,6 +29,7 @@ function App() {
   const [selectedCustomerId, setSelectedCustomerId] = useState<string | null>(null);
   const [customerSubPage, setCustomerSubPage] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState('dashboard');
+  const [previousPage, setPreviousPage] = useState<string | null>(null);
 
   // URLパスに基づいてページを設定
   useEffect(() => {
@@ -101,7 +105,14 @@ function App() {
       return (
         <CustomerHistoryPage
           customerId={selectedCustomerId}
-          onBack={() => setCustomerSubPage(null)}
+          onBack={() => {
+            setCustomerSubPage(null);
+            setSelectedCustomerId(null);
+            if (previousPage) {
+              setCurrentPage(previousPage);
+              setPreviousPage(null);
+            }
+          }}
         />
       );
     }
@@ -136,8 +147,22 @@ function App() {
         return <UnassignedProjectsPage onSelectProject={setSelectedProjectId} />;
       case 'approvals':
         return <ApprovalListPage />;
+      case 'izclub-members':
+        return (
+          <IzClubMemberListPage
+            onViewDetail={(customerId) => {
+              setPreviousPage('izclub-members');
+              setSelectedCustomerId(customerId);
+              setCustomerSubPage('customer-history');
+            }}
+          />
+        );
       case 'management':
         return <UnpaidListPage />;
+      case 'completion-survey-list':
+        return <CompletionSurveyListPage />;
+      case 'ranking':
+        return <ContractRankingPage />;
       case 'settings':
         return <SettingsPage />;
       default:

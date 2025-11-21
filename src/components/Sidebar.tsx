@@ -8,6 +8,8 @@ import {
   CheckCircle2,
   Settings,
   ChevronDown,
+  ClipboardList,
+  Award,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -32,6 +34,8 @@ const menuItems = [
   { id: 'search', label: '担当未決条件', icon: Search },
   { id: 'management', label: '未入金管理', icon: UserCog },
   { id: 'approvals', label: '承認待ち', icon: CheckCircle2 },
+  { id: 'izclub-members', label: 'イズクラブ会員', icon: Award },
+  { id: 'completion-survey-list', label: '完工アンケート', icon: ClipboardList },
   { id: 'ranking', label: '契約ランキング', icon: TrendingUp },
 ];
 

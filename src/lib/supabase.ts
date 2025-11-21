@@ -168,6 +168,7 @@ export type ProjectListItem = {
   status: string;
   contract_amount: number | null;
   sales_person: string | null;
+  branch_name?: string | null; // 担当店舗
   start_date: string | null;
   completion_date: string | null;
 };
@@ -270,6 +271,10 @@ export type CustomerMembership = {
   total_earned_points: number;
   total_used_points: number;
   izclub_remarks: string | null;
+  join_date: string | null;
+  withdrawal_date: string | null;
+  login_id: string | null;
+  password: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -303,6 +308,58 @@ export type MembershipFeeHistory = {
   payment_method: string;
   payment_status: '支払済' | '未払' | 'キャンセル';
   billing_period: string;
+  created_at: string;
+  updated_at: string;
+};
+
+export type CompletionSurveyResponse = {
+  id: string;
+  project_id: string;
+  project_number: string;
+  project_name: string;
+  customer_name: string;
+  sales_person: string;
+  branch_name: string; // 担当店舗
+  response_date: string;
+  score: number; // 総合スコア（1-5など）
+  details: {
+    sales_representative?: {
+      score: number;
+      comments: string | null;
+    };
+    supervisor_craftsmen?: {
+      score: number;
+      comments: string | null;
+    };
+    impressions?: {
+      score: number;
+      comments: string | null;
+    };
+  };
+  survey_type: 'with-supervisor' | 'without-supervisor';
+  created_at: string;
+  updated_at: string;
+};
+
+export type IzClubMemberListItem = {
+  id: string;
+  customer_id: string;
+  customer_name: string;
+  status:
+    | '口座振替登録完了'
+    | '銀行送付済'
+    | '銀行送付未'
+    | 'WEB登録中'
+    | '不備書類再送済'
+    | '不備書類再送未'
+    | '不備書類待ち'
+    | '除外'
+    | 'コンビニ決済'
+    | '都度振込'
+    | 'WEB登録';
+  collection_agency: string | null; // 収納代行先
+  membership_type: 'ゴールド会員' | 'シルバー会員' | 'ブロンズ会員' | null;
+  current_points: number;
   created_at: string;
   updated_at: string;
 };
