@@ -9,8 +9,10 @@ import { ImportantItemDescriptionPage } from './ImportantItemDescriptionPage';
 import { WarrantyContentPage } from './WarrantyContentPage';
 import { ChangeConsentSettingsPage } from './ChangeConsentSettingsPage';
 import { RatificationConsentSettingsPage } from './RatificationConsentSettingsPage';
+import { BulkPointGrantPage } from './BulkPointGrantPage';
+import { CustomerMergePage } from './CustomerMergePage';
 
-type SettingsSubPage = 'company' | 'branches' | 'staff' | 'approval-routes' | 'construction-content' | 'important-items' | 'warranty-content' | 'change-consent' | 'ratification-consent';
+type SettingsSubPage = 'company' | 'branches' | 'staff' | 'approval-routes' | 'construction-content' | 'important-items' | 'warranty-content' | 'change-consent' | 'ratification-consent' | 'bulk-point-grant' | 'customer-merge';
 
 export function SettingsPage() {
   const [activeTab, setActiveTab] = useState<SettingsSubPage>('company');
@@ -35,7 +37,7 @@ export function SettingsPage() {
 
       <div className="w-full max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as SettingsSubPage)}>
-          <TabsList className="grid w-full max-w-5xl grid-cols-9 mb-6">
+          <TabsList className="grid w-full max-w-5xl grid-cols-11 mb-6">
             <TabsTrigger value="company">自社設定</TabsTrigger>
             <TabsTrigger value="branches">店舗・拠点リスト</TabsTrigger>
             <TabsTrigger value="staff">担当者リスト</TabsTrigger>
@@ -45,6 +47,8 @@ export function SettingsPage() {
             <TabsTrigger value="warranty-content">保証内容</TabsTrigger>
             <TabsTrigger value="change-consent">変更合意</TabsTrigger>
             <TabsTrigger value="ratification-consent">追認同意</TabsTrigger>
+            <TabsTrigger value="bulk-point-grant">ポイント一括付与</TabsTrigger>
+            <TabsTrigger value="customer-merge">顧客統合</TabsTrigger>
           </TabsList>
 
           <TabsContent value="company" className="mt-0">
@@ -81,6 +85,14 @@ export function SettingsPage() {
 
           <TabsContent value="ratification-consent" className="mt-0">
             <RatificationConsentSettingsPage />
+          </TabsContent>
+
+          <TabsContent value="bulk-point-grant" className="mt-0">
+            <BulkPointGrantPage />
+          </TabsContent>
+
+          <TabsContent value="customer-merge" className="mt-0">
+            <CustomerMergePage />
           </TabsContent>
         </Tabs>
       </div>

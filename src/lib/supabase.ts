@@ -261,3 +261,48 @@ export type InquiryInfo = {
   created_at: string;
   updated_at: string;
 };
+
+export type CustomerMembership = {
+  id: string;
+  customer_id: string;
+  membership_type: 'ゴールド会員' | 'シルバー会員' | 'ブロンズ会員' | null;
+  current_points: number;
+  total_earned_points: number;
+  total_used_points: number;
+  izclub_remarks: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type PointHistory = {
+  id: string;
+  customer_id: string;
+  transaction_type: '付与' | '使用';
+  points: number;
+  reason: 
+    | 'ゴールド会員' 
+    | 'シルバー会員' 
+    | 'ブロンズ会員' 
+    | '工事完了' 
+    | 'アンケート回答' 
+    | '紹介キャンペーン'
+    | 'お助けサービス利用' 
+    | 'お助けポイント利用' 
+    | 'ポイント利用';
+  related_project_id: string | null;
+  transaction_date: string;
+  created_at: string;
+  updated_at: string;
+};
+
+export type MembershipFeeHistory = {
+  id: string;
+  customer_id: string;
+  fee_amount: number;
+  payment_date: string | null;
+  payment_method: string;
+  payment_status: '支払済' | '未払' | 'キャンセル';
+  billing_period: string;
+  created_at: string;
+  updated_at: string;
+};

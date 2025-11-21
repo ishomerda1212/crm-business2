@@ -12,8 +12,18 @@ import { Badge } from '@/components/ui/badge';
 import { CustomerListItem } from '@/lib/supabase';
 import { mockCustomerList } from '@/data/mockData';
 
-export function CustomerListPage() {
+type CustomerListPageProps = {
+  onSelectCustomer?: (customerId: string) => void;
+};
+
+export function CustomerListPage({ onSelectCustomer }: CustomerListPageProps) {
   const [customers] = useState<CustomerListItem[]>(mockCustomerList);
+
+  const handleViewDetail = (customerId: string) => {
+    if (onSelectCustomer) {
+      onSelectCustomer(customerId);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-50 w-full overflow-x-hidden">
@@ -97,7 +107,10 @@ export function CustomerListPage() {
                         {customer.registration_date}
                       </TableCell>
                       <TableCell>
-                        <button className="flex items-center gap-1 text-red-600 hover:text-red-700 font-medium">
+                        <button
+                          onClick={() => handleViewDetail(customer.id)}
+                          className="flex items-center gap-1 text-red-600 hover:text-red-700 font-medium"
+                        >
                           <Eye className="w-4 h-4" />
                           <span>詳細</span>
                         </button>

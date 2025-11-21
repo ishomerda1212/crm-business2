@@ -4,6 +4,8 @@ import { ProjectListPage } from './features/projects/pages/ProjectListPage';
 import { ProjectDetailPage } from './features/projects/pages/ProjectDetailPage';
 import { UnassignedProjectsPage } from './features/projects/pages/UnassignedProjectsPage';
 import { CustomerListPage } from './features/customers/pages/CustomerListPage';
+import { CustomerDetailPage } from './features/customers/pages/CustomerDetailPage';
+import { CustomerHistoryPage } from './features/customers/pages/CustomerHistoryPage';
 import { ApprovalListPage } from './features/approvals/pages/ApprovalListPage';
 import { UnpaidListPage } from './features/unpaid/pages/UnpaidListPage';
 import { ContractProcedurePage } from './features/projects/features/contract-procedure/ContractProcedurePage';
@@ -17,9 +19,12 @@ import { ContractApprovalPage } from './features/projects/features/contract-appr
 import { CompletionSurveyPage } from './features/projects/features/completion-survey/CompletionSurveyPage';
 import { Sidebar } from './components/Sidebar';
 import { SettingsPage } from './features/settings/pages/SettingsPage';
+import { Toaster } from './components/ui/toaster';
 
 function App() {
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
+  const [selectedCustomerId, setSelectedCustomerId] = useState<string | null>(null);
+  const [customerSubPage, setCustomerSubPage] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState('dashboard');
 
   // URLパスに基づいてページを設定
@@ -49,6 +54,16 @@ function App() {
   const handleNavigate = (page: string) => {
     setCurrentPage(page);
     setSelectedProjectId(null);
+    setSelectedCustomerId(null);
+    setCustomerSubPage(null);
+  };
+
+  const handleCustomerNavigate = (page: string) => {
+    if (page === 'customer-history') {
+      setCustomerSubPage(page);
+    } else {
+      setCustomerSubPage(null);
+    }
   };
 
   const renderPage = () => {
@@ -81,6 +96,26 @@ function App() {
       return <CompletionSurveyPage />;
     }
 
+    // 顧客関連のサブページ
+    if (selectedCustomerId && customerSubPage === 'customer-history') {
+      return (
+        <CustomerHistoryPage
+          customerId={selectedCustomerId}
+          onBack={() => setCustomerSubPage(null)}
+        />
+      );
+    }
+
+    if (selectedCustomerId) {
+      return (
+        <CustomerDetailPage
+          customerId={selectedCustomerId}
+          onBack={() => setSelectedCustomerId(null)}
+          onNavigate={handleCustomerNavigate}
+        />
+      );
+    }
+
     if (selectedProjectId) {
       return (
         <ProjectDetailPage
@@ -94,7 +129,7 @@ function App() {
       case 'dashboard':
         return <DashboardPage />;
       case 'customers':
-        return <CustomerListPage />;
+        return <CustomerListPage onSelectCustomer={setSelectedCustomerId} />;
       case 'projects':
         return <ProjectListPage onSelectProject={setSelectedProjectId} />;
       case 'search':
@@ -126,12 +161,15 @@ function App() {
   }
 
   return (
-    <div className="flex h-screen bg-white dark:bg-white overflow-x-hidden">
-      <Sidebar currentPage={currentPage} onNavigate={handleNavigate} />
-      <main className="flex-1 bg-gray-50 dark:bg-gray-50 min-w-0 w-full overflow-x-hidden overflow-y-auto">
-        {renderPage()}
-      </main>
-    </div>
+    <>
+      <div className="flex h-screen bg-white dark:bg-white overflow-x-hidden">
+        <Sidebar currentPage={currentPage} onNavigate={handleNavigate} />
+        <main className="flex-1 bg-gray-50 dark:bg-gray-50 min-w-0 w-full overflow-x-hidden overflow-y-auto">
+          {renderPage()}
+        </main>
+      </div>
+      <Toaster />
+    </>
   );
 }
 
