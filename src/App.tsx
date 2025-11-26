@@ -20,6 +20,8 @@ import { CancellationConsentPage } from './features/projects/features/cancellati
 import { ConveniencePaymentPage } from './features/projects/features/convenience-payment/ConveniencePaymentPage';
 import { ContractApprovalPage } from './features/projects/features/contract-approval/ContractApprovalPage';
 import { CompletionSurveyPage } from './features/projects/features/completion-survey/CompletionSurveyPage';
+import { HearingFormPage } from './features/projects/features/hearing-form';
+import { SimpleFormPage } from './features/projects/features/simple-form';
 import { Sidebar } from './components/Sidebar';
 import { SettingsPage } from './features/settings/pages/SettingsPage';
 import { Toaster } from './components/ui/toaster';
@@ -52,6 +54,10 @@ function App() {
       setCurrentPage('contract-approval');
     } else if (path === '/completion-survey') {
       setCurrentPage('completion-survey');
+    } else if (path === '/forms/hearing') {
+      setCurrentPage('hearing-form');
+    } else if (path === '/forms/simple') {
+      setCurrentPage('simple-form');
     }
   }, []);
 
@@ -98,6 +104,12 @@ function App() {
     }
     if (currentPage === 'completion-survey') {
       return <CompletionSurveyPage />;
+    }
+    if (currentPage === 'hearing-form') {
+      return <HearingFormPage />;
+    }
+    if (currentPage === 'simple-form') {
+      return <SimpleFormPage />;
     }
 
     // 顧客関連のサブページ
@@ -180,7 +192,9 @@ function App() {
     currentPage === 'cancellation-consent' ||
     currentPage === 'convenience-payment' ||
     currentPage === 'contract-approval' ||
-    currentPage === 'completion-survey'
+    currentPage === 'completion-survey' ||
+    currentPage === 'hearing-form' ||
+    currentPage === 'simple-form'
   ) {
     return renderPage();
   }

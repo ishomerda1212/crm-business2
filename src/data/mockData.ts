@@ -1,4 +1,5 @@
 import { Project, Customer, CorporateInfo, PropertyInfo, Quotation, PaymentMethod, PaymentRequest, CustomerListItem, ProjectListItem, ApprovalRequest, ContractInfo, CompletionInfo, LoanInfo, InquiryInfo, CustomerMembership, PointHistory, MembershipFeeHistory, CompletionSurveyResponse, IzClubMemberListItem } from '@/lib/supabase';
+import type { CustomerSearchCandidate } from '@/features/projects/types/CustomerSearchCandidate';
 
 export const mockProjects: Project[] = [
   {
@@ -382,6 +383,59 @@ export const mockCustomerList: CustomerListItem[] = [
     acquisition_channel: 'Web広告',
     status: 'アクティブ',
     registration_date: '2024/04/12',
+  },
+];
+
+export const mockCustomerSearchCandidates: CustomerSearchCandidate[] = [
+  {
+    id: 'candidate-1',
+    customerName: '田中 太郎',
+    phone: '090-1234-5678',
+    address: '東京都中央区銀座1-2-3',
+    isOb: true,
+    lastProjectName: 'マンション全面リノベーション',
+    lastInteraction: '2024/05/18',
+    notes: '2022年完工のOB様。年1回点検を希望。',
+  },
+  {
+    id: 'candidate-2',
+    customerName: '佐藤 花子',
+    phone: '080-2222-3333',
+    address: '神奈川県横浜市西区みなとみらい3-4-5',
+    isOb: true,
+    lastProjectName: '戸建てフルリフォーム',
+    lastInteraction: '2024/04/02',
+    notes: '浴室追加工事の相談あり。',
+  },
+  {
+    id: 'candidate-3',
+    customerName: '鈴木 一郎',
+    phone: '070-9876-5432',
+    address: '千葉県船橋市浜町4-5-6',
+    isOb: false,
+    lastProjectName: null,
+    lastInteraction: '2023/11/20',
+    notes: '過去に見積りのみ、成約なし。',
+  },
+  {
+    id: 'candidate-4',
+    customerName: '高橋 美咲',
+    phone: '090-4567-8901',
+    address: '埼玉県さいたま市浦和区北浦和2-3-7',
+    isOb: false,
+    lastProjectName: null,
+    lastInteraction: '2024/06/10',
+    notes: 'イベント来場者。キッチン改修希望。',
+  },
+  {
+    id: 'candidate-5',
+    customerName: '山本 健太',
+    phone: '080-3456-7890',
+    address: '東京都世田谷区用賀1-9-1',
+    isOb: true,
+    lastProjectName: '水回り部分改修',
+    lastInteraction: '2024/02/25',
+    notes: 'OB紹介での再相談見込み。',
   },
 ];
 

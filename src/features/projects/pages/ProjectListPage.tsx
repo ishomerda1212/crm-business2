@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
   Table,
   TableBody,
@@ -8,12 +9,15 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Eye } from 'lucide-react';
+import { Eye, Plus } from 'lucide-react';
 import { ProjectListItem } from '@/lib/supabase';
 import { mockProjectList } from '@/data/mockData';
+import { CreateProjectDialog } from '../components/CreateProjectDialog';
+import type { CustomerSearchCandidate } from '../types/CustomerSearchCandidate';
 
 type ProjectListPageProps = {
   onSelectProject: (projectId: string) => void;
+  onCreateProject?: (candidate?: CustomerSearchCandidate | null) => void;
 };
 
 const getStatusBadgeColor = (status: string) => {
@@ -42,18 +46,29 @@ const formatCurrency = (amount: number | null) => {
   return `¥${amount.toLocaleString()}`;
 };
 
-export function ProjectListPage({ onSelectProject }: ProjectListPageProps) {
+export function ProjectListPage({ onSelectProject, onCreateProject }: ProjectListPageProps) {
   const [projects] = useState<ProjectListItem[]>(mockProjectList);
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-50 w-full overflow-x-hidden">
       <div className="bg-white dark:bg-white border-b dark:border-gray-200 w-full">
         <div className="w-full max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
-          <div className="mb-4 sm:mb-6">
-            <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-900 mb-2">
-              案件一覧
-            </h1>
-            <p className="text-sm text-gray-600 dark:text-gray-600">全ての案件情報を管理</p>
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-900 mb-2">
+                案件一覧
+              </h1>
+              <p className="text-sm text-gray-600 dark:text-gray-600">全ての案件情報を管理</p>
+            </div>
+            <CreateProjectDialog
+              onProceed={(candidate) => onCreateProject?.(candidate)}
+              trigger={
+                <Button className="w-full sm:w-auto bg-orange-500 hover:bg-orange-600 text-white">
+                  <Plus className="w-4 h-4 mr-2" />
+                  新規案件追加
+                </Button>
+              }
+            />
           </div>
         </div>
       </div>
