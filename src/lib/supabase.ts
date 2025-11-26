@@ -88,6 +88,14 @@ export type PropertyInfo = {
   construction_postal_code: string | null;
   construction_prefecture: string | null;
   construction_address: string | null;
+  // 工事住所詳細
+  construction_structure: string | null;
+  construction_layout: string | null;
+  construction_floor_area: number | null;
+  construction_land_area: number | null;
+  construction_has_building_plan: boolean | null;
+  construction_has_renovation_history: boolean | null;
+  construction_renovation_history_content: string | null;
   created_at: string;
   updated_at: string;
 };

@@ -113,6 +113,13 @@ export const mockPropertyInfo: PropertyInfo = {
   construction_postal_code: '100-0002',
   construction_prefecture: '東京都',
   construction_address: '中央区東京3-2-2-2',
+  construction_structure: '木造',
+  construction_layout: '3LDK',
+  construction_floor_area: 120,
+  construction_land_area: 200,
+  construction_has_building_plan: true,
+  construction_has_renovation_history: false,
+  construction_renovation_history_content: null,
   created_at: '2024-04-20T00:00:00Z',
   updated_at: '2024-04-20T00:00:00Z',
 };
