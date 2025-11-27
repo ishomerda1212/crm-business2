@@ -1,7 +1,7 @@
 import { UsersRound } from 'lucide-react';
 import { CustomerFormProvider, useCustomerFormContext } from '../simple-form/context/FormContext';
 import { FormHeader, FormNavigation } from '..';
-import { CustomerTypeStep } from '../../forms-shared/components/CustomerTypeStep';
+import { CustomerTypeStep } from './CustomerTypeStep';
 import { IndividualInfoStep } from './IndividualInfoStep';
 import { CorporateInfoStep } from './CorporateInfoStep';
 import { AddressStep } from './AddressStep';

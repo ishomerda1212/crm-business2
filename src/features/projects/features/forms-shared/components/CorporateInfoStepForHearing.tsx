@@ -1,8 +1,7 @@
 import { ChangeEvent } from 'react';
-import { useCustomerFormContext } from '../simple-form/context/FormContext';
-import { CorporationType, NameOrder } from '../simple-form/types';
+import { useFormContext } from '../../hearing-form/context/FormContext';
 
-const corporationTypes: CorporationType[] = [
+const corporationTypes: string[] = [
   '株式会社',
   '合同会社',
   '有限会社',
@@ -17,14 +16,14 @@ const corporationTypes: CorporationType[] = [
   'その他',
 ];
 
-export const CorporateInfoStep = () => {
-  const { data, updateCorporateInfo } = useCustomerFormContext();
+export const CorporateInfoStepForHearing = () => {
+  const { data, updateCorporateInfo } = useFormContext();
 
   const handleSelect = (event: ChangeEvent<HTMLSelectElement>) => {
-    updateCorporateInfo({ corporationType: event.target.value as CorporationType });
+    updateCorporateInfo({ corporationType: event.target.value });
   };
 
-  const handleRadio = (value: NameOrder) => {
+  const handleRadio = (value: 'prefix' | 'suffix') => {
     updateCorporateInfo({ nameOrder: value });
   };
 
@@ -57,11 +56,11 @@ export const CorporateInfoStep = () => {
 
       <div className="space-y-6">
         <div className="space-y-2">
-          <label className="text-sm font-medium text-gray-700">法人種別</label>
+          <label className="text-sm font-medium text-gray-700 dark:text-gray-300">法人種別</label>
           <select
             value={data.corporationType}
             onChange={handleSelect}
-            className="w-full px-4 py-3 bg-white dark:bg-white text-gray-900 dark:text-gray-900 border border-gray-200 dark:border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition-shadow"
+            className="w-full px-4 py-3 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition-shadow"
           >
             <option value="">選択してください</option>
             {corporationTypes.map(type => (
@@ -101,46 +100,46 @@ export const CorporateInfoStep = () => {
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm font-medium text-gray-700">法人名</label>
+          <label className="text-sm font-medium text-gray-700 dark:text-gray-300">法人名</label>
           <input
             type="text"
             value={data.corporationName}
             onChange={handleNameChange}
             placeholder="例）イズホーム"
-            className="w-full px-4 py-3 bg-white dark:bg-white text-gray-900 dark:text-gray-900 border border-gray-200 dark:border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition-shadow placeholder:text-gray-400 dark:placeholder:text-gray-500"
+            className="w-full px-4 py-3 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition-shadow placeholder:text-gray-400 dark:placeholder:text-gray-500"
           />
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm font-medium text-gray-700">代表者肩書</label>
+          <label className="text-sm font-medium text-gray-700 dark:text-gray-300">代表者肩書</label>
           <input
             type="text"
             value={data.representativeTitle}
             onChange={handleRepresentativeTitleChange}
             placeholder="自由入力"
-            className="w-full px-4 py-3 bg-white dark:bg-white text-gray-900 dark:text-gray-900 border border-gray-200 dark:border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition-shadow placeholder:text-gray-400 dark:placeholder:text-gray-500"
+            className="w-full px-4 py-3 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition-shadow placeholder:text-gray-400 dark:placeholder:text-gray-500"
           />
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm font-medium text-gray-700">代表者氏名</label>
+          <label className="text-sm font-medium text-gray-700 dark:text-gray-300">代表者氏名</label>
           <input
             type="text"
             value={data.representativeName}
             onChange={handleRepresentativeNameChange}
             placeholder="例）山田太郎"
-            className="w-full px-4 py-3 bg-white dark:bg-white text-gray-900 dark:text-gray-900 border border-gray-200 dark:border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition-shadow placeholder:text-gray-400 dark:placeholder:text-gray-500"
+            className="w-full px-4 py-3 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition-shadow placeholder:text-gray-400 dark:placeholder:text-gray-500"
           />
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm font-medium text-gray-700">窓口担当者氏名</label>
+          <label className="text-sm font-medium text-gray-700 dark:text-gray-300">窓口担当者氏名</label>
           <input
             type="text"
             value={data.contactPersonName}
             onChange={handleContactPersonNameChange}
             placeholder="例）佐藤花子"
-            className="w-full px-4 py-3 bg-white dark:bg-white text-gray-900 dark:text-gray-900 border border-gray-200 dark:border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition-shadow placeholder:text-gray-400 dark:placeholder:text-gray-500"
+            className="w-full px-4 py-3 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition-shadow placeholder:text-gray-400 dark:placeholder:text-gray-500"
           />
         </div>
       </div>

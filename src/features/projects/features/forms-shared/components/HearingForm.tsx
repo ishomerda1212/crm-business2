@@ -6,10 +6,15 @@ import { PriorityPointsStep } from './PriorityPointsStep';
 import { DesiredCompletionStep } from './DesiredCompletionStep';
 import { BudgetLoanStep } from './BudgetLoanStep';
 import { EstimateStatusStep } from './EstimateStatusStep';
-import { AccountStep } from './AccountStep';
+import { CustomerTypeStep } from './CustomerTypeStep';
+import { IndividualInfoStepForHearing } from './IndividualInfoStepForHearing';
+import { CorporateInfoStepForHearing } from './CorporateInfoStepForHearing';
+import { AddressStepForHearing } from './AddressStepForHearing';
+import { OccupationStepForHearing } from './OccupationStepForHearing';
+import { FamilyStepForHearing } from './FamilyStepForHearing';
 
 const HearingFormContent = () => {
-  const { currentStep, prevStep, nextStep, canProceed } = useFormContext();
+  const { currentStep, data, prevStep, nextStep, canProceed, getTotalSteps } = useFormContext();
 
   const steps = [
     { id: 1, label: '検討箇所' },
@@ -17,7 +22,18 @@ const HearingFormContent = () => {
     { id: 3, label: '完成時期' },
     { id: 4, label: '予算・ローン' },
     { id: 5, label: '見積状況' },
-    { id: 6, label: '会員情報' },
+    { id: 6, label: '種別選択' },
+    {
+      id: 7,
+      label: data.customerCategory === 'corporate' ? '法人情報' : 'お客様情報',
+    },
+    { id: 8, label: 'ご住所情報' },
+    ...(data.customerCategory === 'individual'
+      ? [
+          { id: 9, label: 'ご職業' },
+          { id: 10, label: 'ご家族' },
+        ]
+      : []),
   ];
 
   const renderStep = () => {
@@ -33,7 +49,29 @@ const HearingFormContent = () => {
       case 5:
         return <EstimateStatusStep />;
       case 6:
-        return <AccountStep />;
+        return <CustomerTypeStep />;
+      case 7:
+        if (data.customerCategory === 'individual') {
+          return <IndividualInfoStepForHearing />;
+        }
+        if (data.customerCategory === 'corporate') {
+          return <CorporateInfoStepForHearing />;
+        }
+        return <CustomerTypeStep />;
+      case 8:
+        return <AddressStepForHearing />;
+      case 9:
+        // 個人のみ表示
+        if (data.customerCategory === 'individual') {
+          return <OccupationStepForHearing />;
+        }
+        return <AddressStepForHearing />;
+      case 10:
+        // 個人のみ表示
+        if (data.customerCategory === 'individual') {
+          return <FamilyStepForHearing />;
+        }
+        return <AddressStepForHearing />;
       default:
         return <ReformAreaStep />;
     }
@@ -53,7 +91,7 @@ const HearingFormContent = () => {
         {renderStep()}
         <FormNavigation
           currentStep={currentStep}
-          totalSteps={6}
+          totalSteps={getTotalSteps()}
           canProceed={canProceed()}
           onPrev={prevStep}
           onNext={nextStep}

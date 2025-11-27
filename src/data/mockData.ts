@@ -121,6 +121,11 @@ export const mockPropertyInfo: PropertyInfo = {
   construction_has_building_plan: true,
   construction_has_renovation_history: false,
   construction_renovation_history_content: null,
+  renovation_kitchen_year: null,
+  renovation_unit_bath_year: null,
+  renovation_washstand_year: null,
+  renovation_water_heater_year: null,
+  renovation_toilet_year: null,
   created_at: '2024-04-20T00:00:00Z',
   updated_at: '2024-04-20T00:00:00Z',
 };

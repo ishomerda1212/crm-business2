@@ -9,7 +9,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Check, Clipboard, ClipboardCheck, ExternalLink, FileText, Mic2 } from 'lucide-react';
+import { Check, Clipboard, ClipboardCheck, FileText, Mic2 } from 'lucide-react';
 
 type FormOptionId = 'hearing' | 'simple';
 
@@ -95,6 +95,7 @@ export function NewCustomerFormDialog({ open, onOpenChange, onContinue }: NewCus
   };
 
   const handleContinue = () => {
+    window.open(selectedForm.path, '_blank', 'noopener,noreferrer');
     onOpenChange(false);
     onContinue?.();
   };
@@ -162,7 +163,19 @@ export function NewCustomerFormDialog({ open, onOpenChange, onContinue }: NewCus
             </div>
           </div>
 
-          <div className="grid gap-4 lg:grid-cols-[2fr,1fr]">
+          <div className="space-y-4">
+            <div className="rounded-2xl border border-gray-200 bg-white p-4 text-center">
+              <p className="mb-3 text-sm font-semibold text-gray-900">QRコード</p>
+              <div className="flex items-center justify-center rounded-xl bg-white p-3">
+                <img
+                  src={qrCodeSrc}
+                  alt={`${selectedForm.title}のQRコード`}
+                  className="aspect-square w-48 max-w-full rounded-md border border-gray-100 object-contain"
+                />
+              </div>
+              <p className="mt-2 text-xs text-gray-500">イベント会場や店舗での共有にご利用ください</p>
+            </div>
+
             <div className="space-y-4 rounded-2xl border border-gray-200 bg-gray-50/60 p-4">
               <p className="text-sm font-semibold text-gray-900">{selectedForm.title}の共有リンク</p>
               <div className="rounded-lg border bg-white p-3">
@@ -185,27 +198,9 @@ export function NewCustomerFormDialog({ open, onOpenChange, onContinue }: NewCus
                         </>
                       )}
                     </Button>
-                    <Button asChild className="flex-1 bg-orange-500 text-white hover:bg-orange-600 sm:flex-none">
-                      <a href={selectedForm.path} target="_blank" rel="noreferrer noopener">
-                        <ExternalLink className="mr-2 h-4 w-4" />
-                        フォームを開く
-                      </a>
-                    </Button>
                   </div>
                 </div>
               </div>
-            </div>
-
-            <div className="rounded-2xl border border-gray-200 bg-white p-4 text-center">
-              <p className="mb-3 text-sm font-semibold text-gray-900">QRコード</p>
-              <div className="flex items-center justify-center rounded-xl bg-white p-3">
-                <img
-                  src={qrCodeSrc}
-                  alt={`${selectedForm.title}のQRコード`}
-                  className="h-40 w-40 rounded-md border border-gray-100"
-                />
-              </div>
-              <p className="mt-2 text-xs text-gray-500">イベント会場や店舗での共有にご利用ください</p>
             </div>
           </div>
         </div>
@@ -215,7 +210,7 @@ export function NewCustomerFormDialog({ open, onOpenChange, onContinue }: NewCus
             閉じる
           </Button>
           <Button onClick={handleContinue} className="bg-orange-500 text-white hover:bg-orange-600">
-            フォームを共有
+            フォームを開く
           </Button>
         </DialogFooter>
       </DialogContent>

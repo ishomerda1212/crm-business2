@@ -61,7 +61,7 @@ export const DesiredCompletionStep = () => {
           value={data.desiredCompletionNote}
           onChange={handleNoteChange}
           placeholder="例）8月までに完成させたい、長期休暇中に工事をしたい など"
-          className="w-full min-h-[120px] px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none transition-colors text-sm text-gray-700"
+          className="w-full min-h-[120px] px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none transition-colors text-sm text-gray-700 bg-white dark:bg-white dark:text-gray-700"
         />
       </div>
     </div>

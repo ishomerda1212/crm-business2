@@ -96,6 +96,12 @@ export type PropertyInfo = {
   construction_has_building_plan: boolean | null;
   construction_has_renovation_history: boolean | null;
   construction_renovation_history_content: string | null;
+  // リフォーム歴
+  renovation_kitchen_year: number | null;
+  renovation_unit_bath_year: number | null;
+  renovation_washstand_year: number | null;
+  renovation_water_heater_year: number | null;
+  renovation_toilet_year: number | null;
   created_at: string;
   updated_at: string;
 };

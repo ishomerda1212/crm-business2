@@ -11,7 +11,8 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Coins, Award, ChevronRight } from 'lucide-react';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { ArrowLeft, Coins, Award, ChevronRight, ChevronDown, ChevronUp } from 'lucide-react';
 import { Customer, CorporateInfo, CustomerMembership, PropertyInfo, ProjectListItem } from '@/lib/supabase';
 import { mockCustomer, mockCorporateInfo, mockCustomerMembership, mockPropertyInfo, mockProjectList } from '@/data/mockData';
 
@@ -27,6 +28,7 @@ export function CustomerDetailPage({ customerId, onBack, onNavigate }: CustomerD
   const [membership] = useState<CustomerMembership | null>(mockCustomerMembership);
   const [properties] = useState<PropertyInfo[]>([mockPropertyInfo]);
   const [allProjects] = useState<ProjectListItem[]>(mockProjectList);
+  const [isCustomerDetailOpen, setIsCustomerDetailOpen] = useState(false);
 
   // TODO: customerIdに基づいて実際のデータを取得
   useEffect(() => {
@@ -94,149 +96,201 @@ export function CustomerDetailPage({ customerId, onBack, onNavigate }: CustomerD
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* 左側: メインコンテンツ (3/4) */}
           <div className="lg:col-span-3 space-y-6">
+            {/* 顧客情報セクション */}
+            <Card className="bg-white dark:bg-white border-gray-200 dark:border-gray-200">
+              <CardHeader>
+                <CardTitle className="text-lg font-semibold">顧客情報</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-6">
+                  {/* 個人情報 */}
+                  {customer.customer_type === '個人' && (
+                    <div className="space-y-4 pb-6 border-b border-gray-200">
+                      <div className="text-sm font-medium text-gray-700 mb-3">〈顧客種別: 個人〉</div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-4">
+                        <div>
+                          <Label className="text-sm text-gray-600 dark:text-gray-600">顧客名</Label>
+                          <p className="mt-1 text-base text-red-600 font-medium">
+                            {customer.customer_name || '-'}
+                          </p>
+                        </div>
+                        <div>
+                          <Label className="text-sm text-gray-600 dark:text-gray-600">フリガナ</Label>
+                          <p className="mt-1 text-base">
+                            {customer.furigana || '-'}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
 
-          {/* 顧客情報セクション */}
-          <Card className="bg-white dark:bg-white border-gray-200 dark:border-gray-200">
-            <CardHeader>
-              <CardTitle className="text-lg font-semibold">顧客情報</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-6">
-                <div className="space-y-4">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-4">
-                    <div>
-                      <Label className="text-sm text-gray-600 dark:text-gray-600">顧客種別</Label>
-                      <p className="mt-1 text-base">
-                        {customer.customer_type || '-'}
-                      </p>
+                  {/* 法人情報 */}
+                  {(customer.customer_type === '法人' || corporateInfo) && (
+                    <div className="space-y-4 pb-6 border-b border-gray-200">
+                      <div className="text-sm font-medium text-gray-700 mb-3">〈顧客種別: 法人〉</div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-4">
+                        <div>
+                          <Label className="text-sm text-gray-600 dark:text-gray-600">法人名</Label>
+                          <p className="mt-1 text-base">
+                            {corporateInfo?.corporate_name || '-'}
+                          </p>
+                        </div>
+                        <div>
+                          <Label className="text-sm text-gray-600 dark:text-gray-600">代表者名</Label>
+                          <p className="mt-1 text-base">
+                            {corporateInfo?.representative_title && corporateInfo?.representative_name
+                              ? `${corporateInfo.representative_title} ${corporateInfo.representative_name}`
+                              : corporateInfo?.representative_name || '-'}
+                          </p>
+                        </div>
+                        <div>
+                          <Label className="text-sm text-gray-600 dark:text-gray-600">窓口担当者名</Label>
+                          <p className="mt-1 text-base">
+                            {corporateInfo?.contact_person_name || '-'}
+                          </p>
+                        </div>
+                      </div>
                     </div>
-                    <div>
-                      <Label className="text-sm text-gray-600 dark:text-gray-600">フリガナ</Label>
-                      <p className="mt-1 text-base">
-                        {customer.furigana || '-'}
-                      </p>
+                  )}
+
+                  {/* 連絡先 */}
+                  <div className="space-y-4 pb-6 border-b border-gray-200">
+                    <div className="text-sm font-medium text-gray-700 mb-3">〈連絡先〉</div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-4">
+                      <div>
+                        <Label className="text-sm text-gray-600 dark:text-gray-600">電話番号1</Label>
+                        <p className="mt-1 text-base">
+                          {customer.phone1 || '-'}
+                        </p>
+                      </div>
+                      <div>
+                        <Label className="text-sm text-gray-600 dark:text-gray-600">電話番号2</Label>
+                        <p className="mt-1 text-base">
+                          {customer.phone2 || '-'}
+                        </p>
+                      </div>
+                      <div>
+                        <Label className="text-sm text-gray-600 dark:text-gray-600">メールアドレス1</Label>
+                        <p className="mt-1 text-base">
+                          {customer.email1 ? (
+                            <a href={`mailto:${customer.email1}`} className="text-blue-600 hover:underline">
+                              {customer.email1}
+                            </a>
+                          ) : (
+                            '-'
+                          )}
+                        </p>
+                      </div>
+                      <div>
+                        <Label className="text-sm text-gray-600 dark:text-gray-600">メールアドレス2</Label>
+                        <p className="mt-1 text-base">
+                          {customer.email2 ? (
+                            <a href={`mailto:${customer.email2}`} className="text-blue-600 hover:underline">
+                              {customer.email2}
+                            </a>
+                          ) : (
+                            '-'
+                          )}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <Label className="text-sm text-gray-600 dark:text-gray-600">電話番号2</Label>
-                      <p className="mt-1 text-base">
-                        {customer.phone2 || '-'}
-                      </p>
-                    </div>
-                    <div>
-                      <Label className="text-sm text-gray-600 dark:text-gray-600">メール 2</Label>
-                      <p className="mt-1 text-base">
-                        {customer.email2 || '-'}
-                      </p>
-                    </div>
-                    <div>
-                      <Label className="text-sm text-gray-600 dark:text-gray-600">顧客名</Label>
-                      <p className="mt-1 text-base text-red-600 font-medium">
-                        {customer.customer_name || '-'}
-                      </p>
-                    </div>
-                    <div>
-                      <Label className="text-sm text-gray-600 dark:text-gray-600">電話番号1</Label>
-                      <p className="mt-1 text-base">
-                        {customer.phone1 || '-'}
-                      </p>
-                    </div>
-                    <div>
-                      <Label className="text-sm text-gray-600 dark:text-gray-600">メール 1</Label>
-                      <p className="mt-1 text-base text-blue-600">
-                        {customer.email1 ? (
-                          <a href={`mailto:${customer.email1}`} className="hover:underline">
-                            {customer.email1}
-                          </a>
-                        ) : (
-                          '-'
-                        )}
-                      </p>
+                  </div>
+
+                  {/* 現住所 */}
+                  <div className="space-y-4">
+                    <div className="text-sm font-medium text-gray-700 mb-3">〈現住所〉</div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-4">
+                      <div>
+                        <Label className="text-sm text-gray-600 dark:text-gray-600">物件種別</Label>
+                        <p className="mt-1 text-base">
+                          {customer.current_property_type || '-'}
+                        </p>
+                      </div>
+                      <div>
+                        <Label className="text-sm text-gray-600 dark:text-gray-600">住所</Label>
+                        <p className="mt-1 text-base">
+                          {customer.current_postal_code && customer.current_prefecture && customer.current_address
+                            ? `${customer.current_postal_code} ${customer.current_prefecture} ${customer.current_address}`
+                            : customer.current_address || '-'}
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
 
-          {/* 現住所情報セクション */}
-          <Card className="bg-white dark:bg-white border-gray-200 dark:border-gray-200">
-            <CardHeader>
-              <CardTitle className="text-lg font-semibold">現住所情報</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-4">
-                  <div>
-                    <Label className="text-sm text-gray-600 dark:text-gray-600">現住所物件種別</Label>
-                    <p className="mt-1 text-base">
-                      {customer.current_property_type || '-'}
-                    </p>
-                  </div>
-                  <div>
-                    <Label className="text-sm text-gray-600 dark:text-gray-600">都道府県</Label>
-                    <p className="mt-1 text-base">
-                      {customer.current_prefecture || '-'}
-                    </p>
-                  </div>
-                  <div className="col-span-1 sm:col-span-2">
-                    <Label className="text-sm text-gray-600 dark:text-gray-600">住所</Label>
-                    <p className="mt-1 text-base">
-                      {customer.current_address || '-'}
-                    </p>
-                  </div>
-                  <div>
-                    <Label className="text-sm text-gray-600 dark:text-gray-600">郵便番号</Label>
-                    <p className="mt-1 text-base">
-                      {customer.current_postal_code || '-'}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* 法人情報セクション */}
-          <Card className="bg-white dark:bg-white border-gray-200 dark:border-gray-200">
-            <CardHeader>
-              <CardTitle className="text-lg font-semibold">法人情報</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-4">
-                  <div>
-                    <Label className="text-sm text-gray-600 dark:text-gray-600">法人名</Label>
-                    <p className="mt-1 text-base">
-                      {corporateInfo?.corporate_name || '-'}
-                    </p>
-                  </div>
-                  <div>
-                    <Label className="text-sm text-gray-600 dark:text-gray-600">代表者氏名</Label>
-                    <p className="mt-1 text-base">
-                      {corporateInfo?.representative_name || '-'}
-                    </p>
-                  </div>
-                  <div>
-                    <Label className="text-sm text-gray-600 dark:text-gray-600">担当者</Label>
-                    <p className="mt-1 text-base">
-                      {corporateInfo?.contact_person_name || '-'}
-                    </p>
-                  </div>
-                  <div>
-                    <Label className="text-sm text-gray-600 dark:text-gray-600">代表者所名</Label>
-                    <p className="mt-1 text-base">
-                      {corporateInfo?.representative_title || '-'}
-                    </p>
-                  </div>
-                  <div>
-                    <Label className="text-sm text-gray-600 dark:text-gray-600">窓口担当者名名</Label>
-                    <p className="mt-1 text-base">
-                      {corporateInfo?.contact_person_title || '-'}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+            {/* 顧客詳細セクション（折りたたみ可能） */}
+            <Card className="bg-white dark:bg-white border-gray-200 dark:border-gray-200">
+              <Collapsible open={isCustomerDetailOpen} onOpenChange={setIsCustomerDetailOpen}>
+                <CollapsibleTrigger asChild>
+                  <CardHeader className="cursor-pointer hover:bg-gray-50 transition-colors">
+                    <div className="flex items-center justify-between">
+                      <CardTitle className="text-lg font-semibold">顧客詳細</CardTitle>
+                      {isCustomerDetailOpen ? (
+                        <ChevronUp className="w-5 h-5 text-gray-500" />
+                      ) : (
+                        <ChevronDown className="w-5 h-5 text-gray-500" />
+                      )}
+                    </div>
+                  </CardHeader>
+                </CollapsibleTrigger>
+                <CollapsibleContent>
+                  <CardContent>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-4">
+                      <div>
+                        <Label className="text-sm text-gray-600 dark:text-gray-600">職業</Label>
+                        <p className="mt-1 text-base">
+                          {customer.occupation || '-'}
+                        </p>
+                      </div>
+                      <div>
+                        <Label className="text-sm text-gray-600 dark:text-gray-600">世帯年収</Label>
+                        <p className="mt-1 text-base">
+                          {customer.household_income || '-'}
+                        </p>
+                      </div>
+                      <div>
+                        <Label className="text-sm text-gray-600 dark:text-gray-600">仕事の休み</Label>
+                        <p className="mt-1 text-base">
+                          {customer.work_holiday || '-'}
+                        </p>
+                      </div>
+                      <div>
+                        <Label className="text-sm text-gray-600 dark:text-gray-600">大人人数</Label>
+                        <p className="mt-1 text-base">
+                          {customer.adult_count !== null ? customer.adult_count : '-'}
+                        </p>
+                      </div>
+                      <div>
+                        <Label className="text-sm text-gray-600 dark:text-gray-600">子供人数</Label>
+                        <p className="mt-1 text-base">
+                          {customer.child_count !== null ? customer.child_count : '-'}
+                        </p>
+                      </div>
+                      <div>
+                        <Label className="text-sm text-gray-600 dark:text-gray-600">同居者構成</Label>
+                        <p className="mt-1 text-base">
+                          {customer.cohabitant_structure || '-'}
+                        </p>
+                      </div>
+                      <div>
+                        <Label className="text-sm text-gray-600 dark:text-gray-600">ペット</Label>
+                        <p className="mt-1 text-base">
+                          {customer.pets || '-'}
+                        </p>
+                      </div>
+                      <div>
+                        <Label className="text-sm text-gray-600 dark:text-gray-600">来客頻度</Label>
+                        <p className="mt-1 text-base">
+                          {customer.visitor_frequency || '-'}
+                        </p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </CollapsibleContent>
+              </Collapsible>
+            </Card>
 
           {/* 物件一覧 */}
           <Card className="bg-white dark:bg-white border-gray-200 dark:border-gray-200">

@@ -3,6 +3,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Button } from '@/components/ui/button';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
 import { Customer, CorporateInfo, PropertyInfo } from '@/lib/supabase';
 
@@ -18,7 +25,12 @@ export function CustomerInfoTab({
   propertyInfo,
 }: CustomerInfoTabProps) {
   const [isCustomerDetailsOpen, setIsCustomerDetailsOpen] = useState(false);
+  const [isRenovationHistoryOpen, setIsRenovationHistoryOpen] = useState(false);
   const [isConstructionDetailsOpen, setIsConstructionDetailsOpen] = useState(false);
+
+  // 西暦の選択肢を生成（1950年から現在年まで）
+  const currentYear = new Date().getFullYear();
+  const years = Array.from({ length: currentYear - 1949 }, (_, i) => currentYear - i);
 
   return (
     <div className="space-y-6">
@@ -305,6 +317,114 @@ export function CustomerInfoTab({
                     <span className="text-sm">リフォーム前は現住所でリフォーム後は現場住所</span>
                   </label>
                 </div>
+              </div>
+
+              {/* リフォーム歴（折り畳み） */}
+              <div className="border-t pt-6">
+                <Collapsible open={isRenovationHistoryOpen} onOpenChange={setIsRenovationHistoryOpen}>
+                  <CollapsibleTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      className="w-full justify-between p-0 h-auto font-semibold text-base hover:bg-transparent"
+                    >
+                      <span>リフォーム歴</span>
+                      <ChevronDownIcon
+                        className={`h-4 w-4 transition-transform duration-200 ${
+                          isRenovationHistoryOpen ? 'transform rotate-180' : ''
+                        }`}
+                      />
+                    </Button>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className="pt-6">
+                    <div className="grid grid-cols-2 gap-x-12 gap-y-6">
+                      <div>
+                        <Label className="text-sm text-gray-600 dark:text-gray-600">キッチン</Label>
+                        <Select
+                          value={propertyInfo?.renovation_kitchen_year?.toString() || ''}
+                        >
+                          <SelectTrigger className="mt-1">
+                            <SelectValue placeholder="西暦を選択" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {years.map((year) => (
+                              <SelectItem key={year} value={year.toString()}>
+                                {year}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div>
+                        <Label className="text-sm text-gray-600 dark:text-gray-600">ユニットバス</Label>
+                        <Select
+                          value={propertyInfo?.renovation_unit_bath_year?.toString() || ''}
+                        >
+                          <SelectTrigger className="mt-1">
+                            <SelectValue placeholder="西暦を選択" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {years.map((year) => (
+                              <SelectItem key={year} value={year.toString()}>
+                                {year}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div>
+                        <Label className="text-sm text-gray-600 dark:text-gray-600">洗面</Label>
+                        <Select
+                          value={propertyInfo?.renovation_washstand_year?.toString() || ''}
+                        >
+                          <SelectTrigger className="mt-1">
+                            <SelectValue placeholder="西暦を選択" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {years.map((year) => (
+                              <SelectItem key={year} value={year.toString()}>
+                                {year}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div>
+                        <Label className="text-sm text-gray-600 dark:text-gray-600">給湯器</Label>
+                        <Select
+                          value={propertyInfo?.renovation_water_heater_year?.toString() || ''}
+                        >
+                          <SelectTrigger className="mt-1">
+                            <SelectValue placeholder="西暦を選択" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {years.map((year) => (
+                              <SelectItem key={year} value={year.toString()}>
+                                {year}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div>
+                        <Label className="text-sm text-gray-600 dark:text-gray-600">トイレ</Label>
+                        <Select
+                          value={propertyInfo?.renovation_toilet_year?.toString() || ''}
+                        >
+                          <SelectTrigger className="mt-1">
+                            <SelectValue placeholder="西暦を選択" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {years.map((year) => (
+                              <SelectItem key={year} value={year.toString()}>
+                                {year}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                  </CollapsibleContent>
+                </Collapsible>
               </div>
 
               {/* 工事住所詳細（折り畳み） */}

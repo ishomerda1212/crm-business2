@@ -28,7 +28,7 @@ export const IndividualInfoStep = () => {
             value={data.lastName}
             onChange={handleChange('lastName')}
             placeholder="例）山田"
-            className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition-shadow"
+            className="w-full px-4 py-3 bg-white dark:bg-white text-gray-900 dark:text-gray-900 border border-gray-200 dark:border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition-shadow placeholder:text-gray-400 dark:placeholder:text-gray-500"
           />
         </div>
 
@@ -39,7 +39,7 @@ export const IndividualInfoStep = () => {
             value={data.firstName}
             onChange={handleChange('firstName')}
             placeholder="例）太郎"
-            className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition-shadow"
+            className="w-full px-4 py-3 bg-white dark:bg-white text-gray-900 dark:text-gray-900 border border-gray-200 dark:border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition-shadow placeholder:text-gray-400 dark:placeholder:text-gray-500"
           />
         </div>
 
@@ -50,7 +50,7 @@ export const IndividualInfoStep = () => {
             value={data.lastNameKana}
             onChange={handleChange('lastNameKana')}
             placeholder="例）ヤマダ"
-            className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition-shadow uppercase"
+            className="w-full px-4 py-3 bg-white dark:bg-white text-gray-900 dark:text-gray-900 border border-gray-200 dark:border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition-shadow uppercase placeholder:text-gray-400 dark:placeholder:text-gray-500"
           />
         </div>
 
@@ -61,7 +61,7 @@ export const IndividualInfoStep = () => {
             value={data.firstNameKana}
             onChange={handleChange('firstNameKana')}
             placeholder="例）タロウ"
-            className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition-shadow uppercase"
+            className="w-full px-4 py-3 bg-white dark:bg-white text-gray-900 dark:text-gray-900 border border-gray-200 dark:border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition-shadow uppercase placeholder:text-gray-400 dark:placeholder:text-gray-500"
           />
         </div>
       </div>

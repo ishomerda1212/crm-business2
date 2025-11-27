@@ -25,7 +25,7 @@ interface FormContextType {
   getTotalSteps: () => number;
 }
 
-const FormContext = createContext<FormContextType | undefined>(undefined);
+export const FormContext = createContext<FormContextType | undefined>(undefined);
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const useCustomerFormContext = () => {
