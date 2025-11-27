@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -11,10 +11,15 @@ import {
 } from '@/components/ui/table';
 import { Eye, Plus } from 'lucide-react';
 import { ProjectListItem } from '@/lib/supabase';
-import { mockProjectList } from '@/data/mockData';
+import { mockCustomerList, mockProjectList } from '@/data/mockData';
 import { CreateProjectDialog } from '../components/CreateProjectDialog';
 import type { CustomerSearchCandidate } from '../types/CustomerSearchCandidate';
 import type { PropertyInfo } from '@/lib/supabase';
+import {
+  RecordFilterToolbar,
+  defaultRecordFilterState,
+  type RecordFilterState,
+} from '@/features/shared/components/RecordFilterToolbar';
 
 type ProjectListPageProps = {
   onSelectProject: (projectId: string) => void;
@@ -42,6 +47,16 @@ const getStatusBadgeColor = (status: string) => {
   }
 };
 
+const STATUS_ORDER = [
+  '担当未決',
+  '契約準備',
+  '契約承認待',
+  '契約可',
+  '契約確認',
+  '着工準備',
+  '完了済',
+];
+
 const formatCurrency = (amount: number | null) => {
   if (amount === null) return '-';
   return `¥${amount.toLocaleString()}`;
@@ -49,6 +64,180 @@ const formatCurrency = (amount: number | null) => {
 
 export function ProjectListPage({ onSelectProject, onCreateProject }: ProjectListPageProps) {
   const [projects] = useState<ProjectListItem[]>(mockProjectList);
+  const [filters, setFilters] = useState<RecordFilterState>(defaultRecordFilterState);
+  const [appliedFilters, setAppliedFilters] = useState<RecordFilterState>(defaultRecordFilterState);
+
+  const storeOptions = useMemo(
+    () =>
+      Array.from(
+        new Set(
+          projects
+            .map((project) => project.branch_name)
+            .filter((branchName): branchName is string => Boolean(branchName)),
+        ),
+      ),
+    [projects],
+  );
+
+  const ownerOptions = useMemo(
+    () =>
+      Array.from(
+        new Set(
+          projects
+            .map((project) => project.sales_person)
+            .filter((salesPerson): salesPerson is string => Boolean(salesPerson)),
+        ),
+      ),
+    [projects],
+  );
+
+  const customerIdLookup = useMemo(() => {
+    const map = new Map<string, string>();
+    mockCustomerList.forEach((customer) => {
+      map.set(customer.customer_name, customer.customer_id);
+    });
+    return map;
+  }, []);
+
+  const normalizeDate = (value: string | null | undefined) => {
+    if (!value) return null;
+    const normalized = value.replace(/\//g, '-');
+    const parsed = new Date(normalized);
+    return Number.isNaN(parsed.getTime()) ? null : parsed.getTime();
+  };
+
+  const filteredProjects = useMemo(() => {
+    const data = [...projects].filter((project) => {
+      const customerId = project.customer_name
+        ? customerIdLookup.get(project.customer_name)
+        : undefined;
+
+      if (
+        appliedFilters.customerId &&
+        (!customerId ||
+          !customerId.toLowerCase().includes(appliedFilters.customerId.toLowerCase()))
+      ) {
+        return false;
+      }
+
+      if (
+        appliedFilters.projectId &&
+        !project.project_number.toLowerCase().includes(appliedFilters.projectId.toLowerCase())
+      ) {
+        return false;
+      }
+
+      if (
+        appliedFilters.externalCustomerId &&
+        (!project.external_customer_id ||
+          !project.external_customer_id
+            .toLowerCase()
+            .includes(appliedFilters.externalCustomerId.toLowerCase()))
+      ) {
+        return false;
+      }
+
+      if (
+        appliedFilters.externalProjectId &&
+        (!project.external_project_id ||
+          !project.external_project_id
+            .toLowerCase()
+            .includes(appliedFilters.externalProjectId.toLowerCase()))
+      ) {
+        return false;
+      }
+
+      if (
+        appliedFilters.store &&
+        (!project.branch_name ||
+          !project.branch_name.toLowerCase().includes(appliedFilters.store.toLowerCase()))
+      ) {
+        return false;
+      }
+
+      if (
+        appliedFilters.owner &&
+        (!project.sales_person ||
+          !project.sales_person.toLowerCase().includes(appliedFilters.owner.toLowerCase()))
+      ) {
+        return false;
+      }
+
+      if (appliedFilters.status && project.status !== appliedFilters.status) {
+        return false;
+      }
+
+      return true;
+    });
+
+    const sortByDate = (
+      field: RecordFilterState['sortKey'],
+      a: ProjectListItem,
+      b: ProjectListItem,
+    ) => {
+      const getTarget = (project: ProjectListItem) => {
+        switch (field) {
+          case 'registrationDate':
+            return project.registration_date;
+          case 'contractDate':
+            return project.contract_date ?? project.start_date;
+          case 'startDate':
+            return project.start_date;
+          case 'completionDate':
+            return project.completion_date;
+          default:
+            return null;
+        }
+      };
+      const aValue = normalizeDate(getTarget(a));
+      const bValue = normalizeDate(getTarget(b));
+      if (aValue === bValue) return 0;
+      if (aValue === null) return 1;
+      if (bValue === null) return -1;
+      return aValue - bValue;
+    };
+
+    const sorted = data.sort((a, b) => {
+      if (appliedFilters.sortKey === 'status') {
+        const aIndex = STATUS_ORDER.indexOf(a.status);
+        const bIndex = STATUS_ORDER.indexOf(b.status);
+        const safeA = aIndex === -1 ? STATUS_ORDER.length : aIndex;
+        const safeB = bIndex === -1 ? STATUS_ORDER.length : bIndex;
+        if (safeA === safeB) {
+          return a.project_number.localeCompare(b.project_number);
+        }
+        return safeA - safeB;
+      }
+      const direction = appliedFilters.sortOrder === 'asc' ? 1 : -1;
+      const dateResult = sortByDate(appliedFilters.sortKey, a, b);
+      if (dateResult !== 0) {
+        return dateResult * direction;
+      }
+      return a.project_number.localeCompare(b.project_number) * direction;
+    });
+
+    if (appliedFilters.sortKey === 'status' && appliedFilters.sortOrder === 'desc') {
+      return [...sorted].reverse();
+    }
+
+    return sorted;
+  }, [projects, appliedFilters, customerIdLookup]);
+
+  const handleFilterChange = <T extends keyof RecordFilterState>(key: T, value: RecordFilterState[T]) => {
+    setFilters((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
+  };
+
+  const handleApplyFilters = () => {
+    setAppliedFilters(filters);
+  };
+
+  const handleResetFilters = () => {
+    setFilters(defaultRecordFilterState);
+    setAppliedFilters(defaultRecordFilterState);
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-50 w-full overflow-x-hidden">
@@ -80,6 +269,15 @@ export function ProjectListPage({ onSelectProject, onCreateProject }: ProjectLis
             <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-900 mb-4">
               案件リスト
             </h2>
+            <RecordFilterToolbar
+              filters={filters}
+              onFilterChange={handleFilterChange}
+              onApply={handleApplyFilters}
+              onReset={handleResetFilters}
+              statusOptions={STATUS_ORDER}
+              storeOptions={storeOptions}
+              ownerOptions={ownerOptions}
+            />
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
@@ -114,7 +312,7 @@ export function ProjectListPage({ onSelectProject, onCreateProject }: ProjectLis
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {projects.map((project) => (
+                  {filteredProjects.map((project) => (
                     <TableRow key={project.id}>
                       <TableCell className="text-gray-900 dark:text-gray-900">
                         {project.project_number}

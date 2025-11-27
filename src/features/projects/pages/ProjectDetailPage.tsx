@@ -151,6 +151,20 @@ export function ProjectDetailPage({ projectId, onBack }: ProjectDetailPageProps)
               );
             })}
           </div>
+          <div className="mt-4 rounded-lg border border-orange-100 bg-orange-50 px-3 py-4 text-sm text-gray-700">
+            <p className="font-semibold text-orange-700">注意事項</p>
+            <div className="mt-2 grid gap-x-6 gap-y-1 sm:grid-cols-2 lg:grid-cols-3">
+              <p><span className="font-medium">契約手続：</span>原則対面</p>
+              <p><span className="font-medium">追認同意：</span>原則対面・承認不要</p>
+              <p><span className="font-medium">変更合意：</span>原則対面</p>
+              <p><span className="font-medium">追加注文：</span>非対面可・承認不要</p>
+              <p><span className="font-medium">解約合意：</span>非対面可・要承認</p>
+              <p><span className="font-medium">完了手続：</span>原則対面・要承認</p>
+            </div>
+            <p className="mt-3 text-xs text-gray-600">
+              ※原則対面の場合でも、非対面申請を行えば非対面での手続きが可能です。
+            </p>
+          </div>
         </div>
 
         <Tabs defaultValue="basic" className="space-y-6">

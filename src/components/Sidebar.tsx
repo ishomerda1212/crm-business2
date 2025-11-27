@@ -31,7 +31,7 @@ const menuItems = [
   { id: 'dashboard', label: 'ダッシュボード', icon: LayoutDashboard },
   { id: 'customers', label: '顧客一覧', icon: Users },
   { id: 'projects', label: '案件一覧', icon: FolderOpen },
-  { id: 'search', label: '担当未決条件', icon: Search },
+  { id: 'search', label: '担当未決案件', icon: Search },
   { id: 'management', label: '未入金管理', icon: UserCog },
   { id: 'approvals', label: '承認待ち', icon: CheckCircle2 },
   { id: 'izclub-members', label: 'イズクラブ会員', icon: Award },

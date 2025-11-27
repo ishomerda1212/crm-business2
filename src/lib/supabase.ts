@@ -183,6 +183,10 @@ export type ProjectListItem = {
   contract_amount: number | null;
   sales_person: string | null;
   branch_name?: string | null; // 担当店舗
+  external_customer_id?: string | null;
+  external_project_id?: string | null;
+  registration_date?: string | null;
+  contract_date?: string | null;
   start_date: string | null;
   completion_date: string | null;
 };

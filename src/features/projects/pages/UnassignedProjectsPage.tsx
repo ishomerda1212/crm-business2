@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import {
   Table,
@@ -9,7 +9,12 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Eye } from 'lucide-react';
-import { mockProjectList } from '@/data/mockData';
+import { mockCustomerList, mockProjectList } from '@/data/mockData';
+import {
+  RecordFilterToolbar,
+  defaultRecordFilterState,
+  type RecordFilterState,
+} from '@/features/shared/components/RecordFilterToolbar';
 
 type UnassignedProjectsPageProps = {
   onSelectProject: (projectId: string) => void;
@@ -41,13 +46,202 @@ const formatCurrency = (amount: number | null) => {
   return `¥${amount.toLocaleString()}`;
 };
 
+const STATUS_ORDER = [
+  '担当未決',
+  '契約準備',
+  '契約承認待',
+  '契約可',
+  '契約確認',
+  '着工準備',
+  '完了済',
+];
+
 export function UnassignedProjectsPage({ onSelectProject }: UnassignedProjectsPageProps) {
-  // 担当未決案件をフィルター（ステータスが「担当未決」で担当者が空白）
+  const [filters, setFilters] = useState<RecordFilterState>(defaultRecordFilterState);
+  const [appliedFilters, setAppliedFilters] = useState<RecordFilterState>(defaultRecordFilterState);
+
+  const customerIdLookup = useMemo(() => {
+    const map = new Map<string, string>();
+    mockCustomerList.forEach((customer) => {
+      map.set(customer.customer_name, customer.customer_id);
+    });
+    return map;
+  }, []);
+
   const unassignedProjects = useMemo(() => {
     return mockProjectList.filter(
       (project) => project.status === '担当未決' && !project.sales_person
     );
   }, []);
+
+  const statusOptions = useMemo(
+    () => Array.from(new Set(unassignedProjects.map((project) => project.status))),
+    [unassignedProjects],
+  );
+
+  const storeOptions = useMemo(
+    () =>
+      Array.from(
+        new Set(
+          unassignedProjects
+            .map((project) => project.branch_name)
+            .filter((branchName): branchName is string => Boolean(branchName)),
+        ),
+      ),
+    [unassignedProjects],
+  );
+
+  const ownerOptions = useMemo(
+    () =>
+      Array.from(
+        new Set(
+          unassignedProjects
+            .map((project) => project.sales_person)
+            .filter((salesPerson): salesPerson is string => Boolean(salesPerson)),
+        ),
+      ),
+    [unassignedProjects],
+  );
+
+  const normalizeDate = (value: string | null | undefined) => {
+    if (!value) return null;
+    const normalized = value.replace(/\//g, '-');
+    const parsed = new Date(normalized);
+    return Number.isNaN(parsed.getTime()) ? null : parsed.getTime();
+  };
+
+  const filteredProjects = useMemo(() => {
+    const data = unassignedProjects.filter((project) => {
+      const customerId = project.customer_name
+        ? customerIdLookup.get(project.customer_name)
+        : undefined;
+
+      if (
+        appliedFilters.customerId &&
+        (!customerId ||
+          !customerId.toLowerCase().includes(appliedFilters.customerId.toLowerCase()))
+      ) {
+        return false;
+      }
+
+      if (
+        appliedFilters.projectId &&
+        !project.project_number.toLowerCase().includes(appliedFilters.projectId.toLowerCase())
+      ) {
+        return false;
+      }
+
+      if (
+        appliedFilters.externalCustomerId &&
+        (!project.external_customer_id ||
+          !project.external_customer_id
+            .toLowerCase()
+            .includes(appliedFilters.externalCustomerId.toLowerCase()))
+      ) {
+        return false;
+      }
+
+      if (
+        appliedFilters.externalProjectId &&
+        (!project.external_project_id ||
+          !project.external_project_id
+            .toLowerCase()
+            .includes(appliedFilters.externalProjectId.toLowerCase()))
+      ) {
+        return false;
+      }
+
+      if (
+        appliedFilters.store &&
+        (!project.branch_name ||
+          !project.branch_name.toLowerCase().includes(appliedFilters.store.toLowerCase()))
+      ) {
+        return false;
+      }
+
+      if (
+        appliedFilters.owner &&
+        (!project.sales_person ||
+          !project.sales_person.toLowerCase().includes(appliedFilters.owner.toLowerCase()))
+      ) {
+        return false;
+      }
+
+      if (appliedFilters.status && project.status !== appliedFilters.status) {
+        return false;
+      }
+
+      return true;
+    });
+
+    const sortByDate = (
+      field: RecordFilterState['sortKey'],
+      a: typeof unassignedProjects[number],
+      b: typeof unassignedProjects[number],
+    ) => {
+      const getTarget = (project: typeof unassignedProjects[number]) => {
+        switch (field) {
+          case 'registrationDate':
+            return project.registration_date;
+          case 'contractDate':
+            return project.contract_date ?? project.start_date;
+          case 'startDate':
+            return project.start_date;
+          case 'completionDate':
+            return project.completion_date;
+          default:
+            return null;
+        }
+      };
+      const aValue = normalizeDate(getTarget(a));
+      const bValue = normalizeDate(getTarget(b));
+      if (aValue === bValue) return 0;
+      if (aValue === null) return 1;
+      if (bValue === null) return -1;
+      return aValue - bValue;
+    };
+
+    const sorted = data.sort((a, b) => {
+      if (appliedFilters.sortKey === 'status') {
+        const aIndex = STATUS_ORDER.indexOf(a.status);
+        const bIndex = STATUS_ORDER.indexOf(b.status);
+        const safeA = aIndex === -1 ? STATUS_ORDER.length : aIndex;
+        const safeB = bIndex === -1 ? STATUS_ORDER.length : bIndex;
+        if (safeA === safeB) {
+          return a.project_number.localeCompare(b.project_number);
+        }
+        return safeA - safeB;
+      }
+      const direction = appliedFilters.sortOrder === 'asc' ? 1 : -1;
+      const dateResult = sortByDate(appliedFilters.sortKey, a, b);
+      if (dateResult !== 0) {
+        return dateResult * direction;
+      }
+      return a.project_number.localeCompare(b.project_number) * direction;
+    });
+
+    if (appliedFilters.sortKey === 'status' && appliedFilters.sortOrder === 'desc') {
+      return [...sorted].reverse();
+    }
+
+    return sorted;
+  }, [unassignedProjects, appliedFilters, customerIdLookup]);
+
+  const handleFilterChange = <T extends keyof RecordFilterState>(key: T, value: RecordFilterState[T]) => {
+    setFilters((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
+  };
+
+  const handleApplyFilters = () => {
+    setAppliedFilters(filters);
+  };
+
+  const handleResetFilters = () => {
+    setFilters(defaultRecordFilterState);
+    setAppliedFilters(defaultRecordFilterState);
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-50 w-full overflow-x-hidden">
@@ -70,7 +264,16 @@ export function UnassignedProjectsPage({ onSelectProject }: UnassignedProjectsPa
             <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-900 mb-4">
               担当未決案件リスト
             </h2>
-            {unassignedProjects.length === 0 ? (
+            <RecordFilterToolbar
+              filters={filters}
+              onFilterChange={handleFilterChange}
+              onApply={handleApplyFilters}
+              onReset={handleResetFilters}
+              statusOptions={statusOptions.length > 0 ? statusOptions : STATUS_ORDER}
+              storeOptions={storeOptions}
+              ownerOptions={ownerOptions}
+            />
+            {filteredProjects.length === 0 ? (
               <div className="text-center py-12">
                 <p className="text-gray-500 dark:text-gray-500">
                   担当未決案件はありません
@@ -111,7 +314,7 @@ export function UnassignedProjectsPage({ onSelectProject }: UnassignedProjectsPa
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {unassignedProjects.map((project) => (
+                    {filteredProjects.map((project) => (
                       <TableRow key={project.id}>
                         <TableCell className="text-gray-900 dark:text-gray-900">
                           {project.project_number}
