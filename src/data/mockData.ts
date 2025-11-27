@@ -1150,3 +1150,55 @@ export const mockIzClubMemberList: IzClubMemberListItem[] = [
     updated_at: '2024-07-05T00:00:00Z',
   },
 ];
+
+// 顧客名に紐づく工事住所一覧を取得する関数（モック）
+export function getConstructionAddressesByCustomerName(customerName: string): PropertyInfo[] {
+  // 各プロジェクトのPropertyInfoを取得（実際の実装では、project_idでPropertyInfoを取得）
+  // TODO: 顧客名でプロジェクトを検索して、project_idでPropertyInfoを取得する実装が必要
+  const addresses: PropertyInfo[] = [];
+  
+  // モックデータ: 顧客名に基づいて工事住所を返す
+  if (customerName === '田中 太郎') {
+    addresses.push(mockPropertyInfo);
+    // 追加の工事住所（複数ある場合の例）
+    addresses.push({
+      ...mockPropertyInfo,
+      id: '2',
+      project_id: '1',
+      property_name: '田中様別邸',
+      construction_postal_code: '100-0003',
+      construction_prefecture: '東京都',
+      construction_address: '中央区銀座4-5-6',
+      construction_structure: 'RC造',
+      construction_layout: '2LDK',
+    });
+  } else if (customerName === '佐藤 花子') {
+    addresses.push({
+      ...mockPropertyInfo,
+      id: '3',
+      project_id: '2',
+      property_name: '佐藤邸',
+      construction_postal_code: '220-0001',
+      construction_prefecture: '神奈川県',
+      construction_address: '横浜市西区みなとみらい3-4-5',
+      construction_property_type: '戸建',
+      construction_structure: '木造',
+      construction_layout: '4LDK',
+    });
+  } else if (customerName === '鈴木 一郎') {
+    addresses.push({
+      ...mockPropertyInfo,
+      id: '4',
+      project_id: '3',
+      property_name: '鈴木邸',
+      construction_postal_code: '273-0005',
+      construction_prefecture: '千葉県',
+      construction_address: '船橋市浜町4-5-6',
+      construction_property_type: '戸建',
+      construction_structure: '木造',
+      construction_layout: '3LDK',
+    });
+  }
+  
+  return addresses;
+}

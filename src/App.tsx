@@ -6,6 +6,8 @@ import { UnassignedProjectsPage } from './features/projects/pages/UnassignedProj
 import { CustomerListPage } from './features/customers/pages/CustomerListPage';
 import { CustomerDetailPage } from './features/customers/pages/CustomerDetailPage';
 import { CustomerHistoryPage } from './features/customers/pages/CustomerHistoryPage';
+import { PropertyDetailPage } from './features/property/pages/PropertyDetailPage';
+import { ConstructionAddressFormPage } from './features/property/pages/ConstructionAddressFormPage';
 import { ApprovalListPage } from './features/approvals/pages/ApprovalListPage';
 import { UnpaidListPage } from './features/unpaid/pages/UnpaidListPage';
 import { CompletionSurveyListPage } from './features/completion-survey/pages/CompletionSurveyListPage';
@@ -29,9 +31,11 @@ import { Toaster } from './components/ui/toaster';
 function App() {
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
   const [selectedCustomerId, setSelectedCustomerId] = useState<string | null>(null);
+  const [selectedPropertyId, setSelectedPropertyId] = useState<string | null>(null);
   const [customerSubPage, setCustomerSubPage] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState('dashboard');
   const [previousPage, setPreviousPage] = useState<string | null>(null);
+  const [showConstructionAddressForm, setShowConstructionAddressForm] = useState(false);
 
   // URLパスに基づいてページを設定
   useEffect(() => {
@@ -58,6 +62,8 @@ function App() {
       setCurrentPage('hearing-form');
     } else if (path === '/forms/simple') {
       setCurrentPage('simple-form');
+    } else if (path === '/construction-address-form') {
+      setShowConstructionAddressForm(true);
     }
   }, []);
 
@@ -65,6 +71,7 @@ function App() {
     setCurrentPage(page);
     setSelectedProjectId(null);
     setSelectedCustomerId(null);
+    setSelectedPropertyId(null);
     setCustomerSubPage(null);
   };
 
@@ -111,6 +118,36 @@ function App() {
     if (currentPage === 'simple-form') {
       return <SimpleFormPage />;
     }
+    if (showConstructionAddressForm) {
+      return (
+        <ConstructionAddressFormPage
+          onBack={() => {
+            setShowConstructionAddressForm(false);
+            // URLから直接アクセスした場合は、履歴を戻るかダッシュボードに遷移
+            if (window.location.pathname === '/construction-address-form') {
+              if (window.history.length > 1) {
+                window.history.back();
+              } else {
+                setCurrentPage('dashboard');
+              }
+            }
+          }}
+          onSubmit={(data) => {
+            // TODO: データを保存する処理を実装
+            console.log('Construction address form data:', data);
+            setShowConstructionAddressForm(false);
+            // URLから直接アクセスした場合は、履歴を戻るかダッシュボードに遷移
+            if (window.location.pathname === '/construction-address-form') {
+              if (window.history.length > 1) {
+                window.history.back();
+              } else {
+                setCurrentPage('dashboard');
+              }
+            }
+          }}
+        />
+      );
+    }
 
     // 顧客関連のサブページ
     if (selectedCustomerId && customerSubPage === 'customer-history') {
@@ -129,12 +166,22 @@ function App() {
       );
     }
 
+    if (selectedPropertyId) {
+      return (
+        <PropertyDetailPage
+          propertyId={selectedPropertyId}
+          onBack={() => setSelectedPropertyId(null)}
+        />
+      );
+    }
+
     if (selectedCustomerId) {
       return (
         <CustomerDetailPage
           customerId={selectedCustomerId}
           onBack={() => setSelectedCustomerId(null)}
           onNavigate={handleCustomerNavigate}
+          onSelectProperty={setSelectedPropertyId}
         />
       );
     }
@@ -154,7 +201,11 @@ function App() {
       case 'customers':
         return <CustomerListPage onSelectCustomer={setSelectedCustomerId} />;
       case 'projects':
-        return <ProjectListPage onSelectProject={setSelectedProjectId} />;
+        return (
+          <ProjectListPage
+            onSelectProject={setSelectedProjectId}
+          />
+        );
       case 'search':
         return <UnassignedProjectsPage onSelectProject={setSelectedProjectId} />;
       case 'approvals':
@@ -194,7 +245,8 @@ function App() {
     currentPage === 'contract-approval' ||
     currentPage === 'completion-survey' ||
     currentPage === 'hearing-form' ||
-    currentPage === 'simple-form'
+    currentPage === 'simple-form' ||
+    showConstructionAddressForm
   ) {
     return renderPage();
   }

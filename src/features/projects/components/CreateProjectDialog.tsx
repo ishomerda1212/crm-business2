@@ -5,19 +5,23 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { mockCustomerSearchCandidates } from '@/data/mockData';
+import { mockCustomerSearchCandidates, getConstructionAddressesByCustomerName } from '@/data/mockData';
 import type { CustomerSearchCandidate } from '../types/CustomerSearchCandidate';
+import type { PropertyInfo } from '@/lib/supabase';
 import { Search, UserCheck, UserPlus } from 'lucide-react';
 import { NewCustomerFormDialog } from './NewCustomerFormDialog';
+import { ConstructionAddressSelectDialog } from './ConstructionAddressSelectDialog';
 
 type CreateProjectDialogProps = {
   trigger: ReactNode;
-  onProceed?: (candidate: CustomerSearchCandidate | null) => void;
+  onProceed?: (candidate: CustomerSearchCandidate | null, propertyInfo?: PropertyInfo) => void;
 };
 
 export function CreateProjectDialog({ trigger, onProceed }: CreateProjectDialogProps) {
   const [open, setOpen] = useState(false);
   const [formDialogOpen, setFormDialogOpen] = useState(false);
+  const [addressSelectDialogOpen, setAddressSelectDialogOpen] = useState(false);
+  const [selectedCandidate, setSelectedCandidate] = useState<CustomerSearchCandidate | null>(null);
   const [nameQuery, setNameQuery] = useState('');
   const [phoneQuery, setPhoneQuery] = useState('');
   const [addressQuery, setAddressQuery] = useState('');
@@ -52,8 +56,31 @@ export function CreateProjectDialog({ trigger, onProceed }: CreateProjectDialogP
   };
 
   const handleSelect = (candidate: CustomerSearchCandidate | null) => {
-    onProceed?.(candidate);
+    // 顧客に紐づく工事住所を取得
+    const addresses = getConstructionAddressesByCustomerName(candidate?.customerName || '');
+    
+    if (addresses.length > 0) {
+      // 工事住所がある場合は選択ダイアログを表示
+      setSelectedCandidate(candidate);
+      setAddressSelectDialogOpen(true);
+    } else {
+      // 工事住所がない場合はそのまま進む
+      onProceed?.(candidate);
+      handleClose();
+    }
+  };
+
+  const handleAddressSelect = (propertyInfo: PropertyInfo) => {
+    onProceed?.(selectedCandidate, propertyInfo);
+    setSelectedCandidate(null);
     handleClose();
+  };
+
+  const handleAddressDialogChange = (value: boolean) => {
+    setAddressSelectDialogOpen(value);
+    if (!value) {
+      setSelectedCandidate(null);
+    }
   };
 
   const handleMainDialogChange = (value: boolean) => {
@@ -191,6 +218,16 @@ export function CreateProjectDialog({ trigger, onProceed }: CreateProjectDialogP
         onOpenChange={handleFormDialogChange}
         onContinue={handleFormContinue}
       />
+      {selectedCandidate && (
+        <ConstructionAddressSelectDialog
+          open={addressSelectDialogOpen}
+          onOpenChange={handleAddressDialogChange}
+          customerName={selectedCandidate.customerName}
+          addresses={getConstructionAddressesByCustomerName(selectedCandidate.customerName)}
+          onSelect={handleAddressSelect}
+          customerId={selectedCandidate.id}
+        />
+      )}
     </>
   );
 }

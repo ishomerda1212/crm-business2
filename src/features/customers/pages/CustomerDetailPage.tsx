@@ -12,23 +12,29 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { ArrowLeft, Coins, Award, ChevronRight, ChevronDown, ChevronUp } from 'lucide-react';
+import { ArrowLeft, Coins, Award, ChevronRight, ChevronDown, ChevronUp, Plus } from 'lucide-react';
 import { Customer, CorporateInfo, CustomerMembership, PropertyInfo, ProjectListItem } from '@/lib/supabase';
 import { mockCustomer, mockCorporateInfo, mockCustomerMembership, mockPropertyInfo, mockProjectList } from '@/data/mockData';
+import { CreateProjectDialog } from '@/features/projects/components/CreateProjectDialog';
+import type { CustomerSearchCandidate } from '@/features/projects/types/CustomerSearchCandidate';
+import { ConstructionAddressFormDialog } from '@/features/property/components/ConstructionAddressFormDialog';
 
 type CustomerDetailPageProps = {
   customerId: string;
   onBack: () => void;
   onNavigate?: (page: string, customerId?: string) => void;
+  onSelectProperty?: (propertyId: string) => void;
+  onCreateProject?: (candidate?: CustomerSearchCandidate | null, propertyInfo?: PropertyInfo) => void;
 };
 
-export function CustomerDetailPage({ customerId, onBack, onNavigate }: CustomerDetailPageProps) {
+export function CustomerDetailPage({ customerId, onBack, onNavigate, onSelectProperty, onCreateProject }: CustomerDetailPageProps) {
   const [customer] = useState<Customer | null>(mockCustomer);
   const [corporateInfo] = useState<CorporateInfo | null>(mockCorporateInfo);
   const [membership] = useState<CustomerMembership | null>(mockCustomerMembership);
   const [properties] = useState<PropertyInfo[]>([mockPropertyInfo]);
   const [allProjects] = useState<ProjectListItem[]>(mockProjectList);
   const [isCustomerDetailOpen, setIsCustomerDetailOpen] = useState(false);
+  const [showConstructionAddressFormDialog, setShowConstructionAddressFormDialog] = useState(false);
 
   // TODO: customerIdに基づいて実際のデータを取得
   useEffect(() => {
@@ -295,7 +301,17 @@ export function CustomerDetailPage({ customerId, onBack, onNavigate }: CustomerD
           {/* 物件一覧 */}
           <Card className="bg-white dark:bg-white border-gray-200 dark:border-gray-200">
             <CardHeader>
-              <CardTitle className="text-lg font-semibold">関連物件一覧</CardTitle>
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-lg font-semibold">関連物件一覧</CardTitle>
+                <Button
+                  type="button"
+                  onClick={() => setShowConstructionAddressFormDialog(true)}
+                  className="bg-orange-500 hover:bg-orange-600 text-white"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  新規で工事住所を登録する
+                </Button>
+              </div>
             </CardHeader>
             <CardContent>
               <div className="overflow-x-auto">
@@ -325,7 +341,11 @@ export function CustomerDetailPage({ customerId, onBack, onNavigate }: CustomerD
                       </TableRow>
                     ) : (
                       properties.map((property) => (
-                        <TableRow key={property.id}>
+                        <TableRow 
+                          key={property.id}
+                          className="cursor-pointer hover:bg-gray-50 transition-colors"
+                          onClick={() => onSelectProperty && onSelectProperty(property.id)}
+                        >
                           <TableCell className="text-gray-900 dark:text-gray-900">
                             {property.property_name || '-'}
                           </TableCell>
@@ -350,7 +370,18 @@ export function CustomerDetailPage({ customerId, onBack, onNavigate }: CustomerD
           {/* 案件一覧 */}
           <Card className="bg-white dark:bg-white border-gray-200 dark:border-gray-200">
             <CardHeader>
-              <CardTitle className="text-lg font-semibold">関連案件一覧</CardTitle>
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-lg font-semibold">関連案件一覧</CardTitle>
+                <CreateProjectDialog
+                  onProceed={(candidate, propertyInfo) => onCreateProject?.(candidate, propertyInfo)}
+                  trigger={
+                    <Button className="bg-orange-500 hover:bg-orange-600 text-white">
+                      <Plus className="w-4 h-4 mr-2" />
+                      新規案件追加
+                    </Button>
+                  }
+                />
+              </div>
             </CardHeader>
             <CardContent>
               <div className="overflow-x-auto">
@@ -452,6 +483,12 @@ export function CustomerDetailPage({ customerId, onBack, onNavigate }: CustomerD
           </div>
         </div>
       </div>
+
+      <ConstructionAddressFormDialog
+        open={showConstructionAddressFormDialog}
+        onOpenChange={setShowConstructionAddressFormDialog}
+        customerId={customerId}
+      />
     </div>
   );
 }

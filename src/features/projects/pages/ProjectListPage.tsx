@@ -14,10 +14,11 @@ import { ProjectListItem } from '@/lib/supabase';
 import { mockProjectList } from '@/data/mockData';
 import { CreateProjectDialog } from '../components/CreateProjectDialog';
 import type { CustomerSearchCandidate } from '../types/CustomerSearchCandidate';
+import type { PropertyInfo } from '@/lib/supabase';
 
 type ProjectListPageProps = {
   onSelectProject: (projectId: string) => void;
-  onCreateProject?: (candidate?: CustomerSearchCandidate | null) => void;
+  onCreateProject?: (candidate?: CustomerSearchCandidate | null, propertyInfo?: PropertyInfo) => void;
 };
 
 const getStatusBadgeColor = (status: string) => {
@@ -61,7 +62,7 @@ export function ProjectListPage({ onSelectProject, onCreateProject }: ProjectLis
               <p className="text-sm text-gray-600 dark:text-gray-600">全ての案件情報を管理</p>
             </div>
             <CreateProjectDialog
-              onProceed={(candidate) => onCreateProject?.(candidate)}
+              onProceed={(candidate, propertyInfo) => onCreateProject?.(candidate, propertyInfo)}
               trigger={
                 <Button className="w-full sm:w-auto bg-orange-500 hover:bg-orange-600 text-white">
                   <Plus className="w-4 h-4 mr-2" />
