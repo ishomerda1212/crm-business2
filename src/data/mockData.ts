@@ -126,6 +126,8 @@ export const mockProjects: Project[] = [
 export const mockCustomer: Customer = {
   id: '1',
   project_id: '1',
+  customer_id: 'C001',
+  external_customer_id: 'CRM-001',
   customer_type: '個人',
   customer_name: '田中 太郎',
   furigana: 'タナカ タロウ',
@@ -423,6 +425,8 @@ export const mockCustomerList: CustomerListItem[] = [
     acquisition_channel: 'Web広告',
     status: 'アクティブ',
     registration_date: '2024/01/15',
+    current_address: '東京都中央区東京3-1-1-1',
+    external_customer_id: 'CRM-001',
   },
   {
     id: '2',
@@ -434,6 +438,8 @@ export const mockCustomerList: CustomerListItem[] = [
     acquisition_channel: '紹介',
     status: 'アクティブ',
     registration_date: '2024/02/10',
+    current_address: '神奈川県横浜市西区みなとみらい3-4-5',
+    external_customer_id: 'CRM-002',
   },
   {
     id: '3',
@@ -445,6 +451,8 @@ export const mockCustomerList: CustomerListItem[] = [
     acquisition_channel: '店舗来店',
     status: 'アクティブ',
     registration_date: '2024/03/05',
+    current_address: '千葉県船橋市浜町4-5-6',
+    external_customer_id: 'CRM-003',
   },
   {
     id: '4',
@@ -456,6 +464,8 @@ export const mockCustomerList: CustomerListItem[] = [
     acquisition_channel: 'Web広告',
     status: 'アクティブ',
     registration_date: '2024/04/12',
+    current_address: '埼玉県さいたま市浦和区北浦和2-3-7',
+    external_customer_id: 'CRM-004',
   },
 ];
 

@@ -109,6 +109,24 @@ export function CustomerDetailPage({ customerId, onBack, onNavigate, onSelectPro
               </CardHeader>
               <CardContent>
                 <div className="space-y-6">
+                  {/* 顧客ID・外部連携顧客ID */}
+                  <div className="space-y-4 pb-6 border-b border-gray-200">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-4">
+                      <div>
+                        <Label className="text-sm text-gray-600 dark:text-gray-600">顧客ID</Label>
+                        <p className="mt-1 text-base font-medium">
+                          {customer.customer_id || '-'}
+                        </p>
+                      </div>
+                      <div>
+                        <Label className="text-sm text-gray-600 dark:text-gray-600">外部連携顧客ID</Label>
+                        <p className="mt-1 text-base font-medium">
+                          {customer.external_customer_id || '-'}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
                   {/* 個人情報 */}
                   {customer.customer_type === '個人' && (
                     <div className="space-y-4 pb-6 border-b border-gray-200">

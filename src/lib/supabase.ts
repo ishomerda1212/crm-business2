@@ -30,6 +30,8 @@ export type Project = {
 export type Customer = {
   id: string;
   project_id: string;
+  customer_id?: string | null;
+  external_customer_id?: string | null;
   customer_type: '個人' | '法人' | null;
   customer_name: string | null;
   furigana: string | null;
@@ -172,6 +174,8 @@ export type CustomerListItem = {
   acquisition_channel: string;
   status: string;
   registration_date: string;
+  current_address: string;
+  external_customer_id?: string | null;
 };
 
 export type ProjectListItem = {

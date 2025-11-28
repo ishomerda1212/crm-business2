@@ -12,40 +12,22 @@ import { Label } from '@/components/ui/label';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { cn } from '@/lib/utils';
 import { ChevronDown, Filter, RotateCcw } from 'lucide-react';
-import { RecordFilterState } from './types';
+import { CustomerFilterState } from './types';
 
-type RecordFilterToolbarProps = {
-  filters: RecordFilterState;
-  onFilterChange: <T extends keyof RecordFilterState>(key: T, value: RecordFilterState[T]) => void;
+type CustomerFilterToolbarProps = {
+  filters: CustomerFilterState;
+  onFilterChange: <T extends keyof CustomerFilterState>(key: T, value: CustomerFilterState[T]) => void;
   onApply: () => void;
   onReset: () => void;
-  statusOptions: string[];
-  storeOptions: string[];
-  ownerOptions: string[];
 };
 
-const ALL_OPTION_VALUE = '__all__';
-
-export function RecordFilterToolbar({
+export function CustomerFilterToolbar({
   filters,
   onFilterChange,
   onApply,
   onReset,
-  statusOptions,
-  storeOptions,
-  ownerOptions,
-}: RecordFilterToolbarProps) {
+}: CustomerFilterToolbarProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const statusValue = filters.status || ALL_OPTION_VALUE;
-  const storeValue = filters.store || ALL_OPTION_VALUE;
-  const ownerValue = filters.owner || ALL_OPTION_VALUE;
-
-  const renderSelectItems = (options: string[]) =>
-    options.map((option) => (
-      <SelectItem key={option} value={option}>
-        {option}
-      </SelectItem>
-    ));
 
   return (
     <Collapsible open={isOpen} onOpenChange={setIsOpen}>
@@ -73,7 +55,7 @@ export function RecordFilterToolbar({
             <div className="flex flex-wrap items-end justify-between gap-2 mb-4">
               <div>
                 <p className="text-sm font-semibold text-gray-900">絞込み条件</p>
-                <p className="text-xs text-gray-500">IDや担当情報で素早く検索</p>
+                <p className="text-xs text-gray-500">IDや住所、電話番号で素早く検索</p>
               </div>
               <span className="text-xs text-gray-400">Filter</span>
             </div>
@@ -88,76 +70,31 @@ export function RecordFilterToolbar({
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="projectId">案件ID</Label>
-                <Input
-                  id="projectId"
-                  placeholder="例: PJ001"
-                  value={filters.projectId}
-                  onChange={(event) => onFilterChange('projectId', event.target.value)}
-                />
-              </div>
-              <div className="space-y-2">
                 <Label htmlFor="externalCustomerId">外部連携顧客ID</Label>
                 <Input
                   id="externalCustomerId"
-                  placeholder="CRM-XXXXX"
+                  placeholder="例: CRM-001"
                   value={filters.externalCustomerId}
                   onChange={(event) => onFilterChange('externalCustomerId', event.target.value)}
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="externalProjectId">外部連携案件ID</Label>
+                <Label htmlFor="currentAddress">現住所</Label>
                 <Input
-                  id="externalProjectId"
-                  placeholder="CASE-XXXXX"
-                  value={filters.externalProjectId}
-                  onChange={(event) => onFilterChange('externalProjectId', event.target.value)}
+                  id="currentAddress"
+                  placeholder="住所で検索"
+                  value={filters.currentAddress}
+                  onChange={(event) => onFilterChange('currentAddress', event.target.value)}
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="store">店舗</Label>
-                <Select
-                  value={storeValue}
-                  onValueChange={(value) => onFilterChange('store', value === ALL_OPTION_VALUE ? '' : value)}
-                >
-                  <SelectTrigger id="store">
-                    <SelectValue placeholder="すべて" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value={ALL_OPTION_VALUE}>すべて</SelectItem>
-                    {renderSelectItems(storeOptions)}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="owner">担当</Label>
-                <Select
-                  value={ownerValue}
-                  onValueChange={(value) => onFilterChange('owner', value === ALL_OPTION_VALUE ? '' : value)}
-                >
-                  <SelectTrigger id="owner">
-                    <SelectValue placeholder="すべて" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value={ALL_OPTION_VALUE}>すべて</SelectItem>
-                    {renderSelectItems(ownerOptions)}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="status">ステータス</Label>
-                <Select
-                  value={statusValue}
-                  onValueChange={(value) => onFilterChange('status', value === ALL_OPTION_VALUE ? '' : value)}
-                >
-                  <SelectTrigger id="status">
-                    <SelectValue placeholder="すべて" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value={ALL_OPTION_VALUE}>すべて</SelectItem>
-                    {renderSelectItems(statusOptions)}
-                  </SelectContent>
-                </Select>
+                <Label htmlFor="phone">電話番号</Label>
+                <Input
+                  id="phone"
+                  placeholder="例: 090-1234-5678"
+                  value={filters.phone}
+                  onChange={(event) => onFilterChange('phone', event.target.value)}
+                />
               </div>
             </div>
           </section>
@@ -176,18 +113,16 @@ export function RecordFilterToolbar({
                 <Select
                   value={filters.sortKey}
                   onValueChange={(value) =>
-                    onFilterChange('sortKey', value as RecordFilterState['sortKey'])
+                    onFilterChange('sortKey', value as CustomerFilterState['sortKey'])
                   }
                 >
                   <SelectTrigger id="sortKey">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="status">ステータス</SelectItem>
+                    <SelectItem value="customerId">顧客ID</SelectItem>
+                    <SelectItem value="customerName">氏名</SelectItem>
                     <SelectItem value="registrationDate">登録日</SelectItem>
-                    <SelectItem value="contractDate">契約日</SelectItem>
-                    <SelectItem value="startDate">着工日</SelectItem>
-                    <SelectItem value="completionDate">完工日</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -196,7 +131,7 @@ export function RecordFilterToolbar({
                 <Select
                   value={filters.sortOrder}
                   onValueChange={(value) =>
-                    onFilterChange('sortOrder', value as RecordFilterState['sortOrder'])
+                    onFilterChange('sortOrder', value as CustomerFilterState['sortOrder'])
                   }
                 >
                   <SelectTrigger id="sortOrder">
