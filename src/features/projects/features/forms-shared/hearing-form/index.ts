@@ -1,4 +1,5 @@
-export { HearingFormPage } from './pages/HearingFormPage';
+export { NewCustomerHearingForm } from './pages/NewCustomerHearingFormPage';
+export { ExistingCustomerHearingForm } from './pages/ExistingCustomerHearingFormPage';
 export { FormProvider, useFormContext } from './context/FormContext';
 export type {
   ReformInquiryData,
@@ -9,5 +10,5 @@ export type {
   LoanPreference,
   EstimateStatus,
   RegistrationType,
-  FormStep,
+  HearingFormStep,
 } from './types';

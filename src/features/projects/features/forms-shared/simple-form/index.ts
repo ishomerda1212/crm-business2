@@ -1,4 +1,5 @@
-export { SimpleForm } from '../components/SimpleForm';
+export { NewCustomerSimpleForm } from './pages/NewCustomerSimpleFormPage';
+export { ExistingCustomerSimpleForm } from './pages/ExistingCustomerSimpleFormPage';
 export { CustomerFormProvider, useCustomerFormContext } from './context/FormContext';
 export type {
   CustomerFormData,
@@ -8,7 +9,7 @@ export type {
   NameOrder,
   ResidenceAddressOption,
   OwnerType,
-  FormStep,
+  SimpleFormStep,
   Occupation,
   DayOfWeek,
   HouseholdMember,

@@ -1,20 +1,27 @@
+import { useEffect } from 'react';
 import { Home } from 'lucide-react';
-import { FormProvider, useFormContext } from '../../hearing-form/context/FormContext';
-import { FormHeader, FormNavigation } from '..';
-import { ReformAreaStep } from './ReformAreaStep';
-import { PriorityPointsStep } from './PriorityPointsStep';
-import { DesiredCompletionStep } from './DesiredCompletionStep';
-import { BudgetLoanStep } from './BudgetLoanStep';
-import { EstimateStatusStep } from './EstimateStatusStep';
-import { CustomerTypeStep } from './CustomerTypeStep';
-import { IndividualInfoStepForHearing } from './IndividualInfoStepForHearing';
-import { CorporateInfoStepForHearing } from './CorporateInfoStepForHearing';
-import { AddressStepForHearing } from './AddressStepForHearing';
-import { OccupationStepForHearing } from './OccupationStepForHearing';
-import { FamilyStepForHearing } from './FamilyStepForHearing';
+import { FormProvider, useFormContext } from '../context/FormContext';
+import { FormHeader, FormNavigation } from '../../components';
+import {
+  ReformAreaStep,
+  PriorityPointsStep,
+  DesiredCompletionStep,
+  BudgetLoanStep,
+  EstimateStatusStep,
+  CustomerTypeStep,
+  AddressStep,
+  OccupationStep,
+  FamilyStep,
+  IndividualInfoStep,
+  CorporateInfoStep,
+} from '../../steps';
 
-const HearingFormContent = () => {
-  const { currentStep, data, prevStep, nextStep, canProceed, getTotalSteps } = useFormContext();
+const NewCustomerHearingFormContent = () => {
+  const { currentStep, data, prevStep, nextStep, canProceed, getTotalSteps, setCustomerType } = useFormContext();
+
+  useEffect(() => {
+    setCustomerType('new');
+  }, [setCustomerType]);
 
   const steps = [
     { id: 1, label: '検討箇所' },
@@ -52,26 +59,26 @@ const HearingFormContent = () => {
         return <CustomerTypeStep />;
       case 7:
         if (data.customerCategory === 'individual') {
-          return <IndividualInfoStepForHearing />;
+          return <IndividualInfoStep />;
         }
         if (data.customerCategory === 'corporate') {
-          return <CorporateInfoStepForHearing />;
+          return <CorporateInfoStep />;
         }
         return <CustomerTypeStep />;
       case 8:
-        return <AddressStepForHearing />;
+        return <AddressStep />;
       case 9:
         // 個人のみ表示
         if (data.customerCategory === 'individual') {
-          return <OccupationStepForHearing />;
+          return <OccupationStep />;
         }
-        return <AddressStepForHearing />;
+        return <AddressStep />;
       case 10:
         // 個人のみ表示
         if (data.customerCategory === 'individual') {
-          return <FamilyStepForHearing />;
+          return <FamilyStep />;
         }
-        return <AddressStepForHearing />;
+        return <AddressStep />;
       default:
         return <ReformAreaStep />;
     }
@@ -106,10 +113,10 @@ const HearingFormContent = () => {
   );
 };
 
-export const HearingForm = () => {
+export const NewCustomerHearingForm = () => {
   return (
     <FormProvider>
-      <HearingFormContent />
+      <NewCustomerHearingFormContent />
     </FormProvider>
   );
 };

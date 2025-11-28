@@ -1,9 +1,18 @@
-// このファイルは既存の顧客情報フォーム用です。統合フォーム用のコンポーネントは別途作成します。
-import { ChangeEvent } from 'react';
-import { useCustomerFormContext } from '../simple-form/context/FormContext';
+import { ChangeEvent, useContext } from 'react';
+import { FormContext as HearingFormContext } from '../hearing-form/context/FormContext';
+import { FormContext as SimpleFormContext } from '../simple-form/context/FormContext';
 
 export const IndividualInfoStep = () => {
-  const { data, updatePersonalInfo } = useCustomerFormContext();
+  // 両方のコンテキストをサポート
+  const hearingContext = useContext(HearingFormContext);
+  const simpleContext = useContext(SimpleFormContext);
+
+  if (!hearingContext && !simpleContext) {
+    throw new Error('IndividualInfoStep must be used within a form context');
+  }
+
+  const context = (hearingContext || simpleContext)!;
+  const { data, updatePersonalInfo } = context;
 
   const handleChange = (field: 'lastName' | 'firstName' | 'lastNameKana' | 'firstNameKana') => (event: ChangeEvent<HTMLInputElement>) => {
     updatePersonalInfo({ [field]: event.target.value });

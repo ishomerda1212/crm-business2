@@ -1,5 +1,5 @@
-import { useFormContext } from '../../hearing-form/context/FormContext';
-import { EstimateStatus } from '../../hearing-form/types';
+import { useFormContext } from '../hearing-form/context/FormContext';
+import { EstimateStatus } from '../hearing-form/types';
 
 const estimateStatusOptions: {
   value: EstimateStatus;

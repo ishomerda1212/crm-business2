@@ -17,6 +17,68 @@ src/features/
     types/          # 機能固有の型定義（必要に応じて）
 ```
 
+## アプリケーション構造
+
+### サイドバーナビゲーション
+
+サイドバー（`src/components/Sidebar.tsx`）の構造：
+
+**レイアウト**:
+- 固定幅: `w-64` (256px)
+- 背景色: 白色（`bg-white`）
+- 高さ: 全画面（`h-full`）
+- 上部: ロゴとナビゲーションメニュー
+- 下部: 設定ボタンとユーザー情報（固定位置、`mt-auto`）
+
+**ロゴエリア**:
+- オレンジ色の「R」アイコン（`bg-orange-500`）
+- 「リノベーションCRM」というタイトル
+
+サイドバーには以下のメニュー項目が含まれます：
+
+1. **ダッシュボード** (`dashboard`) - 全体概要表示
+2. **顧客一覧** (`customers`) - 顧客情報管理
+3. **案件一覧** (`projects`) - プロジェクト管理
+4. **担当未決案件** (`search`) - 未割り当て案件の管理
+5. **未入金管理** (`management`) - 支払い管理
+6. **承認待ち** (`approvals`) - 承認ワークフロー
+7. **イズクラブ会員** (`izclub-members`) - イズクラブ会員管理
+8. **完工アンケート** (`completion-survey-list`) - 完工アンケート一覧
+9. **契約ランキング** (`ranking`) - 営業成績表示
+10. **設定** (`settings`) - システム設定（サイドバー下部）
+
+サイドバー下部には：
+- **設定ボタン**: システム設定ページへの遷移
+- **ユーザー切り替え**: ユーザーの切り替え機能
+  - アバター表示（イニシャル表示）
+  - ユーザー名・メールアドレス表示
+  - クリックでユーザー切り替えダイアログを表示
+  - 各ユーザーの進行中案件数をバッジで表示
+
+**サイドバーのスタイリング**:
+- アクティブなメニュー項目: `bg-orange-50`, `text-orange-600`
+- 非アクティブなメニュー項目: `text-gray-700`, ホバー時に `hover:bg-gray-50`
+- アイコンサイズ: `w-5 h-5`
+- パディング: `px-4 py-3`
+- 角丸: `rounded-lg`
+
+### ページ遷移の管理
+
+- ページ遷移は `App.tsx` で管理され、`currentPage` stateで現在のページを追跡
+- サイドバーありのページ: 通常のページ（ダッシュボード、顧客一覧など）
+- サイドバーなしのページ: 
+  - 手続きページ（契約手続き、完工手続き、変更承認など）
+  - フォームページ（ヒアリングフォーム、簡易フォーム）
+  - 工事住所フォームページ
+
+### メインコンテンツエリア
+
+- フレックスレイアウト: `flex h-screen`
+- サイドバーは固定（`flex-shrink-0`）
+- メインコンテンツは可変（`flex-1`）
+- 背景色: `bg-gray-50`
+- オーバーフロー: `overflow-x-hidden overflow-y-auto`（縦スクロール可能）
+
 ## 実装すべき機能
 
 以下の機能をfeaturesディレクトリに実装してください：
@@ -32,19 +94,33 @@ src/features/
 
 ### 2. 顧客一覧 (customers)
 - **パス**: `src/features/customers/`
-- **ページ**: `CustomerListPage.tsx`
+- **ページ**: `CustomerListPage.tsx`, `CustomerDetailPage.tsx`, `CustomerHistoryPage.tsx`
 - **機能**:
   - 顧客一覧表示（検索・フィルター機能）
-  - 顧客詳細ページへの遷移
+  - 顧客詳細表示
+  - 顧客履歴表示
   - 新規顧客登録
   - 顧客情報の編集・削除
+  - 会員費履歴・ポイント履歴表示
 
-### 3. 案件一覧 (projects) - 既存
+### 3. 案件管理 (projects)
 - **パス**: `src/features/projects/`
-- **ページ**: `ProjectListPage.tsx`, `ProjectDetailPage.tsx`
-- **機能**: 既に実装済み
+- **ページ**: `ProjectListPage.tsx`, `ProjectDetailPage.tsx`, `UnassignedProjectsPage.tsx`
+- **機能**: 詳細は `projects.mdc` を参照してください
+  - 案件一覧表示（検索・フィルター機能）
+  - 案件詳細表示・編集
+  - 未割り当て案件の管理
+  - 新規案件作成（既存顧客・新規顧客対応）
+  - 各種手続き機能（契約手続き、完工手続き、変更承認など）
+  - ヒアリングフォーム・簡易フォーム
 
-### 4. 未入金管理 (unpaid)
+### 4. 担当未決案件 (UnassignedProjectsPage)
+- **パス**: `src/features/projects/pages/UnassignedProjectsPage.tsx`
+- **機能**:
+  - 担当者が未割り当ての案件一覧表示
+  - 案件への担当者割り当て
+
+### 5. 未入金管理 (unpaid)
 - **パス**: `src/features/unpaid/`
 - **ページ**: `UnpaidListPage.tsx`
 - **機能**:
@@ -53,7 +129,28 @@ src/features/
   - 入金確認・更新機能
   - 入金リマインダー機能
 
-### 5. ランキング (contracts)
+### 6. 承認待ち (approvals)
+- **パス**: `src/features/approvals/`
+- **ページ**: `ApprovalListPage.tsx`
+- **機能**:
+  - 承認待ちの案件・手続き一覧表示
+  - 承認処理
+
+### 7. イズクラブ会員 (izclub-members)
+- **パス**: `src/features/izclub-members/`
+- **ページ**: `IzClubMemberListPage.tsx`
+- **機能**:
+  - イズクラブ会員の一覧表示
+  - 会員情報の閲覧
+
+### 8. 完工アンケート (completion-survey)
+- **パス**: `src/features/completion-survey/`
+- **ページ**: `CompletionSurveyListPage.tsx`
+- **機能**:
+  - 完工アンケートの一覧表示
+  - アンケート結果の閲覧
+
+### 9. 契約ランキング (ranking)
 - **パス**: `src/features/ranking/`
 - **ページ**: `ContractRankingPage.tsx`
 - **機能**:
@@ -65,6 +162,29 @@ src/features/
     - 期間別（開始日―終了日）ランキング表示
     - 新規加入数によるランキング
   - グラフ・チャート表示
+
+### 10. プロパティ管理 (property)
+- **パス**: `src/features/property/`
+- **ページ**: `PropertyDetailPage.tsx`, `ConstructionAddressFormPage.tsx`
+- **機能**:
+  - 物件情報の表示・管理
+  - 工事住所フォーム
+
+### 11. 設定 (settings)
+- **パス**: `src/features/settings/`
+- **ページ**: `SettingsPage.tsx`（複数のサブページを含む）
+- **機能**:
+  - 会社設定
+  - 店舗・拠点管理
+  - スタッフ管理
+  - 承認ルート設定
+  - 工事内容設定
+  - 重要事項説明設定
+  - 保証内容設定
+  - 変更承認設定
+  - 追客同意設定
+  - 一括ポイント付与
+  - 顧客マージ
 
 ## コーディング規約
 
@@ -100,6 +220,20 @@ src/features/
 - ページ間の遷移は親コンポーネント（`App.tsx`）で管理
 - `currentPage` stateで現在のページを管理
 - `onNavigate` コールバックでページ遷移を実装
+- サイドバーから直接遷移できるページは `Sidebar.tsx` の `menuItems` に定義
+- 手続きページやフォームページはサイドバーなしで表示される
+
+### ダイアログとページの実装
+
+#### ダイアログ（Dialog）
+- モーダル表示で軽量な操作向け
+- shadcn/uiの`Dialog`コンポーネントを使用
+- フォーカストラップとEscキーで閉じる機能を実装
+
+#### ページ（Page）
+- フルスクリーン表示で複雑な手続き向け
+- サイドバーやステップナビゲーションを含む
+- 必要に応じてブラウザの戻る/進むボタンに対応
 
 ## 実装例
 

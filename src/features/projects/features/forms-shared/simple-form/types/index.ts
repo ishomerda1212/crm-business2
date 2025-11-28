@@ -1,4 +1,5 @@
-export type CustomerType = 'individual' | 'corporate';
+export type CustomerStatus = 'new' | 'existing'; // 既存客/新規客
+export type CustomerType = 'individual' | 'corporate'; // 個人/法人
 
 export type CorporationType =
   | '株式会社'
@@ -23,7 +24,10 @@ export type ResidenceAddressOption = 'same' | 'different';
 export type OwnerType = '本人' | '親族' | '賃貸';
 
 export interface CustomerFormData {
-  customerType: CustomerType | null;
+  customerStatus: CustomerStatus | null; // 既存客/新規客
+  customerType: CustomerType | null; // 個人/法人
+  selectedCustomerId: string | null; // 既存客の場合の顧客ID
+  selectedPropertyId: string | null; // 既存客の場合の選択された物件ID
   lastName: string;
   firstName: string;
   lastNameKana: string;
@@ -65,7 +69,7 @@ export interface CustomerFormData {
   photoConsent: boolean;
 }
 
-export type FormStep = 1 | 2 | 3 | 4 | 5;
+export type SimpleFormStep = 1 | 2 | 3 | 4 | 5 | 6 | 7;
 
 export type Occupation = '会社員' | '公務員' | '自営業' | 'その他';
 

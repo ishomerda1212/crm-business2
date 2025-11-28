@@ -21,8 +21,8 @@ import {
   Snowflake,
   Wrench,
 } from 'lucide-react';
-import { useFormContext } from '../../hearing-form/context/FormContext';
-import { ReformArea } from '../../hearing-form/types';
+import { useFormContext } from '../hearing-form/context/FormContext';
+import { ReformArea } from '../hearing-form/types';
 
 export const ReformAreaStep = () => {
   const { data, toggleReformArea } = useFormContext();
@@ -169,3 +169,4 @@ export const ReformAreaStep = () => {
     </div>
   );
 };
+

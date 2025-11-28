@@ -65,8 +65,10 @@ export type CustomerType = 'new' | 'existing';
 export type CustomerCategory = 'individual' | 'corporate';
 
 export interface ReformInquiryData {
-  customerType: CustomerType | null;
+  customerType: CustomerType | null; // 'new' | 'existing'
   customerCategory: CustomerCategory | null; // 個人/法人
+  selectedCustomerId: string | null; // 既存客の場合の顧客ID
+  selectedPropertyId: string | null; // 既存客の場合の選択された物件ID
   reformAreas: ReformArea[];
   priorityPoints: PriorityPoint[];
   desiredCompletion: DesiredCompletionTiming | null;
@@ -123,4 +125,4 @@ export interface ReformInquiryData {
   photoConsent: boolean;
 }
 
-export type FormStep = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
+export type HearingFormStep = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;

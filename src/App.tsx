@@ -22,8 +22,8 @@ import { CancellationConsentPage } from './features/projects/features/cancellati
 import { ConveniencePaymentPage } from './features/projects/features/convenience-payment/ConveniencePaymentPage';
 import { ContractApprovalPage } from './features/projects/features/contract-approval/ContractApprovalPage';
 import { CompletionSurveyPage } from './features/projects/features/completion-survey/CompletionSurveyPage';
-import { HearingFormPage } from './features/projects/features/hearing-form';
-import { SimpleFormPage } from './features/projects/features/simple-form';
+import { HearingFormPage } from './features/projects/features/forms-shared/hearing-form/pages/HearingFormPage';
+import { SimpleFormPage } from './features/projects/features/forms-shared/simple-form/pages/SimpleFormPage';
 import { Sidebar } from './components/Sidebar';
 import { SettingsPage } from './features/settings/pages/SettingsPage';
 import { Toaster } from './components/ui/toaster';
@@ -182,6 +182,11 @@ function App() {
           onBack={() => setSelectedCustomerId(null)}
           onNavigate={handleCustomerNavigate}
           onSelectProperty={setSelectedPropertyId}
+          onCreateProject={(candidate, propertyInfo) => {
+            // TODO: 新規案件を作成する処理を実装
+            console.log('新規案件作成:', { candidate, propertyInfo });
+            // 将来的には案件を作成して案件詳細ページに遷移する処理を追加
+          }}
         />
       );
     }
@@ -204,10 +209,24 @@ function App() {
         return (
           <ProjectListPage
             onSelectProject={setSelectedProjectId}
+            onCreateProject={(candidate, propertyInfo) => {
+              // TODO: 新規案件を作成する処理を実装
+              console.log('新規案件作成:', { candidate, propertyInfo });
+              // 将来的には案件を作成して案件詳細ページに遷移する処理を追加
+            }}
           />
         );
       case 'search':
-        return <UnassignedProjectsPage onSelectProject={setSelectedProjectId} />;
+        return (
+          <UnassignedProjectsPage
+            onSelectProject={setSelectedProjectId}
+            onCreateProject={(candidate, propertyInfo) => {
+              // TODO: 新規案件を作成する処理を実装
+              console.log('新規案件作成:', { candidate, propertyInfo });
+              // 将来的には案件を作成して案件詳細ページに遷移する処理を追加
+            }}
+          />
+        );
       case 'approvals':
         return <ApprovalListPage />;
       case 'izclub-members':

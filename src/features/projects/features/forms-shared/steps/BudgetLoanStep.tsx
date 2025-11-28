@@ -1,5 +1,5 @@
-import { useFormContext } from '../../hearing-form/context/FormContext';
-import { BudgetRange, LoanPreference } from '../../hearing-form/types';
+import { useFormContext } from '../hearing-form/context/FormContext';
+import { BudgetRange, LoanPreference } from '../hearing-form/types';
 
 const budgetOptions: { value: BudgetRange; label: string }[] = [
   { value: 'under-1m', label: '～100万円' },

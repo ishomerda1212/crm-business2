@@ -1,16 +1,20 @@
 import { createContext, useContext, useState, ReactNode } from 'react';
 import {
   CustomerFormData,
+  CustomerStatus,
   CustomerType,
-  FormStep,
+  SimpleFormStep,
   PropertyType,
   ResidenceAddressOption,
 } from '../types';
 
 interface FormContextType {
   data: CustomerFormData;
-  currentStep: FormStep;
+  currentStep: SimpleFormStep;
+  setCustomerStatus: (status: CustomerStatus) => void;
   setCustomerType: (type: CustomerType) => void;
+  setSelectedCustomerId: (customerId: string | null) => void;
+  setSelectedPropertyId: (propertyId: string | null) => void;
   updatePersonalInfo: (payload: Partial<Pick<CustomerFormData, 'lastName' | 'firstName' | 'lastNameKana' | 'firstNameKana'>>) => void;
   updateCorporateInfo: (payload: Partial<Pick<CustomerFormData, 'corporationType' | 'nameOrder' | 'corporationName' | 'representativeTitle' | 'representativeName' | 'contactPersonName'>>) => void;
   setPropertyType: (target: 'construction' | 'residence', type: PropertyType) => void;
@@ -37,7 +41,10 @@ export const useCustomerFormContext = () => {
 };
 
 const initialState: CustomerFormData = {
+  customerStatus: null,
   customerType: null,
+  selectedCustomerId: null,
+  selectedPropertyId: null,
   lastName: '',
   firstName: '',
   lastNameKana: '',
@@ -78,8 +85,12 @@ const initialState: CustomerFormData = {
 };
 
 export const CustomerFormProvider = ({ children }: { children: ReactNode }) => {
-  const [currentStep, setCurrentStep] = useState<FormStep>(1);
+  const [currentStep, setCurrentStep] = useState<SimpleFormStep>(1);
   const [data, setData] = useState<CustomerFormData>(initialState);
+
+  const setCustomerStatus = (status: CustomerStatus) => {
+    setData(prev => ({ ...prev, customerStatus: status }));
+  };
 
   const setCustomerType = (type: CustomerType) => {
     setData(prev => ({
@@ -97,6 +108,14 @@ export const CustomerFormProvider = ({ children }: { children: ReactNode }) => {
       representativeName: type === 'corporate' ? prev.representativeName : '',
       contactPersonName: type === 'corporate' ? prev.contactPersonName : '',
     }));
+  };
+
+  const setSelectedCustomerId = (customerId: string | null) => {
+    setData(prev => ({ ...prev, selectedCustomerId: customerId }));
+  };
+
+  const setSelectedPropertyId = (propertyId: string | null) => {
+    setData(prev => ({ ...prev, selectedPropertyId: propertyId }));
   };
 
   const updatePersonalInfo: FormContextType['updatePersonalInfo'] = payload => {
@@ -193,31 +212,85 @@ export const CustomerFormProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const getTotalSteps = (): number => {
-    return data.customerType === 'individual' ? 5 : 3;
+    if (data.customerStatus === 'existing') {
+      // 既存客: 物件選択 + 住所情報
+      return 2;
+    } else if (data.customerStatus === 'new') {
+      // 新規客: 顧客タイプ選択 + 顧客情報 + 住所情報 + (職業 + 家族)
+      const customerInfoSteps = 1; // 顧客情報
+      const addressSteps = 1; // 住所情報
+      const additionalSteps = data.customerType === 'individual' ? 2 : 0; // 職業 + 家族
+      return 1 + customerInfoSteps + addressSteps + additionalSteps;
+    }
+    
+    return 1;
   };
 
   const canProceed = () => {
-    switch (currentStep) {
-      case 1:
-        return data.customerType !== null;
-      case 2:
-        if (data.customerType === 'individual') {
+    if (data.customerStatus === 'existing') {
+      // 既存客の場合
+      switch (currentStep) {
+        case 1:
+          return data.selectedPropertyId !== null;
+        case 2: {
+          const hasResidenceOption = data.residenceAddressOption !== null;
+          const hasConstructionAddress =
+            data.constructionPostalCode.trim() !== '' &&
+            data.constructionPrefecture.trim() !== '' &&
+            data.constructionCity.trim() !== '' &&
+            data.constructionTown.trim() !== '' &&
+            data.constructionAddressLine.trim() !== '';
+
+          const hasConstructionType = data.constructionPropertyType !== null;
+
+          const hasResidenceAddress =
+            data.residenceAddressOption === 'same'
+              ? true
+              : data.postalCode.trim() !== '' &&
+                data.prefecture.trim() !== '' &&
+                data.city.trim() !== '' &&
+                data.town.trim() !== '' &&
+                data.addressLine.trim() !== '';
+
+          const hasResidenceType =
+            data.residenceAddressOption === 'same'
+              ? hasConstructionType
+              : data.residencePropertyType !== null;
+
           return (
-            data.lastName.trim() !== '' &&
-            data.firstName.trim() !== '' &&
-            data.lastNameKana.trim() !== '' &&
-            data.firstNameKana.trim() !== ''
+            hasResidenceOption &&
+            hasConstructionType &&
+            hasResidenceType &&
+            hasConstructionAddress &&
+            hasResidenceAddress
           );
         }
-        if (data.customerType === 'corporate') {
-          return (
-            data.corporationType !== '' &&
-            data.nameOrder !== null &&
-            data.corporationName.trim() !== ''
-          );
-        }
-        return false;
-      case 3: {
+        default:
+          return false;
+      }
+    } else if (data.customerStatus === 'new') {
+      // 新規客の場合
+      switch (currentStep) {
+        case 1:
+          return data.customerType !== null;
+        case 2:
+          if (data.customerType === 'individual') {
+            return (
+              data.lastName.trim() !== '' &&
+              data.firstName.trim() !== '' &&
+              data.lastNameKana.trim() !== '' &&
+              data.firstNameKana.trim() !== ''
+            );
+          }
+          if (data.customerType === 'corporate') {
+            return (
+              data.corporationType !== '' &&
+              data.nameOrder !== null &&
+              data.corporationName.trim() !== ''
+            );
+          }
+          return false;
+        case 3: {
         const hasResidenceOption = data.residenceAddressOption !== null;
         const hasConstructionAddress =
           data.constructionPostalCode.trim() !== '' &&
@@ -249,38 +322,41 @@ export const CustomerFormProvider = ({ children }: { children: ReactNode }) => {
           hasConstructionAddress &&
           hasResidenceAddress
         );
+        }
+        case 4:
+          // 個人のみ表示されるステップ
+          if (data.customerType !== 'individual') return false;
+          return (
+            data.occupation !== null &&
+            data.workDaysOff.length > 0
+          );
+        case 5:
+          // 個人のみ表示されるステップ
+          if (data.customerType !== 'individual') return false;
+          return (
+            data.numberOfAdults !== null &&
+            data.numberOfChildren !== null &&
+            data.householdMembers.length > 0 &&
+            data.guestFrequency !== null
+          );
+        default:
+          return false;
       }
-      case 4:
-        // 個人のみ表示されるステップ
-        if (data.customerType !== 'individual') return false;
-        return (
-          data.occupation !== null &&
-          data.workDaysOff.length > 0
-        );
-      case 5:
-        // 個人のみ表示されるステップ
-        if (data.customerType !== 'individual') return false;
-        return (
-          data.numberOfAdults !== null &&
-          data.numberOfChildren !== null &&
-          data.householdMembers.length > 0 &&
-          data.guestFrequency !== null
-        );
-      default:
-        return false;
     }
+    
+    return false;
   };
 
   const nextStep = () => {
     const totalSteps = getTotalSteps();
     if (currentStep < totalSteps && canProceed()) {
-      setCurrentStep(prev => (prev + 1) as FormStep);
+      setCurrentStep(prev => (prev + 1) as SimpleFormStep);
     }
   };
 
   const prevStep = () => {
     if (currentStep > 1) {
-      setCurrentStep(prev => (prev - 1) as FormStep);
+      setCurrentStep(prev => (prev - 1) as SimpleFormStep);
     }
   };
 
@@ -289,7 +365,10 @@ export const CustomerFormProvider = ({ children }: { children: ReactNode }) => {
       value={{
         data,
         currentStep,
+        setCustomerStatus,
         setCustomerType,
+        setSelectedCustomerId,
+        setSelectedPropertyId,
         updatePersonalInfo,
         updateCorporateInfo,
         setPropertyType,

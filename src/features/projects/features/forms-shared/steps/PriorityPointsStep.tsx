@@ -1,6 +1,6 @@
 import { BadgeCheck, CalendarClock, Handshake, PiggyBank, ShieldCheck } from 'lucide-react';
-import { useFormContext } from '../../hearing-form/context/FormContext';
-import { PriorityPoint } from '../../hearing-form/types';
+import { useFormContext } from '../hearing-form/context/FormContext';
+import { PriorityPoint } from '../hearing-form/types';
 
 const priorityOptions: {
   value: PriorityPoint;

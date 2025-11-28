@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, ReactNode } from 'react';
 import {
   ReformInquiryData,
-  FormStep,
+  HearingFormStep,
   ReformArea,
   PriorityPoint,
   DesiredCompletionTiming,
@@ -15,9 +15,11 @@ import {
 
 interface FormContextType {
   data: ReformInquiryData;
-  currentStep: FormStep;
+  currentStep: HearingFormStep;
   setCustomerType: (type: CustomerType) => void;
   setCustomerCategory: (category: CustomerCategory) => void;
+  setSelectedCustomerId: (customerId: string | null) => void;
+  setSelectedPropertyId: (propertyId: string | null) => void;
   toggleReformArea: (area: ReformArea) => void;
   togglePriorityPoint: (point: PriorityPoint) => void;
   setDesiredCompletion: (timing: DesiredCompletionTiming) => void;
@@ -58,10 +60,12 @@ export const useFormContext = () => {
 };
 
 export const FormProvider = ({ children }: { children: ReactNode }) => {
-  const [currentStep, setCurrentStep] = useState<FormStep>(1);
+  const [currentStep, setCurrentStep] = useState<HearingFormStep>(1);
   const [data, setData] = useState<ReformInquiryData>({
     customerType: null,
     customerCategory: null,
+    selectedCustomerId: null,
+    selectedPropertyId: null,
     reformAreas: [],
     priorityPoints: [],
     desiredCompletion: null,
@@ -138,6 +142,14 @@ export const FormProvider = ({ children }: { children: ReactNode }) => {
       representativeName: category === 'corporate' ? prev.representativeName : '',
       contactPersonName: category === 'corporate' ? prev.contactPersonName : '',
     }));
+  };
+
+  const setSelectedCustomerId = (customerId: string | null) => {
+    setData(prev => ({ ...prev, selectedCustomerId: customerId }));
+  };
+
+  const setSelectedPropertyId = (propertyId: string | null) => {
+    setData(prev => ({ ...prev, selectedPropertyId: propertyId }));
   };
 
   const toggleReformArea = (area: ReformArea) => {
@@ -296,52 +308,72 @@ export const FormProvider = ({ children }: { children: ReactNode }) => {
 
   const getTotalSteps = (): number => {
     // ヒアリングフォーム: 5ステップ
-    // 顧客種別: 1ステップ
+    // 既存客の場合: 物件選択: 1ステップ
+    // 新規客の場合: 顧客種別: 1ステップ
     // 顧客情報: 1ステップ（個人/法人で異なる）
     // 住所情報: 1ステップ
     // 職業情報: 1ステップ（個人のみ）
     // 家族情報: 1ステップ（個人のみ）
-    const baseSteps = 6; // ヒアリング5 + 顧客種別1
-    if (data.customerCategory === 'individual') {
-      return baseSteps + 4; // 顧客情報 + 住所 + 職業 + 家族
-    } else if (data.customerCategory === 'corporate') {
-      return baseSteps + 2; // 顧客情報 + 住所
+    const hearingSteps = 5; // ヒアリング5ステップ
+    
+    if (data.customerType === 'existing') {
+      // 既存客: 物件選択 + ヒアリング5 + 顧客種別1
+      const customerCategoryStep = 1;
+      if (data.customerCategory === 'individual') {
+        return 1 + hearingSteps + customerCategoryStep + 4; // 物件選択 + ヒアリング5 + 顧客種別 + 顧客情報 + 住所 + 職業 + 家族
+      } else if (data.customerCategory === 'corporate') {
+        return 1 + hearingSteps + customerCategoryStep + 2; // 物件選択 + ヒアリング5 + 顧客種別 + 顧客情報 + 住所
+      }
+      return 1 + hearingSteps + customerCategoryStep; // 物件選択 + ヒアリング5 + 顧客種別（顧客種別未選択時）
+    } else if (data.customerType === 'new') {
+      // 新規客: ヒアリング5 + 顧客種別1
+      const customerCategoryStep = 1;
+      if (data.customerCategory === 'individual') {
+        return hearingSteps + customerCategoryStep + 4; // ヒアリング5 + 顧客種別 + 顧客情報 + 住所 + 職業 + 家族
+      } else if (data.customerCategory === 'corporate') {
+        return hearingSteps + customerCategoryStep + 2; // ヒアリング5 + 顧客種別 + 顧客情報 + 住所
+      }
+      return hearingSteps + customerCategoryStep; // ヒアリング5 + 顧客種別（顧客種別未選択時）
     }
-    return baseSteps; // 顧客種別未選択時
+    return hearingSteps; // customerType未設定時
   };
 
   const canProceed = () => {
-    switch (currentStep) {
-      case 1:
-        return data.reformAreas.length > 0;
-      case 2:
-        return data.priorityPoints.length > 0;
-      case 3:
-        return data.desiredCompletion !== null;
-      case 4:
-        return data.budget !== null && data.loanPreference !== null;
-      case 5:
-        return data.estimateStatus !== null;
-      case 6:
-        return data.customerCategory !== null;
-      case 7:
-        if (data.customerCategory === 'individual') {
-          return (
-            data.lastName.trim() !== '' &&
-            data.firstName.trim() !== '' &&
-            data.lastNameKana.trim() !== '' &&
-            data.firstNameKana.trim() !== ''
-          );
-        }
-        if (data.customerCategory === 'corporate') {
-          return (
-            data.corporationType !== '' &&
-            data.nameOrder !== null &&
-            data.corporationName.trim() !== ''
-          );
-        }
-        return false;
-      case 8: {
+    if (data.customerType === 'existing') {
+      // 既存客の場合
+      switch (currentStep) {
+        case 1:
+          return data.selectedPropertyId !== null;
+        case 2:
+          return data.reformAreas.length > 0;
+        case 3:
+          return data.priorityPoints.length > 0;
+        case 4:
+          return data.desiredCompletion !== null;
+        case 5:
+          return data.budget !== null && data.loanPreference !== null;
+        case 6:
+          return data.estimateStatus !== null;
+        case 7:
+          return data.customerCategory !== null;
+        case 8:
+          if (data.customerCategory === 'individual') {
+            return (
+              data.lastName.trim() !== '' &&
+              data.firstName.trim() !== '' &&
+              data.lastNameKana.trim() !== '' &&
+              data.firstNameKana.trim() !== ''
+            );
+          }
+          if (data.customerCategory === 'corporate') {
+            return (
+              data.corporationType !== '' &&
+              data.nameOrder !== null &&
+              data.corporationName.trim() !== ''
+            );
+          }
+          return false;
+        case 9: {
         const hasResidenceOption = data.residenceAddressOption !== null;
         const hasConstructionAddress =
           data.constructionPostalCode.trim() !== '' &&
@@ -373,38 +405,125 @@ export const FormProvider = ({ children }: { children: ReactNode }) => {
           hasConstructionAddress &&
           hasResidenceAddress
         );
+        }
+        case 10:
+          // 個人のみ表示されるステップ
+          if (data.customerCategory !== 'individual') return false;
+          return (
+            data.occupation !== null &&
+            data.workDaysOff.length > 0
+          );
+        case 11:
+          // 個人のみ表示されるステップ
+          if (data.customerCategory !== 'individual') return false;
+          return (
+            data.numberOfAdults !== null &&
+            data.numberOfChildren !== null &&
+            data.householdMembers.length > 0 &&
+            data.guestFrequency !== null
+          );
+        default:
+          return false;
       }
-      case 9:
-        // 個人のみ表示されるステップ
-        if (data.customerCategory !== 'individual') return false;
-        return (
-          data.occupation !== null &&
-          data.workDaysOff.length > 0
-        );
-      case 10:
-        // 個人のみ表示されるステップ
-        if (data.customerCategory !== 'individual') return false;
-        return (
-          data.numberOfAdults !== null &&
-          data.numberOfChildren !== null &&
-          data.householdMembers.length > 0 &&
-          data.guestFrequency !== null
-        );
-      default:
-        return false;
+    } else if (data.customerType === 'new') {
+      // 新規客の場合
+      switch (currentStep) {
+        case 1:
+          return data.reformAreas.length > 0;
+        case 2:
+          return data.priorityPoints.length > 0;
+        case 3:
+          return data.desiredCompletion !== null;
+        case 4:
+          return data.budget !== null && data.loanPreference !== null;
+        case 5:
+          return data.estimateStatus !== null;
+        case 6:
+          return data.customerCategory !== null;
+        case 7:
+          if (data.customerCategory === 'individual') {
+            return (
+              data.lastName.trim() !== '' &&
+              data.firstName.trim() !== '' &&
+              data.lastNameKana.trim() !== '' &&
+              data.firstNameKana.trim() !== ''
+            );
+          }
+          if (data.customerCategory === 'corporate') {
+            return (
+              data.corporationType !== '' &&
+              data.nameOrder !== null &&
+              data.corporationName.trim() !== ''
+            );
+          }
+          return false;
+        case 8: {
+          const hasResidenceOption = data.residenceAddressOption !== null;
+          const hasConstructionAddress =
+            data.constructionPostalCode.trim() !== '' &&
+            data.constructionPrefecture.trim() !== '' &&
+            data.constructionCity.trim() !== '' &&
+            data.constructionTown.trim() !== '' &&
+            data.constructionAddressLine.trim() !== '';
+
+          const hasConstructionType = data.constructionPropertyType !== null;
+
+          const hasResidenceAddress =
+            data.residenceAddressOption === 'same'
+              ? true
+              : data.postalCode.trim() !== '' &&
+                data.prefecture.trim() !== '' &&
+                data.city.trim() !== '' &&
+                data.town.trim() !== '' &&
+                data.addressLine.trim() !== '';
+
+          const hasResidenceType =
+            data.residenceAddressOption === 'same'
+              ? hasConstructionType
+              : data.residencePropertyType !== null;
+
+          return (
+            hasResidenceOption &&
+            hasConstructionType &&
+            hasResidenceType &&
+            hasConstructionAddress &&
+            hasResidenceAddress
+          );
+        }
+        case 9:
+          // 個人のみ表示されるステップ
+          if (data.customerCategory !== 'individual') return false;
+          return (
+            data.occupation !== null &&
+            data.workDaysOff.length > 0
+          );
+        case 10:
+          // 個人のみ表示されるステップ
+          if (data.customerCategory !== 'individual') return false;
+          return (
+            data.numberOfAdults !== null &&
+            data.numberOfChildren !== null &&
+            data.householdMembers.length > 0 &&
+            data.guestFrequency !== null
+          );
+        default:
+          return false;
+      }
     }
+    
+    return false;
   };
 
   const nextStep = () => {
     const totalSteps = getTotalSteps();
     if (currentStep < totalSteps && canProceed()) {
-      setCurrentStep(prev => (prev + 1) as FormStep);
+      setCurrentStep(prev => (prev + 1) as HearingFormStep);
     }
   };
 
   const prevStep = () => {
     if (currentStep > 1) {
-      setCurrentStep(prev => (prev - 1) as FormStep);
+      setCurrentStep(prev => (prev - 1) as HearingFormStep);
     }
   };
 
@@ -415,6 +534,8 @@ export const FormProvider = ({ children }: { children: ReactNode }) => {
         currentStep,
         setCustomerType,
         setCustomerCategory,
+        setSelectedCustomerId,
+        setSelectedPropertyId,
         toggleReformArea,
         togglePriorityPoint,
         setDesiredCompletion,

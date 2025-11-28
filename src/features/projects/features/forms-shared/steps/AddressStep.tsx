@@ -1,7 +1,7 @@
-import { FormEvent, useState } from 'react';
+import { FormEvent, useState, useContext } from 'react';
 import { Search, MapPin, Building2, Building, Home, LucideIcon } from 'lucide-react';
-import { useFormContext } from '../../hearing-form/context/FormContext';
-import { ReformInquiryData } from '../../hearing-form/types';
+import { FormContext as HearingFormContext } from '../hearing-form/context/FormContext';
+import { FormContext as SimpleFormContext } from '../simple-form/context/FormContext';
 
 interface ZipcloudResponse {
   message: string | null;
@@ -14,8 +14,28 @@ interface ZipcloudResponse {
   status: number;
 }
 
+type PropertyType = 'singleFamily' | 'multiUnit' | 'office';
+type ResidenceAddressOption = 'same' | 'different';
+type OwnerType = '本人' | '親族' | '賃貸';
+
+type AddressField =
+  | 'postalCode'
+  | 'prefecture'
+  | 'city'
+  | 'town'
+  | 'addressLine'
+  | 'building'
+  | 'room'
+  | 'constructionPostalCode'
+  | 'constructionPrefecture'
+  | 'constructionCity'
+  | 'constructionTown'
+  | 'constructionAddressLine'
+  | 'constructionBuilding'
+  | 'constructionRoom';
+
 const propertyOptions: Array<{
-  value: 'singleFamily' | 'multiUnit' | 'office';
+  value: PropertyType;
   label: string;
   description: string;
   icon: LucideIcon;
@@ -42,16 +62,25 @@ const propertyOptions: Array<{
 
 type AddressTarget = 'construction' | 'residence';
 
-export const AddressStepForHearing = () => {
-  const { data, updateAddress, setPropertyType, setResidenceAddressOption } = useFormContext();
-  
-  const ownerOptions: Array<{ value: '本人' | '親族' | '賃貸'; label: string }> = [
+export const AddressStep = () => {
+  // 両方のコンテキストをサポート
+  const hearingContext = useContext(HearingFormContext);
+  const simpleContext = useContext(SimpleFormContext);
+
+  if (!hearingContext && !simpleContext) {
+    throw new Error('AddressStep must be used within a form context');
+  }
+
+  const context = (hearingContext || simpleContext)!;
+  const { data, updateAddress, setPropertyType, setResidenceAddressOption } = context;
+
+  const ownerOptions: Array<{ value: OwnerType; label: string }> = [
     { value: '本人', label: 'ご本人' },
     { value: '親族', label: '親族' },
     { value: '賃貸', label: '賃貸' },
   ];
   
-  const handleOwnerChange = (field: 'buildingOwner' | 'landOwner') => (value: '本人' | '親族' | '賃貸') => {
+  const handleOwnerChange = (field: 'buildingOwner' | 'landOwner') => (value: OwnerType) => {
     updateAddress({ [field]: value });
   };
   const [loading, setLoading] = useState<Record<AddressTarget, boolean>>({
@@ -65,12 +94,12 @@ export const AddressStepForHearing = () => {
   const isResidenceSame = data.residenceAddressOption === 'same';
   const isResidenceDifferent = data.residenceAddressOption === 'different';
 
-  const residenceOptions: Array<{ value: 'same' | 'different'; label: string }> = [
+  const residenceOptions: Array<{ value: ResidenceAddressOption; label: string }> = [
     { value: 'same', label: '工事住所と同じ' },
     { value: 'different', label: '現住所を登録する' },
   ];
 
-  const handleResidenceOptionChange = (option: 'same' | 'different') => {
+  const handleResidenceOptionChange = (option: ResidenceAddressOption) => {
     setResidenceAddressOption(option);
     setErrors(prev => ({
       ...prev,
@@ -78,8 +107,8 @@ export const AddressStepForHearing = () => {
     }));
   };
 
-  const handleChange = (field: string) => (event: FormEvent<HTMLInputElement>) => {
-    updateAddress({ [field]: event.currentTarget.value } as Partial<ReformInquiryData>);
+  const handleChange = (field: AddressField) => (event: FormEvent<HTMLInputElement>) => {
+    updateAddress({ [field]: event.currentTarget.value });
   };
 
   const fetchAddress = async (target: AddressTarget) => {
@@ -202,7 +231,7 @@ export const AddressStepForHearing = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
             <div className="space-y-2 md:col-span-2">
-              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">郵便番号（ハイフン不要）</label>
+              <label className="text-sm font-medium text-gray-700">郵便番号（ハイフン不要）</label>
               <div className="relative">
                 <input
                   type="text"
@@ -210,7 +239,7 @@ export const AddressStepForHearing = () => {
                   onChange={handleChange('constructionPostalCode')}
                   placeholder="例）5300001"
                   maxLength={7}
-                  className="w-full px-4 py-3 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition-shadow tracking-wider placeholder:text-gray-400 dark:placeholder:text-gray-500"
+                  className="w-full px-4 py-3 bg-white dark:bg-white text-gray-900 dark:text-gray-900 border border-gray-200 dark:border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition-shadow tracking-wider placeholder:text-gray-400 dark:placeholder:text-gray-500"
                 />
                 <MapPin className="w-5 h-5 text-gray-400 absolute right-3 top-3.5" />
               </div>
@@ -238,60 +267,60 @@ export const AddressStepForHearing = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">都道府県</label>
+              <label className="text-sm font-medium text-gray-700">都道府県</label>
               <input
                 type="text"
                 value={data.constructionPrefecture}
                 onChange={handleChange('constructionPrefecture')}
-                className="w-full px-4 py-3 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition-shadow placeholder:text-gray-400 dark:placeholder:text-gray-500"
+                className="w-full px-4 py-3 bg-white dark:bg-white text-gray-900 dark:text-gray-900 border border-gray-200 dark:border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition-shadow placeholder:text-gray-400 dark:placeholder:text-gray-500"
               />
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">市区町村</label>
+              <label className="text-sm font-medium text-gray-700">市区町村</label>
               <input
                 type="text"
                 value={data.constructionCity}
                 onChange={handleChange('constructionCity')}
-                className="w-full px-4 py-3 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition-shadow placeholder:text-gray-400 dark:placeholder:text-gray-500"
+                className="w-full px-4 py-3 bg-white dark:bg-white text-gray-900 dark:text-gray-900 border border-gray-200 dark:border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition-shadow placeholder:text-gray-400 dark:placeholder:text-gray-500"
               />
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">町域名</label>
+              <label className="text-sm font-medium text-gray-700">町域名</label>
               <input
                 type="text"
                 value={data.constructionTown}
                 onChange={handleChange('constructionTown')}
-                className="w-full px-4 py-3 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition-shadow placeholder:text-gray-400 dark:placeholder:text-gray-500"
+                className="w-full px-4 py-3 bg-white dark:bg-white text-gray-900 dark:text-gray-900 border border-gray-200 dark:border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition-shadow placeholder:text-gray-400 dark:placeholder:text-gray-500"
               />
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">丁目・番地・住居番号</label>
+              <label className="text-sm font-medium text-gray-700">丁目・番地・住居番号</label>
               <input
                 type="text"
                 value={data.constructionAddressLine}
                 onChange={handleChange('constructionAddressLine')}
                 placeholder="例）1丁目2-3"
-                className="w-full px-4 py-3 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition-shadow placeholder:text-gray-400 dark:placeholder:text-gray-500"
+                className="w-full px-4 py-3 bg-white dark:bg-white text-gray-900 dark:text-gray-900 border border-gray-200 dark:border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition-shadow placeholder:text-gray-400 dark:placeholder:text-gray-500"
               />
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">建物名・棟名</label>
+              <label className="text-sm font-medium text-gray-700">建物名・棟名</label>
               <input
                 type="text"
                 value={data.constructionBuilding}
                 onChange={handleChange('constructionBuilding')}
                 placeholder="例）イズホームマンション"
-                className="w-full px-4 py-3 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition-shadow placeholder:text-gray-400 dark:placeholder:text-gray-500"
+                className="w-full px-4 py-3 bg-white dark:bg-white text-gray-900 dark:text-gray-900 border border-gray-200 dark:border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition-shadow placeholder:text-gray-400 dark:placeholder:text-gray-500"
               />
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">号室</label>
+              <label className="text-sm font-medium text-gray-700">号室</label>
               <input
                 type="text"
                 value={data.constructionRoom}
                 onChange={handleChange('constructionRoom')}
                 placeholder="例）101号室"
-                className="w-full px-4 py-3 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition-shadow placeholder:text-gray-400 dark:placeholder:text-gray-500"
+                className="w-full px-4 py-3 bg-white dark:bg-white text-gray-900 dark:text-gray-900 border border-gray-200 dark:border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition-shadow placeholder:text-gray-400 dark:placeholder:text-gray-500"
               />
             </div>
           </div>
@@ -462,7 +491,7 @@ export const AddressStepForHearing = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
                 <div className="space-y-2 md:col-span-2">
-                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300">郵便番号（ハイフン不要）</label>
+                  <label className="text-sm font-medium text-gray-700">郵便番号（ハイフン不要）</label>
                   <div className="relative">
                     <input
                       type="text"
@@ -470,7 +499,7 @@ export const AddressStepForHearing = () => {
                       onChange={handleChange('postalCode')}
                       placeholder="例）5300001"
                       maxLength={7}
-                      className="w-full px-4 py-3 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition-shadow tracking-wider placeholder:text-gray-400 dark:placeholder:text-gray-500"
+                      className="w-full px-4 py-3 bg-white dark:bg-white text-gray-900 dark:text-gray-900 border border-gray-200 dark:border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition-shadow tracking-wider placeholder:text-gray-400 dark:placeholder:text-gray-500"
                     />
                     <MapPin className="w-5 h-5 text-gray-400 absolute right-3 top-3.5" />
                   </div>
@@ -498,60 +527,60 @@ export const AddressStepForHearing = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300">都道府県</label>
+                  <label className="text-sm font-medium text-gray-700">都道府県</label>
                   <input
                     type="text"
                     value={data.prefecture}
                     onChange={handleChange('prefecture')}
-                    className="w-full px-4 py-3 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition-shadow placeholder:text-gray-400 dark:placeholder:text-gray-500"
+                    className="w-full px-4 py-3 bg-white dark:bg-white text-gray-900 dark:text-gray-900 border border-gray-200 dark:border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition-shadow placeholder:text-gray-400 dark:placeholder:text-gray-500"
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300">市区町村</label>
+                  <label className="text-sm font-medium text-gray-700">市区町村</label>
                   <input
                     type="text"
                     value={data.city}
                     onChange={handleChange('city')}
-                    className="w-full px-4 py-3 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition-shadow placeholder:text-gray-400 dark:placeholder:text-gray-500"
+                    className="w-full px-4 py-3 bg-white dark:bg-white text-gray-900 dark:text-gray-900 border border-gray-200 dark:border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition-shadow placeholder:text-gray-400 dark:placeholder:text-gray-500"
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300">町域名</label>
+                  <label className="text-sm font-medium text-gray-700">町域名</label>
                   <input
                     type="text"
                     value={data.town}
                     onChange={handleChange('town')}
-                    className="w-full px-4 py-3 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition-shadow placeholder:text-gray-400 dark:placeholder:text-gray-500"
+                    className="w-full px-4 py-3 bg-white dark:bg-white text-gray-900 dark:text-gray-900 border border-gray-200 dark:border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition-shadow placeholder:text-gray-400 dark:placeholder:text-gray-500"
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300">丁目・番地・住居番号</label>
+                  <label className="text-sm font-medium text-gray-700">丁目・番地・住居番号</label>
                   <input
                     type="text"
                     value={data.addressLine}
                     onChange={handleChange('addressLine')}
                     placeholder="例）1丁目2-3"
-                    className="w-full px-4 py-3 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition-shadow placeholder:text-gray-400 dark:placeholder:text-gray-500"
+                    className="w-full px-4 py-3 bg-white dark:bg-white text-gray-900 dark:text-gray-900 border border-gray-200 dark:border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition-shadow placeholder:text-gray-400 dark:placeholder:text-gray-500"
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300">建物名・棟名</label>
+                  <label className="text-sm font-medium text-gray-700">建物名・棟名</label>
                   <input
                     type="text"
                     value={data.building}
                     onChange={handleChange('building')}
                     placeholder="例）イズホームマンション"
-                    className="w-full px-4 py-3 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition-shadow placeholder:text-gray-400 dark:placeholder:text-gray-500"
+                    className="w-full px-4 py-3 bg-white dark:bg-white text-gray-900 dark:text-gray-900 border border-gray-200 dark:border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition-shadow placeholder:text-gray-400 dark:placeholder:text-gray-500"
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300">号室</label>
+                  <label className="text-sm font-medium text-gray-700">号室</label>
                   <input
                     type="text"
                     value={data.room}
                     onChange={handleChange('room')}
                     placeholder="例）101号室"
-                    className="w-full px-4 py-3 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition-shadow placeholder:text-gray-400 dark:placeholder:text-gray-500"
+                    className="w-full px-4 py-3 bg-white dark:bg-white text-gray-900 dark:text-gray-900 border border-gray-200 dark:border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition-shadow placeholder:text-gray-400 dark:placeholder:text-gray-500"
                   />
                 </div>
               </div>

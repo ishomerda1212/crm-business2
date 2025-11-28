@@ -47,6 +47,21 @@ export function CustomerDetailPage({ customerId, onBack, onNavigate, onSelectPro
     return allProjects.filter((project) => project.customer_name === customer.customer_name);
   }, [customer, allProjects]);
 
+  // Customer型をCustomerSearchCandidate型に変換
+  const customerSearchCandidate = useMemo<CustomerSearchCandidate | null>(() => {
+    if (!customer?.customer_name) return null;
+    return {
+      id: customer.customer_id || customer.id || '',
+      customerName: customer.customer_name,
+      phone: customer.phone1 || '',
+      address: customer.current_address || customer.address || '',
+      isOb: false, // TODO: 実際のデータから判定
+      lastProjectName: null,
+      lastInteraction: null,
+      notes: null,
+    };
+  }, [customer]);
+
   const formatCurrency = (amount: number | null) => {
     if (amount === null) return '-';
     return `¥${amount.toLocaleString()}`;
@@ -392,6 +407,7 @@ export function CustomerDetailPage({ customerId, onBack, onNavigate, onSelectPro
                 <CardTitle className="text-lg font-semibold">関連案件一覧</CardTitle>
                 <CreateProjectDialog
                   onProceed={(candidate, propertyInfo) => onCreateProject?.(candidate, propertyInfo)}
+                  preSelectedCustomer={customerSearchCandidate}
                   trigger={
                     <Button className="bg-orange-500 hover:bg-orange-600 text-white">
                       <Plus className="w-4 h-4 mr-2" />

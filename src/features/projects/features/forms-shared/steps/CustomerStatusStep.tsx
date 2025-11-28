@@ -1,30 +1,30 @@
-import { User, Building2 } from 'lucide-react';
+import { UserCheck, UserPlus } from 'lucide-react';
 import { useContext } from 'react';
-import { FormContext as HearingFormContext } from '../../hearing-form/context/FormContext';
+import { FormContext as HearingFormContext } from '../hearing-form/context/FormContext';
 import { FormContext as SimpleFormContext } from '../simple-form/context/FormContext';
 
-export const CustomerTypeStep = () => {
+export const CustomerStatusStep = () => {
   // 両方のコンテキストを試す（どちらかが存在するはず）
   const hearingContext = useContext(HearingFormContext);
   const simpleContext = useContext(SimpleFormContext);
 
   if (!hearingContext && !simpleContext) {
-    throw new Error('CustomerTypeStep must be used within a form context');
+    throw new Error('CustomerStatusStep must be used within a form context');
   }
 
-  const handleIndividual = () => {
+  const handleNew = () => {
     if (hearingContext) {
-      hearingContext.setCustomerCategory('individual');
+      hearingContext.setCustomerType('new');
     } else if (simpleContext) {
-      simpleContext.setCustomerType('individual');
+      simpleContext.setCustomerStatus('new');
     }
   };
 
-  const handleCorporate = () => {
+  const handleExisting = () => {
     if (hearingContext) {
-      hearingContext.setCustomerCategory('corporate');
+      hearingContext.setCustomerType('existing');
     } else if (simpleContext) {
-      simpleContext.setCustomerType('corporate');
+      simpleContext.setCustomerStatus('existing');
     }
   };
 
@@ -35,41 +35,41 @@ export const CustomerTypeStep = () => {
           <span className="text-orange-500">お客様の種類</span>をお選びください
         </h2>
         <p className="text-gray-600">
-          個人のお客様か、法人のお客様かを選択してください。
+          既存のお客様か、新規のお客様かを選択してください。
         </p>
       </div>
 
       <div className="grid md:grid-cols-2 gap-6">
         <button
-          onClick={handleIndividual}
+          onClick={handleNew}
           className="group relative p-8 rounded-2xl border-2 border-gray-200 bg-white hover:border-orange-500 hover:bg-orange-50 transition-all duration-200 hover:shadow-lg"
         >
           <div className="flex flex-col items-center space-y-4">
             <div className="w-16 h-16 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center group-hover:bg-orange-500 group-hover:text-white transition-colors">
-              <User className="w-8 h-8" />
+              <UserPlus className="w-8 h-8" />
             </div>
             <h3 className="text-xl font-bold text-gray-800 group-hover:text-orange-600">
-              個人
+              新規客
             </h3>
             <p className="text-sm text-gray-600 text-center">
-              個人のお客様
+              新規のお客様
             </p>
           </div>
         </button>
 
         <button
-          onClick={handleCorporate}
+          onClick={handleExisting}
           className="group relative p-8 rounded-2xl border-2 border-gray-200 bg-white hover:border-orange-500 hover:bg-orange-50 transition-all duration-200 hover:shadow-lg"
         >
           <div className="flex flex-col items-center space-y-4">
             <div className="w-16 h-16 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center group-hover:bg-orange-500 group-hover:text-white transition-colors">
-              <Building2 className="w-8 h-8" />
+              <UserCheck className="w-8 h-8" />
             </div>
             <h3 className="text-xl font-bold text-gray-800 group-hover:text-orange-600">
-              法人
+              既存客
             </h3>
             <p className="text-sm text-gray-600 text-center">
-              法人のお客様
+              既存のお客様
             </p>
           </div>
         </button>

@@ -1,0 +1,442 @@
+---
+description: Projects配下の実装に関する詳細なルール
+globs:
+  - "src/features/projects/**"
+---
+
+# Projects配下の実装ルール
+
+このルールは `src/features/projects/` 配下のファイルに適用されます。
+
+## ディレクトリ構造
+
+```
+src/features/projects/
+  components/              # プロジェクト共通コンポーネント
+    - CreateProjectDialog.tsx
+    - ProjectHeader.tsx
+    - ProjectList.tsx
+    - ProjectStatusSteps.tsx
+    - ...（その他の共有コンポーネント）
+  features/                # プロジェクト関連の機能
+    {feature-name}/
+      {FeatureName}Dialog.tsx    # ダイアログ版（モーダル表示用）
+      {FeatureName}Page.tsx      # ページ版（フルスクリーン表示用）
+      components/                # 機能固有のコンポーネント（ステップコンポーネントなど）
+      data/                      # ステップ定義や設定データ
+    forms-shared/          # フォーム共有機能
+      components/          # 共有フォームコンポーネント（FormHeader, FormNavigationなど）
+      hearing-form/        # ヒアリングフォーム
+        context/           # フォームコンテキスト
+        pages/             # ページコンポーネント
+          - HearingFormPage.tsx              # ルーティング用ページ
+          - NewCustomerHearingFormPage.tsx   # 新規顧客向けヒアリングフォーム
+          - ExistingCustomerHearingFormPage.tsx  # 既存顧客向けヒアリングフォーム
+        types/             # 型定義
+      simple-form/         # 簡易フォーム
+        context/           # フォームコンテキスト
+        pages/             # ページコンポーネント
+          - SimpleFormPage.tsx               # ルーティング用ページ
+          - NewCustomerSimpleFormPage.tsx    # 新規顧客向け簡易フォーム
+          - ExistingCustomerSimpleFormPage.tsx  # 既存顧客向け簡易フォーム
+        types/             # 型定義
+      steps/               # 共有ステップコンポーネント
+        - ReformAreaStep.tsx
+        - PriorityPointsStep.tsx
+        - DesiredCompletionStep.tsx
+        - BudgetLoanStep.tsx
+        - EstimateStatusStep.tsx
+        - CustomerTypeStep.tsx
+        - IndividualInfoStep.tsx
+        - CorporateInfoStep.tsx
+        - AddressStep.tsx
+        - OccupationStep.tsx
+        - FamilyStep.tsx
+        - PropertySelectStep.tsx
+        - CustomerStatusStep.tsx
+  pages/                   # ページレベルのコンポーネント
+  types/                   # 型定義
+  utils/                   # ユーティリティ関数
+```
+
+## 機能の種類と構造パターン
+
+### パターン1: ステップベースの機能（複数ステップを含む）
+
+以下の機能は複数のステップを持つ手続き系機能です：
+- `additional-order`（追加注文）
+- `cancellation-consent`（キャンセル承認）
+- `change-consent`（変更承認）
+- `completion-procedure`（完工手続き）
+- `completion-survey`（完工アンケート）
+- `contract-procedure`（契約手続き）
+- `ratification-consent`（承認承認）
+
+**構造パターン**:
+```
+{feature-name}/
+  {FeatureName}Dialog.tsx       # ダイアログ版
+  {FeatureName}Page.tsx         # ページ版
+  components/
+    {StepName}Step.tsx          # 各ステップコンポーネント
+  data/
+    {featureName}Steps.ts       # ステップ定義データ
+```
+
+**実装例**:
+- `useProcedure`フックを使用してステップ管理
+- `ProcedureSidebar`と`StepNavigation`を使用してUIを構成
+- 各ステップは`components/`配下に配置
+
+### パターン2: シンプルな機能（1つのページまたはダイアログ）
+
+以下の機能は単一の画面またはダイアログで完結する機能です：
+- `assign-staff`（担当者割り当て）
+- `contract-approval`（契約承認）
+- `convenience-payment`（コンビニ決済）
+- `report-output`（帳票出力）
+- `survey-consent`（アンケート承認）
+
+**構造パターン**:
+```
+{feature-name}/
+  {FeatureName}Dialog.tsx       # ダイアログ版（必要に応じて）
+  {FeatureName}Page.tsx         # ページ版（必要に応じて）
+  components/                   # 必要に応じて
+```
+
+### パターン3: フォーム共有機能（forms-shared）
+
+既存顧客と新規顧客の両方に対応するフォーム機能：
+
+**ヒアリングフォーム（hearing-form）**:
+- 検討箇所、重視ポイント、完成時期、予算・ローン、見積状況などの情報を収集
+- 既存顧客向けと新規顧客向けで異なるステップ構成
+- `forms-shared/steps/`配下の共有ステップコンポーネントを利用
+
+**簡易フォーム（simple-form）**:
+- より簡潔な情報収集フォーム
+- 既存顧客向けと新規顧客向けで異なるステップ構成
+- `forms-shared/steps/`配下の共有ステップコンポーネントを利用
+
+**共有ステップコンポーネント（steps/）**:
+- フォーム間で共通利用されるステップコンポーネント
+- `ReformAreaStep`, `PriorityPointsStep`, `BudgetLoanStep`など
+- 各フォームのコンテキストを使用して状態管理
+
+## ステップベースの機能実装
+
+### ステップ定義データ（data/{featureName}Steps.ts）
+```typescript
+export const {featureName}Steps = [
+  { id: 'step-id', label: 'ステップ名', component: StepComponent },
+  // ...
+];
+```
+
+### ステップ管理
+- `useProcedure`フックを使用してステップ管理
+- `ProcedureSidebar`でステップ一覧を表示
+- `StepNavigation`で前後への移動を実装
+
+### ステップコンポーネント
+- 各ステップは独立したコンポーネントとして実装
+- ステップ固有の状態はローカルで管理
+- 親コンポーネントに必要なデータをコールバックで返す
+
+## フォーム実装のベストプラクティス
+
+### 既存顧客 vs 新規顧客の扱い
+
+1. **ルーティング用ページ**: `{FormName}Page.tsx`
+   - URLパラメータ（`customerId`）で既存顧客か新規顧客かを判定
+   - 適切なフォームページにルーティング
+
+2. **フォームページ**: 
+   - `NewCustomer{FormName}Page.tsx` - 新規顧客向け
+   - `ExistingCustomer{FormName}Page.tsx` - 既存顧客向け
+   - それぞれ異なるステップ構成を持つ
+
+3. **フォームコンテキスト**:
+   - `context/FormContext.tsx`でフォーム状態を管理
+   - `FormProvider`でラップして使用
+
+### 共有ステップコンポーネントの使用
+
+- `forms-shared/steps/`配下のステップコンポーネントは、各フォームのコンテキストを使用
+- `useFormContext()`でフォームデータにアクセス
+- ステップコンポーネントは再利用可能なように設計
+
+### フォームコンテキスト
+- `FormContext`でフォーム全体の状態を管理
+- `FormProvider`でフォームページをラップ
+- `useFormContext()`でフォームデータとアクションにアクセス
+
+### フォームページの構造
+```typescript
+// ルーティング用ページ（{FormName}Page.tsx）
+const FormPageContent = () => {
+  const [isExistingCustomer, setIsExistingCustomer] = useState<boolean | null>(null);
+  // URLパラメータから判定
+  return isExistingCustomer 
+    ? <ExistingCustomerForm /> 
+    : <NewCustomerForm />;
+};
+
+// フォーム実装（{CustomerType}{FormName}Page.tsx）
+const {FormName}Content = () => {
+  const { currentStep, data, prevStep, nextStep } = useFormContext();
+  // ステップレンダリング
+  return (/* ... */);
+};
+
+export const {CustomerType}{FormName} = () => {
+  return (
+    <FormProvider>
+      <{FormName}Content />
+    </FormProvider>
+  );
+};
+```
+
+### 共有ステップコンポーネント
+- `forms-shared/steps/`配下のステップコンポーネントは再利用可能に設計
+- 各フォームのコンテキストに依存する
+- ステップ固有のロジックはコンポーネント内に閉じ込める
+
+## 実装例
+
+### ステップベースの機能実装例
+
+#### ステップ定義データ
+
+```typescript
+// data/{featureName}Steps.ts
+import { StepComponent } from '../components/StepComponent';
+
+export const {featureName}Steps = [
+  { id: 'step-1', label: 'ステップ1', component: StepComponent },
+  { id: 'step-2', label: 'ステップ2', component: AnotherStepComponent },
+];
+```
+
+#### ステップベースのページ
+
+```typescript
+// {FeatureName}Page.tsx
+import { ProcedureSidebar } from '@/components/ProcedureSidebar';
+import { StepNavigation } from '@/components/StepNavigation';
+import { useProcedure } from '@/hooks/useProcedure';
+import { {featureName}Steps } from './data/{featureName}Steps';
+
+export const {FeatureName}Page = () => {
+  const {
+    steps,
+    currentStep,
+    currentStepIndex,
+    goToStep,
+    nextStep,
+    previousStep,
+    canGoNext,
+    canGoPrevious,
+  } = useProcedure({featureName}Steps);
+
+  const renderStep = () => {
+    switch (currentStep.id) {
+      case 'step-1':
+        return <StepComponent />;
+      case 'step-2':
+        return <AnotherStepComponent />;
+      default:
+        return <StepComponent />;
+    }
+  };
+
+  return (
+    <div className="flex min-h-screen bg-gray-50">
+      <ProcedureSidebar
+        steps={steps}
+        currentStepIndex={currentStepIndex}
+        onStepClick={goToStep}
+        title="機能名"
+      />
+      <div className="flex-1 p-6">
+        {renderStep()}
+        <StepNavigation
+          onPrev={previousStep}
+          onNext={nextStep}
+          canGoPrev={canGoPrevious}
+          canGoNext={canGoNext}
+        />
+      </div>
+    </div>
+  );
+};
+```
+
+### フォーム実装例
+
+#### フォームコンテキスト
+
+```typescript
+// context/FormContext.tsx
+import { createContext, useContext, useState, ReactNode } from 'react';
+
+type FormData = {
+  // フォームデータの型定義
+};
+
+type FormContextType = {
+  data: FormData;
+  currentStep: number;
+  updateData: (data: Partial<FormData>) => void;
+  nextStep: () => void;
+  prevStep: () => void;
+  // その他のメソッド
+};
+
+const FormContext = createContext<FormContextType | undefined>(undefined);
+
+export const FormProvider = ({ children }: { children: ReactNode }) => {
+  const [data, setData] = useState<FormData>({});
+  const [currentStep, setCurrentStep] = useState(1);
+
+  const updateData = (newData: Partial<FormData>) => {
+    setData((prev) => ({ ...prev, ...newData }));
+  };
+
+  const nextStep = () => setCurrentStep((prev) => prev + 1);
+  const prevStep = () => setCurrentStep((prev) => Math.max(1, prev - 1));
+
+  return (
+    <FormContext.Provider value={{ data, currentStep, updateData, nextStep, prevStep }}>
+      {children}
+    </FormContext.Provider>
+  );
+};
+
+export const useFormContext = () => {
+  const context = useContext(FormContext);
+  if (!context) throw new Error('useFormContext must be used within FormProvider');
+  return context;
+};
+```
+
+#### フォームページ（新規顧客向け）
+
+```typescript
+// pages/NewCustomer{FormName}Page.tsx
+import { FormProvider, useFormContext } from '../context/FormContext';
+import { FormHeader, FormNavigation } from '../../components';
+import { Step1, Step2 } from '../../steps';
+
+const {FormName}Content = () => {
+  const { currentStep, data, prevStep, nextStep, canProceed } = useFormContext();
+
+  const steps = [
+    { id: 1, label: 'ステップ1' },
+    { id: 2, label: 'ステップ2' },
+  ];
+
+  const renderStep = () => {
+    switch (currentStep) {
+      case 1:
+        return <Step1 />;
+      case 2:
+        return <Step2 />;
+      default:
+        return <Step1 />;
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
+      <FormHeader
+        title="フォーム名"
+        steps={steps}
+        currentStep={currentStep}
+      />
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {renderStep()}
+        <FormNavigation
+          currentStep={currentStep}
+          totalSteps={steps.length}
+          canProceed={canProceed()}
+          onPrev={prevStep}
+          onNext={nextStep}
+          showPrev={currentStep > 1}
+        />
+      </main>
+    </div>
+  );
+};
+
+export const NewCustomer{FormName} = () => {
+  return (
+    <FormProvider>
+      <{FormName}Content />
+    </FormProvider>
+  );
+};
+```
+
+#### 共有ステップコンポーネント
+
+```typescript
+// steps/{StepName}Step.tsx
+import { useFormContext } from '../{form-name}/context/FormContext';
+
+export const {StepName}Step = () => {
+  const { data, updateData } = useFormContext();
+
+  const handleChange = (value: string) => {
+    updateData({ fieldName: value });
+  };
+
+  return (
+    <div>
+      {/* ステップ固有のUI */}
+    </div>
+  );
+};
+```
+
+## 注意事項
+
+### ディレクトリ構造
+- `features/`配下の機能は、機能ごとに独立したディレクトリに配置
+- 共有コンポーネントは`forms-shared/`配下に配置
+- ステップコンポーネントは機能固有の`components/`または`forms-shared/steps/`に配置
+
+### ステップベースの機能
+- ステップ定義は`data/`配下に配置し、`{featureName}Steps.ts`という命名規則に従う
+- `useProcedure`フックを使用してステップ管理を行う
+- ステップ間のデータ受け渡しは親コンポーネントのstateで管理
+- 各ステップは独立性を保ち、再利用可能に設計
+
+### フォーム実装
+- 既存顧客と新規顧客で異なるステップ構成が必要な場合は、別々のページコンポーネントを作成
+- ルーティング用ページ（`{FormName}Page.tsx`）でURLパラメータから顧客タイプを判定
+- フォームコンテキストは各フォームタイプ（hearing-form, simple-form）ごとに独立
+- 共有ステップコンポーネントは、使用するフォームのコンテキストに依存することを前提とする
+
+### ダイアログとページの使い分け
+- 軽量な操作や確認はダイアログを使用
+- 複数のステップを含む手続きはページを使用
+- 必要に応じて両方を実装し、用途に応じて使い分け
+
+### 命名規則
+- ディレクトリ名: kebab-case（例: `completion-procedure`）
+- コンポーネント名: PascalCase（例: `CompletionProcedurePage.tsx`）
+- ステップ定義ファイル: camelCase + Steps（例: `completionSteps.ts`）
+- 型定義: PascalCase（例: `FormData`, `StepData`）
+
+### インポートパス
+- 相対パスではなく、`@/`エイリアスを使用（例: `@/components/ui/button`）
+- `forms-shared`配下のコンポーネントは相対パスでインポート（例: `../steps/ReformAreaStep`）
+
+### 状態管理
+- ローカル状態は`useState`を使用
+- フォーム状態は`FormContext`で管理
+- ステップ管理は`useProcedure`フックを使用
+- グローバル状態は必要最小限に抑える

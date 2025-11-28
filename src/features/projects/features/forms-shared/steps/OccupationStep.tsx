@@ -1,17 +1,28 @@
-import { useFormContext } from '../../hearing-form/context/FormContext';
+import { useContext } from 'react';
+import { FormContext as HearingFormContext } from '../hearing-form/context/FormContext';
+import { FormContext as SimpleFormContext } from '../simple-form/context/FormContext';
 
-const occupationOptions: ('会社員' | '公務員' | '自営業' | 'その他')[] = ['会社員', '公務員', '自営業', 'その他'];
+const occupationOptions = ['会社員', '公務員', '自営業', 'その他'] as const;
 
-const dayOfWeekOptions: ('月' | '火' | '水' | '木' | '金' | '土' | '日' | '不定休')[] = ['月', '火', '水', '木', '金', '土', '日', '不定休'];
+const dayOfWeekOptions = ['月', '火', '水', '木', '金', '土', '日', '不定休'] as const;
 
-export const OccupationStepForHearing = () => {
-  const { data, updateOccupation } = useFormContext();
+export const OccupationStep = () => {
+  // 両方のコンテキストをサポート
+  const hearingContext = useContext(HearingFormContext);
+  const simpleContext = useContext(SimpleFormContext);
 
-  const handleOccupationChange = (occupation: '会社員' | '公務員' | '自営業' | 'その他') => {
+  if (!hearingContext && !simpleContext) {
+    throw new Error('OccupationStep must be used within a form context');
+  }
+
+  const context = (hearingContext || simpleContext)!;
+  const { data, updateOccupation } = context;
+
+  const handleOccupationChange = (occupation: typeof occupationOptions[number]) => {
     updateOccupation({ occupation });
   };
 
-  const handleDayOffToggle = (day: '月' | '火' | '水' | '木' | '金' | '土' | '日' | '不定休') => {
+  const handleDayOffToggle = (day: typeof dayOfWeekOptions[number]) => {
     const currentDaysOff = data.workDaysOff;
     const isSelected = currentDaysOff.includes(day);
     const newDaysOff = isSelected

@@ -1,15 +1,32 @@
 import { UsersRound } from 'lucide-react';
-import { CustomerFormProvider, useCustomerFormContext } from '../simple-form/context/FormContext';
-import { FormHeader, FormNavigation } from '..';
-import { CustomerTypeStep } from './CustomerTypeStep';
-import { IndividualInfoStep } from './IndividualInfoStep';
-import { CorporateInfoStep } from './CorporateInfoStep';
-import { AddressStep } from './AddressStep';
-import { OccupationStep } from './OccupationStep';
-import { FamilyStep } from './FamilyStep';
+import { CustomerFormProvider, useCustomerFormContext } from '../context/FormContext';
+import { FormHeader, FormNavigation } from '../../components';
+import {
+  CustomerTypeStep,
+  IndividualInfoStep,
+  CorporateInfoStep,
+  AddressStep,
+  OccupationStep,
+  FamilyStep,
+} from '../../steps';
 
-const SimpleFormContent = () => {
-  const { currentStep, data, prevStep, nextStep, canProceed } = useCustomerFormContext();
+const NewCustomerSimpleFormContent = () => {
+  const { currentStep, data, prevStep, nextStep, canProceed, getTotalSteps } = useCustomerFormContext();
+
+  const steps = [
+    { id: 1, label: '種別選択' },
+    {
+      id: 2,
+      label: data.customerType === 'corporate' ? '法人情報' : 'お客様情報',
+    },
+    { id: 3, label: 'ご住所情報' },
+    ...(data.customerType === 'individual'
+      ? [
+          { id: 4, label: 'ご職業' },
+          { id: 5, label: 'ご家族' },
+        ]
+      : []),
+  ];
 
   const renderStep = () => {
     switch (currentStep) {
@@ -42,21 +59,6 @@ const SimpleFormContent = () => {
     }
   };
 
-  const steps = [
-    { id: 1, label: '種別選択' },
-    {
-      id: 2,
-      label: data.customerType === 'corporate' ? '法人情報' : 'お客様情報',
-    },
-    { id: 3, label: 'ご住所情報' },
-    ...(data.customerType === 'individual'
-      ? [
-          { id: 4, label: 'ご職業' },
-          { id: 5, label: 'ご家族' },
-        ]
-      : []),
-  ];
-
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
       <FormHeader
@@ -71,7 +73,7 @@ const SimpleFormContent = () => {
         {renderStep()}
         <FormNavigation
           currentStep={currentStep}
-          totalSteps={steps.length}
+          totalSteps={getTotalSteps()}
           canProceed={canProceed()}
           onPrev={prevStep}
           onNext={nextStep}
@@ -86,10 +88,10 @@ const SimpleFormContent = () => {
   );
 };
 
-export const SimpleForm = () => {
+export const NewCustomerSimpleForm = () => {
   return (
     <CustomerFormProvider>
-      <SimpleFormContent />
+      <NewCustomerSimpleFormContent />
     </CustomerFormProvider>
   );
 };

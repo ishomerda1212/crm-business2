@@ -1,4 +1,4 @@
-export { FormHeader } from './components/FormHeader';
-export { FormNavigation } from './components/FormNavigation';
-export { HearingForm } from './components/HearingForm';
+export * from './components';
+export * from './steps';
+export * from './hearing-form';
 export * from './simple-form';

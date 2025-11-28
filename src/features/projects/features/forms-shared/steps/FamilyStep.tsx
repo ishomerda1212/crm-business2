@@ -1,7 +1,8 @@
-import { ChangeEvent } from 'react';
-import { useFormContext } from '../../hearing-form/context/FormContext';
+import { ChangeEvent, useContext } from 'react';
+import { FormContext as HearingFormContext } from '../hearing-form/context/FormContext';
+import { FormContext as SimpleFormContext } from '../simple-form/context/FormContext';
 
-const householdMemberOptions: ('夫' | '妻' | '子' | '父' | '母' | '祖父' | '祖母' | '兄弟姉妹')[] = [
+const householdMemberOptions = [
   '夫',
   '妻',
   '子',
@@ -10,12 +11,21 @@ const householdMemberOptions: ('夫' | '妻' | '子' | '父' | '母' | '祖父' 
   '祖父',
   '祖母',
   '兄弟姉妹',
-];
+] as const;
 
-const guestFrequencyOptions: ('ほぼ無し' | '毎週' | '毎月' | '半年' | '毎年')[] = ['ほぼ無し', '毎週', '毎月', '半年', '毎年'];
+const guestFrequencyOptions = ['ほぼ無し', '毎週', '毎月', '半年', '毎年'] as const;
 
-export const FamilyStepForHearing = () => {
-  const { data, updateFamily } = useFormContext();
+export const FamilyStep = () => {
+  // 両方のコンテキストをサポート
+  const hearingContext = useContext(HearingFormContext);
+  const simpleContext = useContext(SimpleFormContext);
+
+  if (!hearingContext && !simpleContext) {
+    throw new Error('FamilyStep must be used within a form context');
+  }
+
+  const context = (hearingContext || simpleContext)!;
+  const { data, updateFamily } = context;
 
   const handleAdultsChange = (event: ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
@@ -29,7 +39,7 @@ export const FamilyStepForHearing = () => {
     updateFamily({ numberOfChildren: numValue });
   };
 
-  const handleMemberToggle = (member: '夫' | '妻' | '子' | '父' | '母' | '祖父' | '祖母' | '兄弟姉妹') => {
+  const handleMemberToggle = (member: typeof householdMemberOptions[number]) => {
     const currentMembers = data.householdMembers;
     const isSelected = currentMembers.includes(member);
     const newMembers = isSelected
@@ -42,7 +52,7 @@ export const FamilyStepForHearing = () => {
     updateFamily({ pets: event.target.value });
   };
 
-  const handleGuestFrequencyChange = (frequency: 'ほぼ無し' | '毎週' | '毎月' | '半年' | '毎年') => {
+  const handleGuestFrequencyChange = (frequency: typeof guestFrequencyOptions[number]) => {
     updateFamily({ guestFrequency: frequency });
   };
 
@@ -61,19 +71,19 @@ export const FamilyStepForHearing = () => {
         <section className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">大人人数</label>
+              <label className="text-sm font-medium text-gray-700">大人人数</label>
               <input
                 type="number"
                 value={data.numberOfAdults ?? ''}
                 onChange={handleAdultsChange}
                 min="0"
                 placeholder="例）2"
-                className="w-full px-4 py-3 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition-shadow placeholder:text-gray-400 dark:placeholder:text-gray-500"
+                className="w-full px-4 py-3 bg-white dark:bg-white text-gray-900 dark:text-gray-900 border border-gray-200 dark:border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition-shadow placeholder:text-gray-400 dark:placeholder:text-gray-500"
               />
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label className="text-sm font-medium text-gray-700">
                 子供人数（18歳以下）
               </label>
               <input
@@ -82,7 +92,7 @@ export const FamilyStepForHearing = () => {
                 onChange={handleChildrenChange}
                 min="0"
                 placeholder="例）1"
-                className="w-full px-4 py-3 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition-shadow placeholder:text-gray-400 dark:placeholder:text-gray-500"
+                className="w-full px-4 py-3 bg-white dark:bg-white text-gray-900 dark:text-gray-900 border border-gray-200 dark:border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition-shadow placeholder:text-gray-400 dark:placeholder:text-gray-500"
               />
             </div>
           </div>
@@ -122,15 +132,15 @@ export const FamilyStepForHearing = () => {
         </section>
 
         <section className="space-y-2">
-          <label className="text-sm font-medium text-gray-700 dark:text-gray-300">ペット</label>
+          <label className="text-sm font-medium text-gray-700">ペット</label>
           <input
             type="text"
             value={data.pets}
             onChange={handlePetsChange}
             placeholder="例）犬1匹、猫2匹"
-            className="w-full px-4 py-3 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition-shadow placeholder:text-gray-400 dark:placeholder:text-gray-500"
+            className="w-full px-4 py-3 bg-white dark:bg-white text-gray-900 dark:text-gray-900 border border-gray-200 dark:border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition-shadow placeholder:text-gray-400 dark:placeholder:text-gray-500"
           />
-          <p className="text-xs text-gray-500 dark:text-gray-400">ペットを飼っていない場合は空欄のままで結構です。</p>
+          <p className="text-xs text-gray-500">ペットを飼っていない場合は空欄のままで結構です。</p>
         </section>
 
         <section className="space-y-4">

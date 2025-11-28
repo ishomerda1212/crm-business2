@@ -1,5 +1,5 @@
-import { useFormContext } from '../../hearing-form/context/FormContext';
-import { DesiredCompletionTiming } from '../../hearing-form/types';
+import { useFormContext } from '../hearing-form/context/FormContext';
+import { DesiredCompletionTiming } from '../hearing-form/types';
 
 const completionOptions: { value: DesiredCompletionTiming; label: string; description?: string }[] = [
   { value: 'asap', label: '決まればすぐにでも' },

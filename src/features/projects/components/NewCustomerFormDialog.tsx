@@ -48,11 +48,13 @@ type NewCustomerFormDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onContinue?: () => void;
+  description?: string;
+  customerId?: string | null;
 };
 
 const QR_IMAGE_SIZE = 192;
 
-export function NewCustomerFormDialog({ open, onOpenChange, onContinue }: NewCustomerFormDialogProps) {
+export function NewCustomerFormDialog({ open, onOpenChange, onContinue, description, customerId }: NewCustomerFormDialogProps) {
   const [selectedFormId, setSelectedFormId] = useState<FormOptionId>('hearing');
   const [copyState, setCopyState] = useState<'idle' | 'copied'>('idle');
 
@@ -73,11 +75,16 @@ export function NewCustomerFormDialog({ open, onOpenChange, onContinue }: NewCus
       return path;
     }
     try {
-      return new URL(path, window.location.origin).toString();
+      const url = new URL(path, window.location.origin);
+      // 既存客の場合は顧客IDをURLパラメータに追加
+      if (customerId) {
+        url.searchParams.set('customerId', customerId);
+      }
+      return url.toString();
     } catch {
       return path;
     }
-  }, [selectedForm]);
+  }, [selectedForm, customerId]);
 
   const qrCodeSrc = useMemo(() => {
     const encoded = encodeURIComponent(formUrl);
@@ -95,7 +102,7 @@ export function NewCustomerFormDialog({ open, onOpenChange, onContinue }: NewCus
   };
 
   const handleContinue = () => {
-    window.open(selectedForm.path, '_blank', 'noopener,noreferrer');
+    window.open(formUrl, '_blank', 'noopener,noreferrer');
     onOpenChange(false);
     onContinue?.();
   };
@@ -106,7 +113,7 @@ export function NewCustomerFormDialog({ open, onOpenChange, onContinue }: NewCus
         <DialogHeader>
           <DialogTitle>フォームを選択して共有</DialogTitle>
           <DialogDescription>
-            新規顧客には目的に応じてフォームを共有できます。URLまたはQRコードでご案内ください。
+            {description || '新規顧客には目的に応じてフォームを共有できます。URLまたはQRコードでご案内ください。'}
           </DialogDescription>
         </DialogHeader>
 

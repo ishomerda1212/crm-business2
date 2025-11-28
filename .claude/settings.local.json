@@ -3,7 +3,20 @@
     "allow": [
       "Bash(if [ ! -d \"doc\" ])",
       "Bash(then mkdir doc)",
-      "Bash(fi)"
+      "Bash(fi)",
+      "Bash(tree:*)",
+      "Bash(mkdir:*)",
+      "Bash(mv:*)",
+      "Bash(rm:*)",
+      "Bash(for file in BudgetLoanStep.tsx DesiredCompletionStep.tsx EstimateStatusStep.tsx PriorityPointsStep.tsx)",
+      "Bash(do sed -i \"s|from ''../../../hearing-form/|from ''../hearing-form/|g\" \"$file\")",
+      "Bash(done)",
+      "Bash(for file in AddressStepForHearing.tsx CorporateInfoStepForHearing.tsx FamilyStepForHearing.tsx IndividualInfoStepForHearing.tsx OccupationStepForHearing.tsx)",
+      "Bash(do sed -i \"s|from ''../../hearing-form/|from ''../hearing-form/|g\" \"$file\")",
+      "Bash(for file in PropertySelectStep.tsx CustomerStatusStep.tsx CustomerTypeStep.tsx)",
+      "Bash(for file in AddressStep.tsx CorporateInfoStep.tsx FamilyStep.tsx IndividualInfoStep.tsx OccupationStep.tsx)",
+      "Bash(do sed -i \"s|from ''../../../simple-form/|from ''../simple-form/|g\" \"$file\")",
+      "Bash(npm run build:*)"
     ],
     "deny": [],
     "ask": []

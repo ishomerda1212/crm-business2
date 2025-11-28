@@ -15,13 +15,15 @@ import { ConstructionAddressSelectDialog } from './ConstructionAddressSelectDial
 type CreateProjectDialogProps = {
   trigger: ReactNode;
   onProceed?: (candidate: CustomerSearchCandidate | null, propertyInfo?: PropertyInfo) => void;
+  preSelectedCustomer?: CustomerSearchCandidate | null;
 };
 
-export function CreateProjectDialog({ trigger, onProceed }: CreateProjectDialogProps) {
+export function CreateProjectDialog({ trigger, onProceed, preSelectedCustomer }: CreateProjectDialogProps) {
   const [open, setOpen] = useState(false);
   const [formDialogOpen, setFormDialogOpen] = useState(false);
+  const [existingCustomerFormDialogOpen, setExistingCustomerFormDialogOpen] = useState(false);
   const [addressSelectDialogOpen, setAddressSelectDialogOpen] = useState(false);
-  const [selectedCandidate, setSelectedCandidate] = useState<CustomerSearchCandidate | null>(null);
+  const [selectedCandidate, setSelectedCandidate] = useState<CustomerSearchCandidate | null>(preSelectedCustomer || null);
   const [nameQuery, setNameQuery] = useState('');
   const [phoneQuery, setPhoneQuery] = useState('');
   const [addressQuery, setAddressQuery] = useState('');
@@ -56,18 +58,10 @@ export function CreateProjectDialog({ trigger, onProceed }: CreateProjectDialogP
   };
 
   const handleSelect = (candidate: CustomerSearchCandidate | null) => {
-    // 顧客に紐づく工事住所を取得
-    const addresses = getConstructionAddressesByCustomerName(candidate?.customerName || '');
-    
-    if (addresses.length > 0) {
-      // 工事住所がある場合は選択ダイアログを表示
-      setSelectedCandidate(candidate);
-      setAddressSelectDialogOpen(true);
-    } else {
-      // 工事住所がない場合はそのまま進む
-      onProceed?.(candidate);
-      handleClose();
-    }
+    // 既存顧客の場合はフォーム選択ダイアログを表示
+    setSelectedCandidate(candidate);
+    setExistingCustomerFormDialogOpen(true);
+    handleClose();
   };
 
   const handleAddressSelect = (propertyInfo: PropertyInfo) => {
@@ -90,6 +84,14 @@ export function CreateProjectDialog({ trigger, onProceed }: CreateProjectDialogP
     }
   };
 
+  const handleTriggerClick = () => {
+    // 事前に選択された顧客がいる場合は、顧客検索ダイアログをスキップして直接フォーム選択ダイアログを表示
+    if (preSelectedCustomer) {
+      setSelectedCandidate(preSelectedCustomer);
+      setExistingCustomerFormDialogOpen(true);
+    }
+  };
+
   const handleContinueAsNew = () => {
     handleClose();
     setFormDialogOpen(true);
@@ -104,10 +106,29 @@ export function CreateProjectDialog({ trigger, onProceed }: CreateProjectDialogP
     setFormDialogOpen(false);
   };
 
+  const handleExistingCustomerFormDialogChange = (value: boolean) => {
+    setExistingCustomerFormDialogOpen(value);
+    if (!value) {
+      setSelectedCandidate(null);
+    }
+  };
+
+  const handleExistingCustomerFormContinue = () => {
+    // 既存顧客の場合は、フォームを開いた後、案件作成処理を続行
+    // フォーム選択ダイアログを閉じる（フォームは別ウィンドウで開かれる）
+    setExistingCustomerFormDialogOpen(false);
+    setSelectedCandidate(null);
+  };
+
   return (
     <>
-      <Dialog open={open} onOpenChange={handleMainDialogChange}>
-        <DialogTrigger asChild>{trigger}</DialogTrigger>
+      {preSelectedCustomer ? (
+        <div onClick={handleTriggerClick}>
+          {trigger}
+        </div>
+      ) : (
+        <Dialog open={open} onOpenChange={handleMainDialogChange}>
+          <DialogTrigger asChild>{trigger}</DialogTrigger>
         <DialogContent className="w-full max-w-3xl">
         <DialogHeader>
           <DialogTitle>新規案件の事前確認</DialogTitle>
@@ -213,10 +234,18 @@ export function CreateProjectDialog({ trigger, onProceed }: CreateProjectDialogP
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      )}
       <NewCustomerFormDialog
         open={formDialogOpen}
         onOpenChange={handleFormDialogChange}
         onContinue={handleFormContinue}
+      />
+      <NewCustomerFormDialog
+        open={existingCustomerFormDialogOpen}
+        onOpenChange={handleExistingCustomerFormDialogChange}
+        onContinue={handleExistingCustomerFormContinue}
+        description={selectedCandidate ? `${selectedCandidate.customerName}様に紐づく案件作成のためのフォームを選択して共有できます。URLまたはQRコードでご案内ください。` : undefined}
+        customerId={selectedCandidate?.id}
       />
       {selectedCandidate && (
         <ConstructionAddressSelectDialog
