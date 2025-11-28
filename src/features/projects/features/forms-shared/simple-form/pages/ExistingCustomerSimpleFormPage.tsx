@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { UsersRound } from 'lucide-react';
 import { CustomerFormProvider, useCustomerFormContext } from '../context/FormContext';
 import { FormHeader, FormNavigation } from '../../components';
-import { PropertySelectStep, AddressStep } from '../../steps';
+import { PropertySelectStep, AddressStep, ExistingCustomerGreetingStep } from '../../steps';
 
 const ExistingCustomerSimpleFormContent = () => {
   const { currentStep, prevStep, nextStep, canProceed, getTotalSteps, setSelectedCustomerId, setCustomerStatus } = useCustomerFormContext();
@@ -18,18 +18,21 @@ const ExistingCustomerSimpleFormContent = () => {
   }, []); // 初回マウント時のみ実行
 
   const steps = [
-    { id: 1, label: '物件選択' },
-    { id: 2, label: 'ご住所情報' },
+    { id: 1, label: 'ご案内' },
+    { id: 2, label: '物件選択' },
+    { id: 3, label: 'ご住所情報' },
   ];
 
   const renderStep = () => {
     switch (currentStep) {
       case 1:
-        return <PropertySelectStep />;
+        return <ExistingCustomerGreetingStep />;
       case 2:
+        return <PropertySelectStep />;
+      case 3:
         return <AddressStep />;
       default:
-        return <PropertySelectStep />;
+        return <ExistingCustomerGreetingStep />;
     }
   };
 

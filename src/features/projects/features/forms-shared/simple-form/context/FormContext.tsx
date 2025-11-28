@@ -213,8 +213,8 @@ export const CustomerFormProvider = ({ children }: { children: ReactNode }) => {
 
   const getTotalSteps = (): number => {
     if (data.customerStatus === 'existing') {
-      // 既存客: 物件選択 + 住所情報
-      return 2;
+      // ご案内 + 物件選択 + 住所情報
+      return 3;
     } else if (data.customerStatus === 'new') {
       // 新規客: 顧客タイプ選択 + 顧客情報 + 住所情報 + (職業 + 家族)
       const customerInfoSteps = 1; // 顧客情報
@@ -231,8 +231,10 @@ export const CustomerFormProvider = ({ children }: { children: ReactNode }) => {
       // 既存客の場合
       switch (currentStep) {
         case 1:
+          return true;
+        case 2:
           return data.selectedPropertyId !== null;
-        case 2: {
+        case 3: {
           const hasResidenceOption = data.residenceAddressOption !== null;
           const hasConstructionAddress =
             data.constructionPostalCode.trim() !== '' &&

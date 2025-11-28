@@ -1,0 +1,93 @@
+---
+description: forms-shared配下のヒアリング／簡易フォームまとめ
+globs:
+  - "src/features/projects/features/forms-shared/**"
+---
+
+# フォーム実装サマリ
+
+`forms-shared`配下には、ヒアリングフォーム（hearing-form）と簡易フォーム（simple-form）の2系統があり、それぞれ新規顧客向けページと既存顧客向けページを提供しています。ここでは現在実装済みのステップ構成と振る舞いを整理します。
+
+## ヒアリングフォーム（`hearing-form/pages`）
+
+### 新規顧客：`NewCustomerHearingFormPage.tsx`
+
+1. **検討箇所** (`ReformAreaStep`)  
+2. **重視ポイント** (`PriorityPointsStep`)  
+3. **完成時期** (`DesiredCompletionStep`)  
+4. **予算・ローン** (`BudgetLoanStep`)  
+5. **見積状況** (`EstimateStatusStep`)  
+6. **種別選択** (`CustomerTypeStep`)  
+7. **個人/法人情報**（ラベルは `data.customerCategory` で動的切替）  
+8. **ご住所情報** (`AddressStep`)  
+9. **ご職業**（個人のみ表示、`OccupationStep`）  
+10. **ご家族**（個人のみ表示、`FamilyStep`）
+
+- ステップ1〜5を「案件ヒアリング領域」と定義。  
+- ステップ6以降が「顧客・物件ヒアリング領域」。  
+- マウント時に `setCustomerType('new')` を実行し、新規顧客前提で初期化。
+
+### 既存顧客：`ExistingCustomerHearingFormPage.tsx`
+
+1. **再訪挨拶ステップ（新設）**  
+   - 例文: 「`{顧客名} 様　再度お問い合わせいただきありがとうございます。`」  
+   - 注意書き: 「`他の名義・法人での工事の場合は別フォームでのお手続きとなりますので、営業までお申し付けください。`」  
+   - 既存顧客であることの再確認と名義違い時の動線案内のみを行うインフォメーションステップ。
+2. **物件選択** (`PropertySelectStep`)  
+3. **検討箇所**  
+4. **重視ポイント**  
+5. **完成時期**  
+6. **予算・ローン**  
+7. **見積状況**
+
+> 既存顧客は物件がステップ2で確定するため、以降は案件ヒアリング領域のみで完結し、**顧客・物件ヒアリング領域は不要**です（顧客基本情報は既にCRMに存在している前提）。
+
+- マウント時に `setCustomerType('existing')` と URL クエリから取得した `customerId` を `setSelectedCustomerId` に連携。
+- 案件ヒアリング領域のステップは新規と同じ構成（ステップ番号のみシフト）。
+
+### 共有ステップ利用状況（ヒアリング）
+
+- 案件情報系: `ReformAreaStep`, `PriorityPointsStep`, `DesiredCompletionStep`, `BudgetLoanStep`, `EstimateStatusStep`
+- 顧客・物件系（新規のみ）: `CustomerTypeStep`, `IndividualInfoStep`, `CorporateInfoStep`, `AddressStep`, `OccupationStep`, `FamilyStep`
+- 既存顧客専用: 再訪挨拶ステップ（文言のみの軽量ステップ）、`PropertySelectStep`
+
+どちらのページも `FormProvider` でラップし、`useFormContext()`から以下のメソッドを利用：`currentStep`, `prevStep`, `nextStep`, `canProceed`, `getTotalSteps`, `setCustomerType`, `setSelectedCustomerId` など。`FormHeader` / `FormNavigation` を共通UIとして使用し、`hideNavigationBeforeStep` によりステップ1まではナビゲーション非表示。
+
+## 簡易フォーム（`simple-form/pages`）
+
+### 新規顧客：`NewCustomerSimpleFormPage.tsx`
+
+1. **種別選択** (`CustomerTypeStep`)  
+2. **個人/法人情報**（動的）  
+3. **ご住所情報** (`AddressStep`)  
+4. **ご職業**（個人のみ表示）  
+5. **ご家族**（個人のみ表示）
+
+- `useCustomerFormContext()` を利用。`getTotalSteps()` は `data.customerType` に応じて変動。
+- 案件ヒアリング領域は持たず、顧客・物件ヒアリング領域のみで完結。
+
+### 既存顧客：`ExistingCustomerSimpleFormPage.tsx`
+
+1. **再訪挨拶ステップ（新設）**  
+   - ヒアリングフォームと同様の文言で既存顧客への感謝と名義違い時の案内を表示。  
+   - `setCustomerStatus('existing')` を確定させ、他のフォーム利用が必要なケースを明示。
+2. **物件選択** (`PropertySelectStep`)  
+3. **ご住所情報** (`AddressStep`)
+
+- URL クエリから `customerId` を取得し、`setSelectedCustomerId` へ投入。
+- 既存顧客は物件と住所のみ再確認すればよいため、顧客・物件ヒアリング領域の追加ステップは存在しません。
+
+### 共有ステップ利用状況（簡易）
+
+- 新規: `CustomerTypeStep`, `IndividualInfoStep` / `CorporateInfoStep`, `AddressStep`, `OccupationStep`, `FamilyStep`
+- 既存: 再訪挨拶ステップ、`PropertySelectStep`, `AddressStep`
+- どちらも `FormHeader` / `FormNavigation` を再利用。`CustomerFormProvider` がフォーム状態・`currentStep`・`canProceed`・`setCustomerStatus` などを提供。
+
+## ステップ分類の指針
+
+- **案件ヒアリング領域**（ヒアリングのみ）: 検討箇所〜見積状況までの5ステップ。既存顧客は物件確定後にここへ即時進入。
+- **顧客・物件ヒアリング領域**: 新規顧客のみが利用。種別選択〜家族情報までを含む。
+- **既存顧客前提ステップ**: 再訪挨拶ステップ → `PropertySelectStep` → （必要最小限の住所確認）。既存フローでは顧客情報はCRMに存在する前提のため再入力不要。
+
+このファイルではフォーム仕様のみを管理し、その他の`projects.mdc`のルールと重複しないようにしています。フォーム改修時はここを起点にステップ追加・削除やコンテキスト仕様を更新してください。
+

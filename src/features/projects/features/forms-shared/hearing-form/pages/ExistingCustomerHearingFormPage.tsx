@@ -9,16 +9,11 @@ import {
   DesiredCompletionStep,
   BudgetLoanStep,
   EstimateStatusStep,
-  CustomerTypeStep,
-  AddressStep,
-  OccupationStep,
-  FamilyStep,
-  IndividualInfoStep,
-  CorporateInfoStep,
+  ExistingCustomerGreetingStep,
 } from '../../steps';
 
 const ExistingCustomerHearingFormContent = () => {
-  const { currentStep, data, prevStep, nextStep, canProceed, getTotalSteps, setSelectedCustomerId, setCustomerType } = useFormContext();
+  const { currentStep, prevStep, nextStep, canProceed, getTotalSteps, setSelectedCustomerId, setCustomerType } = useFormContext();
 
   useEffect(() => {
     setCustomerType('existing');
@@ -30,66 +25,33 @@ const ExistingCustomerHearingFormContent = () => {
   }, [setCustomerType, setSelectedCustomerId]);
 
   const steps = [
-    { id: 1, label: '物件選択' },
-    { id: 2, label: '検討箇所' },
-    { id: 3, label: '重視ポイント' },
-    { id: 4, label: '完成時期' },
-    { id: 5, label: '予算・ローン' },
-    { id: 6, label: '見積状況' },
-    { id: 7, label: '種別選択' },
-    {
-      id: 8,
-      label: data.customerCategory === 'corporate' ? '法人情報' : 'お客様情報',
-    },
-    { id: 9, label: 'ご住所情報' },
-    ...(data.customerCategory === 'individual'
-      ? [
-          { id: 10, label: 'ご職業' },
-          { id: 11, label: 'ご家族' },
-        ]
-      : []),
+    { id: 1, label: 'ご案内' },
+    { id: 2, label: '物件選択' },
+    { id: 3, label: '検討箇所' },
+    { id: 4, label: '重視ポイント' },
+    { id: 5, label: '完成時期' },
+    { id: 6, label: '予算・ローン' },
+    { id: 7, label: '見積状況' },
   ];
 
   const renderStep = () => {
     switch (currentStep) {
       case 1:
-        return <PropertySelectStep />;
+        return <ExistingCustomerGreetingStep />;
       case 2:
-        return <ReformAreaStep />;
-      case 3:
-        return <PriorityPointsStep />;
-      case 4:
-        return <DesiredCompletionStep />;
-      case 5:
-        return <BudgetLoanStep />;
-      case 6:
-        return <EstimateStatusStep />;
-      case 7:
-        return <CustomerTypeStep />;
-      case 8:
-        if (data.customerCategory === 'individual') {
-          return <IndividualInfoStep />;
-        }
-        if (data.customerCategory === 'corporate') {
-          return <CorporateInfoStep />;
-        }
-        return <CustomerTypeStep />;
-      case 9:
-        return <AddressStep />;
-      case 10:
-        // 個人のみ表示
-        if (data.customerCategory === 'individual') {
-          return <OccupationStep />;
-        }
-        return <AddressStep />;
-      case 11:
-        // 個人のみ表示
-        if (data.customerCategory === 'individual') {
-          return <FamilyStep />;
-        }
-        return <AddressStep />;
-      default:
         return <PropertySelectStep />;
+      case 3:
+        return <ReformAreaStep />;
+      case 4:
+        return <PriorityPointsStep />;
+      case 5:
+        return <DesiredCompletionStep />;
+      case 6:
+        return <BudgetLoanStep />;
+      case 7:
+        return <EstimateStatusStep />;
+      default:
+        return <ExistingCustomerGreetingStep />;
     }
   };
 

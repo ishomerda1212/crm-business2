@@ -109,7 +109,7 @@ export function NewCustomerFormDialog({ open, onOpenChange, onContinue, descript
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="w-full max-w-3xl">
+      <DialogContent className="w-full max-w-[90vw] sm:max-w-4xl lg:max-w-[960px]">
         <DialogHeader>
           <DialogTitle>フォームを選択して共有</DialogTitle>
           <DialogDescription>

@@ -5,6 +5,7 @@ export { CustomerStatusStep } from './CustomerStatusStep';
 export { CustomerTypeStep } from './CustomerTypeStep';
 export { DesiredCompletionStep } from './DesiredCompletionStep';
 export { EstimateStatusStep } from './EstimateStatusStep';
+export { ExistingCustomerGreetingStep } from './ExistingCustomerGreetingStep';
 export { FamilyStep } from './FamilyStep';
 export { IndividualInfoStep } from './IndividualInfoStep';
 export { OccupationStep } from './OccupationStep';
